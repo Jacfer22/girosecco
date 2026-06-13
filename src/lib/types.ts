@@ -1,0 +1,60 @@
+export type Difficolta = 'facile' | 'medio' | 'impegnativo';
+
+export type TipoTappa = 'partenza' | 'panorama' | 'cibo' | 'benzina' | 'sosta' | 'arrivo';
+
+export interface Tappa {
+  id: string;
+  itinerario_id: string;
+  ordine: number;
+  nome: string;
+  tipo: TipoTappa;
+  lat: number;
+  lng: number;
+  note: string | null;
+}
+
+export interface ProExtra {
+  variante: string;
+  weekend: string;
+}
+
+// Aggiornamenti sullo stato della strada: chiusure, lavori, info utili, consigli stagionali.
+export type TipoAvviso = 'chiuso' | 'lavori' | 'info' | 'consiglio';
+
+export interface Avviso {
+  id: string;
+  itinerario_id: string;
+  tipo: TipoAvviso;
+  titolo: string;
+  descrizione: string;
+  // Data dell'ultimo aggiornamento, formato YYYY-MM-DD
+  data: string;
+  // Fonte verificabile (comune, ente, articolo). Obbligatoria:
+  // nessun avviso va pubblicato senza una fonte controllabile.
+  fonte: string;
+}
+
+export interface Itinerario {
+  id: string;
+  slug: string;
+  titolo: string;
+  sottotitolo: string;
+  descrizione: string;
+  zona: string;
+  km: number;
+  durata_ore: number;
+  difficolta: Difficolta;
+  periodo_ideale: string;
+  gpx_url: string | null;
+  is_premium: boolean;
+  cover_url: string | null;
+  // Sequenza di punti che disegna il percorso reale su strada (più densa delle tappe)
+  tracciato: [number, number][];
+  // Contenuti extra per gli itinerari Pro
+  pro_extra?: ProExtra | null;
+  tappe?: Tappa[];
+  avvisi?: Avviso[];
+  // Nome ufficiale della strada percorsa (solo se verificato). Null = da verificare.
+  strada?: string | null;
+  strada_fonte?: string | null;
+}

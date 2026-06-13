@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --asfalto: #15181a;
+  --cemento: #f0f1f2;
+  --segnale: #f2b705;
+}
+
+body {
+  background: var(--cemento);
+  color: var(--asfalto);
+}
+
+/* Firma visiva: linea di mezzeria stradale (tratteggio bianco su asfalto) */
+.mezzeria {
+  height: 14px;
+  background-color: var(--asfalto);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 28px,
+    #fff 28px 64px
+  );
+  background-position: center;
+  background-size: 92px 4px;
+  background-repeat: repeat-x;
+}
+
+.mezzeria-animata {
+  animation: scorri 2.4s linear infinite;
+}
+
+@keyframes scorri {
+  from { background-position-x: 0; }
+  to { background-position-x: -92px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mezzeria-animata { animation: none; }
+}
+
+/* Chip dati stile computer di bordo */
+.chip {
+  @apply inline-flex items-center gap-1.5 border border-asfalto/20 bg-white px-2.5 py-1 font-mono text-xs uppercase tracking-wide;
+}
+
+/* Sfondo "carta topografica": griglia sottile, visibile mentre i tile
+   caricano o se la rete non è disponibile (errorTileUrl trasparente) */
+.mappa-itinerario .leaflet-container {
+  background:
+    repeating-linear-gradient(0deg, rgba(138, 90, 43, 0.08) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(138, 90, 43, 0.08) 0 1px, transparent 1px 28px),
+    #ede6d8;
+}
+
+/* Marker numerati (corrispondono al roadbook) */
+.marker-tappa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 2px solid #15181a;
+  background: #f2b705;
+  color: #15181a;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 13px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* Etichetta nome tappa sulla mappa */
+.etichetta-tappa {
+  background: #15181a;
+  color: #f0f1f2;
+  border: none;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  box-shadow: none;
+}
+.etichetta-tappa::before {
+  display: none;
+}
+
+/* Bussola */
+.bussola-mappa {
+  background: #15181a;
+  color: #f0f1f2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  border: 2px solid #15181a;
+}
+.bussola-mappa span {
+  color: #f2b705;
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--segnale);
+  outline-offset: 2px;
+}
