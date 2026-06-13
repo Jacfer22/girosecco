@@ -70,7 +70,9 @@ export async function getItinerario(slug: string): Promise<Itinerario | null> {
     };
   }
 
-  const riga = data as RigaItinerario & { avvisi?: (Avviso & { attivo?: boolean })[] };
+  const riga = data as Omit<RigaItinerario, 'avvisi'> & {
+    avvisi?: (Avviso & { attivo?: boolean })[];
+  };
   const itinerario = mappaRiga(riga);
   itinerario.avvisi = (riga.avvisi ?? []).filter((a) => a.attivo !== false);
   return itinerario;
