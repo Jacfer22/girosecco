@@ -27,6 +27,16 @@ export default function PaginaAccedi() {
     }
   }, []);
 
+  // Se già loggato, vai direttamente all'account
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        window.location.href = '/account';
+      }
+    });
+  }, [supabase]);
+
   if (!supabase) {
     return (
       <section className="mx-auto max-w-md px-4 py-14">
