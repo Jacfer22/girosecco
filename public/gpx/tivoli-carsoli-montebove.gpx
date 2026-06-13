@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Tivoli–Carsoli–Colli di Montebove — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Tivoli–Carsoli–Colli di Montebove</name>
+    <trkseg>
+      <trkpt lat="41.963" lon="12.798"></trkpt>
+      <trkpt lat="41.985" lon="12.860"></trkpt>
+      <trkpt lat="42.020" lon="12.940"></trkpt>
+      <trkpt lat="42.060" lon="13.010"></trkpt>
+      <trkpt lat="42.099" lon="13.088"></trkpt>
+      <trkpt lat="42.085" lon="13.108"></trkpt>
+      <trkpt lat="42.078" lon="13.130"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

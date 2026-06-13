@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Tuscia e Civita di Bagnoregio — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Tuscia e Civita di Bagnoregio</name>
+    <trkseg>
+      <trkpt lat="42.460" lon="12.386"></trkpt>
+      <trkpt lat="42.485" lon="12.330"></trkpt>
+      <trkpt lat="42.510" lon="12.230"></trkpt>
+      <trkpt lat="42.530" lon="12.120"></trkpt>
+      <trkpt lat="42.539" lon="12.030"></trkpt>
+      <trkpt lat="42.595" lon="12.005"></trkpt>
+      <trkpt lat="42.644" lon="11.986"></trkpt>
+      <trkpt lat="42.635" lon="12.050"></trkpt>
+      <trkpt lat="42.628" lon="12.114"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

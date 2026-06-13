@@ -37,7 +37,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 4,
     difficolta: 'facile',
     periodo_ideale: 'Tutto l’anno',
-    gpx_url: null,
+    gpx_url: '/gpx/monti-della-tolfa.gpx',
     is_premium: false,
     cover_url: null,
     strada: 'SP3A Braccianese Claudia',
@@ -73,7 +73,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 3,
     difficolta: 'medio',
     periodo_ideale: 'Marzo–Novembre',
-    gpx_url: null,
+    gpx_url: '/gpx/via-licinese.gpx',
     is_premium: false,
     cover_url: null,
     tracciato: [
@@ -103,7 +103,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 3,
     difficolta: 'medio',
     periodo_ideale: 'Aprile–Ottobre',
-    gpx_url: null,
+    gpx_url: '/gpx/tivoli-carsoli-montebove.gpx',
     is_premium: true,
     cover_url: null,
     tracciato: [
@@ -139,7 +139,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 4,
     difficolta: 'facile',
     periodo_ideale: 'Tutto l’anno',
-    gpx_url: null,
+    gpx_url: '/gpx/castelli-romani.gpx',
     is_premium: false,
     cover_url: null,
     tracciato: [
@@ -174,7 +174,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 5,
     difficolta: 'medio',
     periodo_ideale: 'Aprile–Ottobre',
-    gpx_url: null,
+    gpx_url: '/gpx/laghi-turano-e-salto.gpx',
     is_premium: true,
     cover_url: null,
     tracciato: [
@@ -212,7 +212,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 5,
     difficolta: 'facile',
     periodo_ideale: 'Marzo–Novembre',
-    gpx_url: null,
+    gpx_url: '/gpx/tuscia-e-civita.gpx',
     is_premium: false,
     cover_url: null,
     tracciato: [
@@ -245,7 +245,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 4,
     difficolta: 'facile',
     periodo_ideale: 'Tutto l’anno (top in inverno)',
-    gpx_url: null,
+    gpx_url: '/gpx/anello-lago-di-bracciano.gpx',
     is_premium: false,
     cover_url: null,
     tracciato: [
@@ -273,7 +273,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 5,
     difficolta: 'impegnativo',
     periodo_ideale: 'Maggio–Ottobre',
-    gpx_url: null,
+    gpx_url: '/gpx/monti-simbruini.gpx',
     is_premium: true,
     cover_url: null,
     tracciato: [
@@ -310,7 +310,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 5,
     difficolta: 'facile',
     periodo_ideale: 'Tutto l’anno',
-    gpx_url: null,
+    gpx_url: '/gpx/ciociaria-dei-borghi.gpx',
     is_premium: false,
     cover_url: null,
     tracciato: [
@@ -344,7 +344,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     durata_ore: 5,
     difficolta: 'medio',
     periodo_ideale: 'Marzo–Novembre',
-    gpx_url: null,
+    gpx_url: '/gpx/monti-aurunci.gpx',
     is_premium: true,
     cover_url: null,
     tracciato: [

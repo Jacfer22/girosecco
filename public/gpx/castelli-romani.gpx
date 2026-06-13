@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Castelli Romani — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Castelli Romani</name>
+    <trkseg>
+      <trkpt lat="41.806" lon="12.681"></trkpt>
+      <trkpt lat="41.790" lon="12.668"></trkpt>
+      <trkpt lat="41.762" lon="12.655"></trkpt>
+      <trkpt lat="41.747" lon="12.650"></trkpt>
+      <trkpt lat="41.733" lon="12.687"></trkpt>
+      <trkpt lat="41.721" lon="12.717"></trkpt>
+      <trkpt lat="41.740" lon="12.715"></trkpt>
+      <trkpt lat="41.761" lon="12.709"></trkpt>
+      <trkpt lat="41.766" lon="12.683"></trkpt>
+      <trkpt lat="41.769" lon="12.659"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

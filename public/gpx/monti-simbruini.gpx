@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Monti Simbruini — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Monti Simbruini</name>
+    <trkseg>
+      <trkpt lat="41.925" lon="13.095"></trkpt>
+      <trkpt lat="41.935" lon="13.125"></trkpt>
+      <trkpt lat="41.945" lon="13.155"></trkpt>
+      <trkpt lat="41.910" lon="13.200"></trkpt>
+      <trkpt lat="41.862" lon="13.249"></trkpt>
+      <trkpt lat="41.875" lon="13.290"></trkpt>
+      <trkpt lat="41.890" lon="13.323"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

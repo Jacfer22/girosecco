@@ -1,35 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { useAuth } from '@/components/AuthProvider';
 
-interface Profilo {
-  username: string | null;
-  moto: string | null;
-  is_pro: boolean;
-}
-
 export default function PaginaAccount() {
   const router = useRouter();
-  const { user, loading, nonConfigurato } = useAuth();
+  const { user, profilo, loading, nonConfigurato } = useAuth();
   const supabase = getSupabaseBrowser();
-
-  const [profilo, setProfilo] = useState<Profilo | null>(null);
-
-  useEffect(() => {
-    if (!user || !supabase) return;
-    supabase
-      .from('profiles')
-      .select('username, moto, is_pro')
-      .eq('id', user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) setProfilo(data as Profilo);
-      });
-  }, [user, supabase]);
 
   async function logout() {
     if (!supabase) return;

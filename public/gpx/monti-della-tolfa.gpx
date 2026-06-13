@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Monti della Tolfa — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Monti della Tolfa</name>
+    <trkseg>
+      <trkpt lat="42.094" lon="11.793"></trkpt>
+      <trkpt lat="42.103" lon="11.825"></trkpt>
+      <trkpt lat="42.121" lon="11.851"></trkpt>
+      <trkpt lat="42.140" lon="11.878"></trkpt>
+      <trkpt lat="42.156" lon="11.902"></trkpt>
+      <trkpt lat="42.149" lon="11.934"></trkpt>
+      <trkpt lat="42.135" lon="11.985"></trkpt>
+      <trkpt lat="42.118" lon="12.045"></trkpt>
+      <trkpt lat="42.108" lon="12.110"></trkpt>
+      <trkpt lat="42.103" lon="12.176"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

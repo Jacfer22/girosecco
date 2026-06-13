@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getItinerario } from '@/lib/supabase';
 import MappaItinerario from '@/components/MappaItinerario';
 import AvvisoBanner from '@/components/AvvisoBanner';
+import ContenutoPro from '@/components/ContenutoPro';
 import { ChipDato, ChipDifficolta } from '@/components/Chips';
 
 export const revalidate = 3600;
@@ -105,70 +106,11 @@ export default async function PaginaItinerario({
         </section>
       )}
 
-      {/* Contenuti Pro: variante percorso + pacchetto weekend */}
-      {itinerario.is_premium && itinerario.pro_extra && (
-        <section className="mt-10 border-2 border-segnale bg-white">
-          <div className="flex items-center gap-2 border-b-2 border-segnale bg-asfalto px-4 py-2">
-            <span className="bg-segnale px-2 py-0.5 font-mono text-xs font-medium uppercase text-asfalto">
-              Pro
-            </span>
-            <span className="font-mono text-xs uppercase tracking-wide text-guardrail">
-              Contenuti riservati
-            </span>
-          </div>
-          <div className="space-y-5 p-5">
-            <div>
-              <h3 className="font-display text-2xl font-bold uppercase tracking-tight">
-                Variante del percorso
-              </h3>
-              <p className="mt-1 text-asfalto/85">{itinerario.pro_extra.variante}</p>
-            </div>
-            <div>
-              <h3 className="font-display text-2xl font-bold uppercase tracking-tight">
-                Pacchetto weekend
-              </h3>
-              <p className="mt-1 text-asfalto/85">{itinerario.pro_extra.weekend}</p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="mt-10 border-2 border-asfalto bg-asfalto p-6 text-cemento">
-        <h2 className="font-display text-3xl font-bold uppercase tracking-tight">
-          Traccia GPX
-        </h2>
-        {itinerario.gpx_url && !itinerario.is_premium ? (
-          <>
-            <p className="mt-2 text-guardrail">
-              Scarica la traccia e caricala sul navigatore o sull’app che usi.
-            </p>
-            <a
-              href={itinerario.gpx_url}
-              download
-              className="mt-4 inline-block bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white"
-            >
-              Scarica GPX
-            </a>
-          </>
-        ) : itinerario.is_premium ? (
-          <>
-            <p className="mt-2 text-guardrail">
-              Questo è un itinerario Pro: GPX, varianti del percorso e pacchetto
-              weekend completo sono riservati agli iscritti.
-            </p>
-            <Link
-              href="/pro"
-              className="mt-4 inline-block bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white"
-            >
-              Sblocca con Pro
-            </Link>
-          </>
-        ) : (
-          <p className="mt-2 font-mono text-sm text-guardrail">
-            GPX in arrivo per questo itinerario.
-          </p>
-        )}
-      </section>
+      <ContenutoPro
+        isPremium={itinerario.is_premium}
+        proExtra={itinerario.pro_extra}
+        gpxUrl={itinerario.gpx_url}
+      />
     </article>
   );
 }

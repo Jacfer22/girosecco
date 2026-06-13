@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Ciociaria dei borghi — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Ciociaria dei borghi</name>
+    <trkseg>
+      <trkpt lat="41.692" lon="13.418"></trkpt>
+      <trkpt lat="41.710" lon="13.380"></trkpt>
+      <trkpt lat="41.726" lon="13.342"></trkpt>
+      <trkpt lat="41.735" lon="13.280"></trkpt>
+      <trkpt lat="41.744" lon="13.154"></trkpt>
+      <trkpt lat="41.715" lon="13.085"></trkpt>
+      <trkpt lat="41.690" lon="13.024"></trkpt>
+      <trkpt lat="41.620" lon="13.000"></trkpt>
+      <trkpt lat="41.549" lon="12.984"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

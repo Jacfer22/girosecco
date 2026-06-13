@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Laghi del Turano e del Salto — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Laghi del Turano e del Salto</name>
+    <trkseg>
+      <trkpt lat="41.917" lon="12.873"></trkpt>
+      <trkpt lat="41.965" lon="12.890"></trkpt>
+      <trkpt lat="42.020" lon="12.905"></trkpt>
+      <trkpt lat="42.075" lon="12.920"></trkpt>
+      <trkpt lat="42.131" lon="12.937"></trkpt>
+      <trkpt lat="42.175" lon="12.943"></trkpt>
+      <trkpt lat="42.211" lon="12.948"></trkpt>
+      <trkpt lat="42.221" lon="12.962"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

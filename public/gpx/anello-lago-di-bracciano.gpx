@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GiroSecco" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Anello del Lago di Bracciano — GiroSecco</name>
+    <desc>Percorso proposto da GiroSecco. Traccia indicativa: verifica sempre il navigatore prima di partire.</desc>
+  </metadata>
+  <trk>
+    <name>Anello del Lago di Bracciano</name>
+    <trkseg>
+      <trkpt lat="42.103" lon="12.176"></trkpt>
+      <trkpt lat="42.130" lon="12.205"></trkpt>
+      <trkpt lat="42.156" lon="12.244"></trkpt>
+      <trkpt lat="42.130" lon="12.270"></trkpt>
+      <trkpt lat="42.092" lon="12.283"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
