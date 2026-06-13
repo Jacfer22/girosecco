@@ -15,7 +15,7 @@ const ARTICOLI = [
     data: '2 giugno 2026',
     zona: 'Monti Simbruini',
     anteprima:
-      'Non serve l\'Himalaya. A un'ora da Roma ci sono sentieri e strade bianche che mettono alla prova qualsiasi adventure. Una guida ai percorsi misti del Lazio, con consigli su quando andare e cosa portare.',
+      "Non serve l'Himalaya. A un'ora da Roma ci sono sentieri e strade bianche che mettono alla prova qualsiasi adventure. Una guida ai percorsi misti del Lazio, con consigli su quando andare e cosa portare.",
   },
 ];
 
