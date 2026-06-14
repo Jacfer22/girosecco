@@ -58,3 +58,17 @@ export interface Itinerario {
   strada?: string | null;
   strada_fonte?: string | null;
 }
+
+export type StatoArticolo = 'in_revisione' | 'pubblicato' | 'rifiutato';
+
+export interface Articolo {
+  id: string;
+  autore_id: string;
+  titolo: string;
+  contenuto: string;
+  stato: StatoArticolo;
+  created_at: string;
+  pubblicato_at: string | null;
+  // Presente quando l'articolo viene letto con il join su profiles
+  autore?: { username: string | null } | null;
+}

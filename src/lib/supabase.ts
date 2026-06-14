@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Avviso, Itinerario } from './types';
+import { Articolo, Avviso, Itinerario } from './types';
 import { AVVISI_FALLBACK, ITINERARI_FALLBACK } from './fallback';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -96,3 +96,37 @@ export async function getItinerariConAvvisi(): Promise<Set<string>> {
 }
 
 export type { Avviso };
+
+// ============ BLOG ============
+
+// Niente fallback locale per il blog: senza Supabase configurato la pagina
+// mostra solo un avviso, non finge articoli inesistenti.
+
+export async function getArticoliPubblicati(): Promise<Articolo[]> {
+  const supabase = getClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from('articoli')
+    .select('*, autore:profiles(username)')
+    .eq('stato', 'pubblicato')
+    .order('pubblicato_at', { ascending: false });
+
+  if (error || !data) return [];
+  return data as unknown as Articolo[];
+}
+
+export async function getArticolo(id: string): Promise<Articolo | null> {
+  const supabase = getClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('articoli')
+    .select('*, autore:profiles(username)')
+    .eq('id', id)
+    .eq('stato', 'pubblicato')
+    .single();
+
+  if (error || !data) return null;
+  return data as unknown as Articolo;
+}

@@ -41,3 +41,32 @@ export function formattaDurata(secondi: number): string {
 export function formattaKm(metri: number): string {
   return (metri / 1000).toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
+
+/** Indice del punto del tracciato più vicino a una posizione. */
+export function indicePuntoPiuVicino(tracciato: Punto[], pos: Punto): number {
+  let migliore = 0;
+  let distanzaMin = Infinity;
+  tracciato.forEach((p, i) => {
+    const d = distanzaMetri(p, pos);
+    if (d < distanzaMin) {
+      distanzaMin = d;
+      migliore = i;
+    }
+  });
+  return migliore;
+}
+
+/** Distanza (in metri) rimanente sul tracciato a partire da un indice fino alla fine. */
+export function distanzaRimanente(tracciato: Punto[], daIndice: number): number {
+  let totale = 0;
+  for (let i = daIndice; i < tracciato.length - 1; i++) {
+    totale += distanzaMetri(tracciato[i], tracciato[i + 1]);
+  }
+  return totale;
+}
+
+/** Converte una velocità in m/s (come da GPS) in km/h. */
+export function msAKmh(ms: number | null | undefined): number | null {
+  if (ms === null || ms === undefined || Number.isNaN(ms)) return null;
+  return ms * 3.6;
+}

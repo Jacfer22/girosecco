@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import MappaItinerario from '@/components/MappaItinerario';
+import NavigazioneClient from '@/components/NavigazioneClient';
 import { useAuth } from './AuthProvider';
 import { ProExtra, Tappa } from '@/lib/types';
 
@@ -15,6 +16,7 @@ const TIPO_LABEL: Record<string, string> = {
 };
 
 interface Props {
+  titolo: string;
   isPremium: boolean;
   tappe: Tappa[];
   tracciato: [number, number][];
@@ -151,6 +153,7 @@ function Lucchetto({
 }
 
 export default function ContenutoItinerario({
+  titolo,
   isPremium,
   tappe,
   tracciato,
@@ -219,6 +222,9 @@ export default function ContenutoItinerario({
     <>
       <BloccoMappa tappe={tappe} tracciato={tracciato} strada={strada} stradaFonte={stradaFonte} />
       <BloccoRoadbook tappe={tappe} />
+      {tappe.length > 0 && tracciato.length > 1 && (
+        <NavigazioneClient titolo={titolo} tappe={tappe} tracciato={tracciato} />
+      )}
       {isPremium && proExtra && <BloccoProExtra proExtra={proExtra} />}
       <BloccoGpx gpxUrl={gpxUrl} />
     </>

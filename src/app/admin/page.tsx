@@ -22,12 +22,22 @@ interface RigaProfilo {
   is_admin: boolean;
 }
 
+interface RigaArticolo {
+  id: string;
+  titolo: string;
+  contenuto: string;
+  stato: 'in_revisione' | 'pubblicato' | 'rifiutato';
+  created_at: string;
+  autore: { username: string | null } | null;
+}
+
 export default function PaginaAdmin() {
   const { user, profilo, loading, nonConfigurato } = useAuth();
   const supabase = getSupabaseBrowser();
 
   const [avvisi, setAvvisi] = useState<RigaAvviso[] | null>(null);
   const [profili, setProfili] = useState<RigaProfilo[] | null>(null);
+  const [articoli, setArticoli] = useState<RigaArticolo[] | null>(null);
   const [errore, setErrore] = useState<string | null>(null);
 
   const autorizzato = !!profilo?.is_admin;
@@ -51,6 +61,16 @@ export default function PaginaAdmin() {
       .then(({ data, error }) => {
         if (error) setErrore(error.message);
         else setProfili(data as RigaProfilo[]);
+      });
+
+    supabase
+      .from('articoli')
+      .select('id, titolo, contenuto, stato, created_at, autore:profiles(username)')
+      .eq('stato', 'in_revisione')
+      .order('created_at', { ascending: true })
+      .then(({ data, error }) => {
+        if (error) setErrore(error.message);
+        else setArticoli(data as unknown as RigaArticolo[]);
       });
   }, [supabase, autorizzato]);
 
@@ -79,6 +99,19 @@ export default function PaginaAdmin() {
     setProfili((prev) =>
       prev ? prev.map((p) => (p.id === id ? { ...p, [campo]: !valore } : p)) : prev
     );
+  }
+
+  async function moderaArticolo(id: string, decisione: 'pubblicato' | 'rifiutato') {
+    if (!supabase) return;
+    const aggiornamento: Record<string, unknown> = { stato: decisione };
+    if (decisione === 'pubblicato') aggiornamento.pubblicato_at = new Date().toISOString();
+
+    const { error } = await supabase.from('articoli').update(aggiornamento).eq('id', id);
+    if (error) {
+      setErrore(error.message);
+      return;
+    }
+    setArticoli((prev) => (prev ? prev.filter((a) => a.id !== id) : prev));
   }
 
   if (nonConfigurato) {
@@ -130,6 +163,49 @@ export default function PaginaAdmin() {
           {errore}
         </p>
       )}
+
+      <h2 className="mt-10 font-display text-2xl font-bold uppercase tracking-tight">
+        Articoli da revisionare
+      </h2>
+      <p className="mt-1 text-sm text-asfalto/60">
+        Pubblica o rifiuta gli articoli inviati dagli utenti per il blog.
+      </p>
+      <div className="mt-4 divide-y-2 divide-asfalto/10 border-2 border-asfalto bg-white">
+        {articoli === null ? (
+          <p className="p-4 font-mono text-sm text-asfalto/50">Caricamento…</p>
+        ) : articoli.length === 0 ? (
+          <p className="p-4 font-mono text-sm text-asfalto/50">Nessun articolo da revisionare.</p>
+        ) : (
+          articoli.map((a) => (
+            <div key={a.id} className="p-4">
+              <p className="font-mono text-xs uppercase text-asfalto/50">
+                {a.autore?.username ?? 'utente'} ·{' '}
+                {new Date(a.created_at).toLocaleDateString('it-IT')}
+              </p>
+              <p className="mt-1 font-display text-xl font-bold uppercase tracking-tight">
+                {a.titolo}
+              </p>
+              <p className="mt-1 line-clamp-3 text-sm text-asfalto/70">{a.contenuto}</p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => moderaArticolo(a.id, 'pubblicato')}
+                  className="border-2 border-asfalto bg-segnale px-3 py-1.5 font-mono text-xs font-medium uppercase text-asfalto hover:bg-white"
+                >
+                  Pubblica
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moderaArticolo(a.id, 'rifiutato')}
+                  className="border-2 border-asfalto px-3 py-1.5 font-mono text-xs font-medium uppercase hover:bg-asfalto hover:text-cemento"
+                >
+                  Rifiuta
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       <h2 className="mt-10 font-display text-2xl font-bold uppercase tracking-tight">
         Avvisi

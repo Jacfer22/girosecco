@@ -57,6 +57,7 @@ export default async function PaginaItinerario({
 
       {/* Mappa, roadbook, GPX (+ variante/weekend se Pro): in base al livello account */}
       <ContenutoItinerario
+        titolo={itinerario.titolo}
         isPremium={itinerario.is_premium}
         tappe={tappe}
         tracciato={itinerario.tracciato ?? []}

@@ -33,12 +33,6 @@ export default function Header() {
           >
             Itinerari
           </a>
-          <Link
-            href="/blog"
-            className="font-mono text-sm uppercase tracking-wide hover:text-segnale"
-          >
-            Blog
-          </Link>
 
           {!loading && profilo?.is_admin && (
             <Link
