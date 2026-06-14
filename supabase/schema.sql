@@ -11,6 +11,8 @@ create table public.itinerari (
   sottotitolo text not null default '',
   descrizione text not null default '',
   zona text not null default '',
+  -- Una o più regioni (slug). Un giro a cavallo del confine ne ha due.
+  regioni text[] not null default '{}',
   km integer not null default 0,
   durata_ore integer not null default 0,
   difficolta text not null default 'facile' check (difficolta in ('facile','medio','impegnativo')),

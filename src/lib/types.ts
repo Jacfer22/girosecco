@@ -41,6 +41,8 @@ export interface Itinerario {
   sottotitolo: string;
   descrizione: string;
   zona: string;
+  // Una o più regioni: un giro che scavalla il confine appare in entrambe.
+  regioni: string[];
   km: number;
   durata_ore: number;
   difficolta: Difficolta;

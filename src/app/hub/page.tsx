@@ -20,7 +20,7 @@ const AZIONI = [
     href: '/itinerari',
     ancora: true,
     titolo: 'Itinerari',
-    sotto: 'I giri nel Lazio, con mappa, roadbook e GPX',
+    sotto: 'Gli itinerari, regione per regione',
     colore: 'bg-asfalto text-cemento',
     span: 'col-span-2',
   },

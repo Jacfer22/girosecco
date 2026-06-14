@@ -33,6 +33,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Il giro che ogni motociclista romano fa almeno una volta al mese. Si parte dal mare di Civitavecchia e si sale verso Allumiere e Tolfa su strade larghe, pulite e piene di curve in appoggio. Panorami aperti sulla campagna, butteri a cavallo se sei fortunato, e discesa finale verso il lago di Bracciano. Perfetto la domenica mattina: partenza presto, pranzo a Tolfa, a casa per le 15.',
     zona: 'Roma Nord-Ovest',
+    regioni: ['lazio'],
     km: 120,
     durata_ore: 4,
     difficolta: 'facile',
@@ -69,6 +70,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'La SP Licinese è la strada di casa per chi gira a est di Roma: asfalto buono, curve da manuale, traffico quasi zero nei giorni feriali. Si parte da Tivoli, si sale a San Polo dei Cavalieri e si prosegue verso Licenza nella valle dell’Aniene. Giro corto, intenso, perfetto anche per un’uscita pomeridiana dopo il lavoro.',
     zona: 'Valle dell’Aniene',
+    regioni: ['lazio'],
     km: 90,
     durata_ore: 3,
     difficolta: 'medio',
@@ -99,6 +101,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Prima metà Tivoli–Carsoli: misto veloce di rettilinei e curve. Seconda metà fino a Colli di Montebove: strada stretta tra i boschi, traffico quasi assente, il posto giusto per lavorare sulla guida. Lungo il percorso trattorie economiche con cucina locale vera. Circa 80 km tra salite e discese al confine con l’Abruzzo.',
     zona: 'Confine Lazio–Abruzzo',
+    regioni: ['lazio', 'abruzzo'],
     km: 80,
     durata_ore: 3,
     difficolta: 'medio',
@@ -135,6 +138,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Il giro perfetto per chi inizia o per le mezze giornate: 140 km che si fanno in meno di 4 ore, ma con i Castelli la sosta è d’obbligo. Frascati, Castel Gandolfo affacciata sul lago Albano, Nemi col suo lago piccolo e le fragoline, i boschi di Rocca di Papa. Chiusura classica a Marino per un quarto di vino. Strade panoramiche, mai noiose, vivibili anche d’inverno.',
     zona: 'Castelli Romani',
+    regioni: ['lazio'],
     km: 140,
     durata_ore: 4,
     difficolta: 'facile',
@@ -170,6 +174,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Tornanti panoramici che salgono da San Gregorio da Sassola e San Polo dei Cavalieri verso l’Appennino, poi Orvinio — uno dei borghi più belli d’Italia — e la discesa verso Colle di Tora e Castel di Tora, affacciati sul lago del Turano. Acqua turchese, borghi di pietra, curve infinite. Il giro da fare quando vuoi le foto migliori.',
     zona: 'Reatino',
+    regioni: ['lazio'],
     km: 160,
     durata_ore: 5,
     difficolta: 'medio',
@@ -208,6 +213,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       '160 km da Orte alla panoramica Montefiascone, dal lago di Bolsena fino a Civita di Bagnoregio, la “città che muore” sospesa sui calanchi. Strade della Tuscia: larghe, ondulate, con il vulcano di Bolsena sempre all’orizzonte. Tappa obbligata per anguilla e vino Est! Est!! Est!!! a Montefiascone.',
     zona: 'Tuscia (VT)',
+    regioni: ['lazio'],
     km: 160,
     durata_ore: 5,
     difficolta: 'facile',
@@ -241,6 +247,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       '140 km di strade collinari, panoramiche e divertenti attorno al bacino di Bracciano, con clima mite anche in inverno. Bracciano col castello Odescalchi, Trevignano per il lungolago, Anguillara per il tramonto. Quando a gennaio tutti tengono la moto in garage, questo è il giro che ti salva la domenica.',
     zona: 'Lago di Bracciano',
+    regioni: ['lazio'],
     km: 140,
     durata_ore: 4,
     difficolta: 'facile',
@@ -269,6 +276,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Catena di montagne al confine con l’Abruzzo, con strade che sembrano disegnate per chi guida: salita da Subiaco a Monte Livata tra i faggi, poi Trevi nel Lazio e Filettino, il comune più alto del Lazio. Aria di montagna a un’ora da Roma, curve tecniche, panorami da Alpi. D’estate è il rifugio dal caldo della città.',
     zona: 'Alta Valle dell’Aniene',
+    regioni: ['lazio'],
     km: 150,
     durata_ore: 5,
     difficolta: 'impegnativo',
@@ -306,6 +314,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Da Veroli ad Alatri con la sua acropoli preromana dalle mura ciclopiche, poi Anagni la città dei papi, Segni e le sue chiese, fino a Sermoneta, borgo medievale tra i più belli d’Italia. Strade secondarie tranquille, borghi dove il tempo si è fermato e la cucina ciociara che da sola vale il viaggio.',
     zona: 'Ciociaria (FR)',
+    regioni: ['lazio'],
     km: 130,
     durata_ore: 5,
     difficolta: 'facile',
@@ -340,6 +349,7 @@ export const ITINERARI_FALLBACK: Itinerario[] = [
     descrizione:
       'Si parte da Sezze in direzione Priverno — sosta obbligata per scorta di mozzarella di bufala — poi via verso il Parco Naturale dei Monti Aurunci passando per Castro dei Volsci ed Esperia. Curve piacevoli, natura selvaggia, zero folla. Il giro per chi vuole scoprire il Lazio che non conosce nessuno.',
     zona: 'Sud Pontino (LT)',
+    regioni: ['lazio'],
     km: 145,
     durata_ore: 5,
     difficolta: 'medio',

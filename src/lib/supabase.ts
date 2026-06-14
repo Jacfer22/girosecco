@@ -23,6 +23,7 @@ function mappaRiga(riga: RigaItinerario): Itinerario {
   return {
     ...resto,
     tracciato: riga.tracciato ?? [],
+    regioni: riga.regioni ?? [],
     pro_extra:
       variante_pro && weekend_pro
         ? { variante: variante_pro, weekend: weekend_pro }
@@ -41,6 +42,13 @@ export async function getItinerari(): Promise<Itinerario[]> {
 
   if (error || !data || data.length === 0) return ITINERARI_FALLBACK;
   return (data as RigaItinerario[]).map(mappaRiga);
+}
+
+// Itinerari di una regione (per slug). Include i giri che la toccano anche
+// se a cavallo del confine, perché appaiono nell'array `regioni` di entrambe.
+export async function getItinerariPerRegione(regioneSlug: string): Promise<Itinerario[]> {
+  const tutti = await getItinerari();
+  return tutti.filter((i) => (i.regioni ?? []).includes(regioneSlug));
 }
 
 export async function getItinerario(slug: string): Promise<Itinerario | null> {

@@ -30,9 +30,9 @@ const hand = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: 'GiroSecco — Itinerari moto curati nel Lazio',
+  title: 'GiroSecco — Itinerari moto in Italia',
   description:
-    'Giri in moto veri, provati su strada: curve, soste, trattorie e benzinai. Scarica il GPX e parti.',
+    'Itinerari in moto regione per regione: curve, soste, trattorie e benzinai. Mappa, roadbook e GPX. Proposti e aggiornati dalla community.',
   icons: {
     icon: '/favicon-32.png',
     apple: '/apple-touch-icon.png',

@@ -1,74 +1,94 @@
 import Link from 'next/link';
-import { getItinerari, getItinerariConAvvisi } from '@/lib/supabase';
-import ItinerarioCard from '@/components/ItinerarioCard';
+import { getItinerari } from '@/lib/supabase';
+import { REGIONI } from '@/lib/regioni';
 
 export const revalidate = 3600;
 
 export const metadata = {
-  title: 'Itinerari moto nel Lazio — GiroSecco',
+  title: 'Itinerari moto in Italia — GiroSecco',
   description:
-    'Dieci itinerari in moto nel Lazio, ognuno con mappa, roadbook tappa per tappa e traccia GPX da scaricare.',
+    'Itinerari in moto regione per regione, con mappa, roadbook e traccia GPX. Percorsi condivisi e aggiornati dalla community.',
 };
 
 export default async function PaginaItinerari() {
-  const [itinerari, idConAvvisi] = await Promise.all([
-    getItinerari(),
-    getItinerariConAvvisi(),
-  ]);
+  const itinerari = await getItinerari();
 
-  const kmTotali = itinerari.reduce((acc, i) => acc + i.km, 0);
-  const free = itinerari.filter((i) => !i.is_premium);
-  const pro = itinerari.filter((i) => i.is_premium);
+  // Conteggio itinerari per regione (un giro può contare in più regioni)
+  const conteggio = new Map<string, number>();
+  for (const it of itinerari) {
+    for (const r of it.regioni ?? []) {
+      conteggio.set(r, (conteggio.get(r) ?? 0) + 1);
+    }
+  }
+
+  const conGiri = REGIONI.filter((r) => (conteggio.get(r.slug) ?? 0) > 0);
+  const senzaGiri = REGIONI.filter((r) => (conteggio.get(r.slug) ?? 0) === 0);
+  const totale = itinerari.length;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <p className="font-mono text-sm uppercase tracking-widest text-cartello">
-        Lazio
-      </p>
+      <p className="font-mono text-sm uppercase tracking-widest text-cartello">Italia</p>
       <h1 className="mt-1 font-display text-5xl font-bold uppercase leading-none tracking-tight sm:text-7xl">
-        Gli itinerari
+        Scegli la regione
       </h1>
       <p className="mt-4 max-w-2xl text-lg text-asfalto/75">
-        Ogni giro ha la mappa del percorso, il roadbook tappa per tappa e la
-        traccia GPX da caricare sul navigatore. I km sono misurati sul
-        tracciato reale.
+        Gli itinerari sono divisi per regione. Ogni giro ha mappa, roadbook e
+        traccia GPX. I percorsi li propone e aggiorna la community: se conosci
+        una strada che vale, puoi aggiungerla.
       </p>
 
       <div className="mt-6 flex flex-wrap gap-3 font-mono text-sm">
         <span className="border-2 border-asfalto px-3 py-1.5">
-          {itinerari.length} itinerari
+          {totale} {totale === 1 ? 'itinerario' : 'itinerari'}
         </span>
         <span className="border-2 border-asfalto px-3 py-1.5">
-          {kmTotali.toLocaleString('it-IT')} km totali
+          {conGiri.length} {conGiri.length === 1 ? 'regione attiva' : 'regioni attive'}
         </span>
       </div>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {free.map((i) => (
-          <ItinerarioCard key={i.id} itinerario={i} haAvviso={idConAvvisi.has(i.id)} />
-        ))}
-      </div>
-
-      {pro.length > 0 && (
-        <div className="mt-16">
-          <div className="flex items-end justify-between gap-4 border-b-2 border-asfalto pb-3">
-            <h2 className="font-display text-3xl font-bold uppercase tracking-tight">
-              Itinerari Pro
-            </h2>
-            <Link
-              href="/pro"
-              className="font-mono text-xs uppercase tracking-wide text-cartello underline hover:text-asfalto"
-            >
-              Cos&apos;è Pro →
-            </Link>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {pro.map((i) => (
-              <ItinerarioCard key={i.id} itinerario={i} haAvviso={idConAvvisi.has(i.id)} />
+      {conGiri.length > 0 && (
+        <>
+          <h2 className="mt-12 font-display text-2xl font-bold uppercase tracking-tight">
+            Con itinerari
+          </h2>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {conGiri.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/itinerari/regione/${r.slug}`}
+                className="group flex items-center justify-between border-2 border-asfalto bg-white p-4 transition-colors hover:bg-asfalto hover:text-cemento"
+              >
+                <span className="font-display text-xl font-bold uppercase leading-tight tracking-tight">
+                  {r.nome}
+                </span>
+                <span className="ml-2 shrink-0 bg-segnale px-2 py-0.5 font-mono text-xs font-medium text-asfalto">
+                  {conteggio.get(r.slug)}
+                </span>
+              </Link>
             ))}
           </div>
-        </div>
+        </>
       )}
+
+      <h2 className="mt-12 font-display text-2xl font-bold uppercase tracking-tight">
+        Altre regioni
+      </h2>
+      <p className="mt-1 text-sm text-asfalto/60">
+        Ancora senza itinerari. Le prime strade le aggiunge chi le conosce.
+      </p>
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {senzaGiri.map((r) => (
+          <Link
+            key={r.slug}
+            href={`/itinerari/regione/${r.slug}`}
+            className="flex items-center justify-between border-2 border-asfalto/20 p-4 text-asfalto/40 transition-colors hover:border-asfalto/40"
+          >
+            <span className="font-display text-xl font-bold uppercase leading-tight tracking-tight">
+              {r.nome}
+            </span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
