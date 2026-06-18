@@ -47,6 +47,9 @@ export default function Header() {
           <Link href="/itinerari" className={voce('/itinerari')}>
             Itinerari
           </Link>
+          <Link href="/community" className={voce('/community')}>
+            Community
+          </Link>
           <Link href="/foto" className={voce('/foto')}>
             Foto
           </Link>
@@ -98,6 +101,13 @@ export default function Header() {
             className="block border-b border-guardrail/10 py-3 font-mono text-sm uppercase tracking-wide hover:text-segnale"
           >
             Itinerari
+          </Link>
+          <Link
+            href="/community"
+            onClick={chiudi}
+            className="block border-b border-guardrail/10 py-3 font-mono text-sm uppercase tracking-wide hover:text-segnale"
+          >
+            Community
           </Link>
           <Link
             href="/foto"

@@ -40,8 +40,7 @@ export default function CondividiItinerario({
 
       const testo =
         `${titolo} · ${zona}\n` +
-        `${km} km in moto 🏍️ — itinerario su GiroSecco\n` +
-        `https://girosecco.vercel.app`;
+        `${km} km in moto 🏍️ — itinerario su GiroSecco`;
 
       const res = await fetch(url);
       const blob = await res.blob();

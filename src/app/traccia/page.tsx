@@ -60,6 +60,8 @@ export default function PaginaTraccia() {
   const [velCorrenteKmh, setVelCorrenteKmh] = useState(0);
   const [temaCard, setTemaCard] = useState<'tracciato' | 'foto'>('tracciato');
   const [luogoCard, setLuogoCard] = useState('');
+  const [giroIdSalvato, setGiroIdSalvato] = useState<string | null>(null);
+  const [giroPubblico, setGiroPubblico] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
   const [storico, setStorico] = useState<GiroSalvato[]>([]);
   const [cardUrl, setCardUrl] = useState<string | null>(null);
@@ -215,20 +217,34 @@ export default function PaginaTraccia() {
     const supabase = getSupabaseBrowser();
     if (!supabase || !user) return;
     try {
-      await supabase.from('giri').insert({
-        utente_id: user.id,
-        nome: 'Giro libero',
-        km: Number((giro.km / 1000).toFixed(2)),
-        durata_sec: Math.round(giro.durataSec),
-        vel_media_kmh: stat.velMediaKmh,
-        vel_max_kmh: stat.velMaxKmh,
-        dislivello_m: stat.dislivelloPositivoM,
-        curve: stat.curve,
-        tracciato: giro.punti.map((p) => [p.lat, p.lng]),
-      });
+      const { data } = await supabase
+        .from('giri')
+        .insert({
+          utente_id: user.id,
+          nome: luogoCard.trim() || 'Giro libero',
+          km: Number((giro.km / 1000).toFixed(2)),
+          durata_sec: Math.round(giro.durataSec),
+          vel_media_kmh: stat.velMediaKmh,
+          vel_max_kmh: stat.velMaxKmh,
+          dislivello_m: stat.dislivelloPositivoM,
+          curve: stat.curve,
+          tracciato: giro.punti.map((p) => [p.lat, p.lng]),
+          pubblico: false,
+        })
+        .select('id')
+        .single();
+      if (data?.id) setGiroIdSalvato(data.id as string);
     } catch {
       // se il salvataggio cloud fallisce, il giro resta comunque in locale
     }
+  }
+
+  // Rende il giro appena salvato visibile (o no) nel feed community.
+  async function impostaGiroPubblico(pubblico: boolean) {
+    setGiroPubblico(pubblico);
+    const supabase = getSupabaseBrowser();
+    if (!supabase || !giroIdSalvato) return;
+    await supabase.from('giri').update({ pubblico }).eq('id', giroIdSalvato);
   }
 
   function nuovoGiro() {
@@ -238,6 +254,8 @@ export default function PaginaTraccia() {
     setDurataSec(0);
     setVelCorrenteKmh(0);
     setCardUrl(null);
+    setGiroIdSalvato(null);
+    setGiroPubblico(false);
     puntiRef.current = [];
   }
 
@@ -307,8 +325,7 @@ export default function PaginaTraccia() {
     const testo =
       `${luogoCard.trim() ? luogoCard.trim() + ' · ' : ''}` +
       `${formattaKm(distanzaM)} km in moto 🏍️\n` +
-      `Il mio giro su GiroSecco — itinerari moto in Italia\n` +
-      `https://girosecco.vercel.app`;
+      `Il mio giro su GiroSecco — itinerari moto in Italia`;
     try {
       const res = await fetch(cardUrl);
       const blob = await res.blob();
@@ -501,6 +518,36 @@ export default function PaginaTraccia() {
           <p className="mt-4 font-mono text-xs uppercase tracking-wide text-asfalto/50">
             {user ? '✓ Salvato nei tuoi giri' : 'Accedi per salvare i tuoi giri e ritrovarli ovunque'}
           </p>
+
+          {user && giroIdSalvato && (
+            <button
+              type="button"
+              onClick={() => impostaGiroPubblico(!giroPubblico)}
+              className={`tap mt-3 flex w-full items-center justify-between gap-3 rounded-app border-2 p-3 text-left ${
+                giroPubblico ? 'border-bosco bg-bosco/10' : 'border-asfalto/15'
+              }`}
+            >
+              <span>
+                <span className="block font-mono text-sm font-medium uppercase">
+                  {giroPubblico ? '✓ Visibile nella community' : 'Condividi nella community'}
+                </span>
+                <span className="block font-mono text-[11px] text-asfalto/55">
+                  {giroPubblico ? 'Gli altri biker vedono questo giro nel feed' : 'Mostra questo giro nel feed pubblico'}
+                </span>
+              </span>
+              <span
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                  giroPubblico ? 'bg-bosco' : 'bg-asfalto/20'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
+                    giroPubblico ? 'left-[22px]' : 'left-0.5'
+                  }`}
+                />
+              </span>
+            </button>
+          )}
 
           {!cardUrl ? (
             <div className="mt-4 space-y-4">

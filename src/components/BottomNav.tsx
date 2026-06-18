@@ -54,7 +54,7 @@ export default function BottomNav() {
 
   const voci = [
     { href: '/itinerari', label: 'Itinerari', Icona: IconaStrada, match: (p: string) => p.startsWith('/itinerari') },
-    { href: '/foto', label: 'Foto', Icona: IconaFoto, match: (p: string) => p.startsWith('/foto') },
+    { href: '/community', label: 'Community', Icona: IconaFoto, match: (p: string) => p.startsWith('/community') || p.startsWith('/foto') },
     { href: '/blog', label: 'Blog', Icona: IconaBlog, match: (p: string) => p.startsWith('/blog') },
     {
       href: loggato ? '/hub' : '/accedi',

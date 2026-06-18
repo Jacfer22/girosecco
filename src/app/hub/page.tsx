@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { etichettaCategoria } from '@/lib/categorie-moto';
+import BadgeUtente from '@/components/BadgeUtente';
 
 interface AvvisoHub {
   id: string;
@@ -40,6 +41,12 @@ const AZIONI: AzioneHub[] = [
     icona: 'gps',
     titolo: 'Traccia un giro',
     sotto: 'Registra il percorso e le statistiche',
+  },
+  {
+    href: '/community',
+    icona: 'foto',
+    titolo: 'Community',
+    sotto: 'Foto, commenti e giri dei biker',
   },
   {
     href: '/foto',
@@ -254,6 +261,13 @@ export default function PaginaHub() {
         </div>
 
         <div className="mezzeria mezzeria-animata" aria-hidden="true" />
+      </section>
+
+      {/* Livello / badge km */}
+      <section className="mx-auto -mt-8 max-w-6xl px-4">
+        <div className="rounded-app-lg bg-asfalto p-1">
+          <BadgeUtente />
+        </div>
       </section>
 
       {/* Griglia azioni */}
