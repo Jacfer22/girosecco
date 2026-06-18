@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Foto } from '@/lib/types';
+import BottoneLike from './BottoneLike';
 
 function formattaData(iso: string): string {
   return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
@@ -88,17 +89,22 @@ export default function GalleriaFoto({
             />
             <div className="mt-3 text-cemento">
               {aperta.didascalia && <p className="text-lg">{aperta.didascalia}</p>}
-              <p className="mt-1 font-mono text-xs uppercase tracking-wide text-guardrail">
-                {aperta.autore?.username ?? 'biker'} · {formattaData(aperta.created_at)}
-                {mostraItinerario && aperta.itinerario && (
-                  <>
-                    {' · '}
-                    <Link href={`/itinerari/${aperta.itinerario.slug}`} className="text-segnale underline">
-                      {aperta.itinerario.titolo}
-                    </Link>
-                  </>
-                )}
-              </p>
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <p className="font-mono text-xs uppercase tracking-wide text-guardrail">
+                  {aperta.autore?.username ?? 'biker'} · {formattaData(aperta.created_at)}
+                  {mostraItinerario && aperta.itinerario && (
+                    <>
+                      {' · '}
+                      <Link href={`/itinerari/${aperta.itinerario.slug}`} className="text-segnale underline">
+                        {aperta.itinerario.titolo}
+                      </Link>
+                    </>
+                  )}
+                </p>
+                <span className="rounded-full bg-white/10 px-3 py-1.5">
+                  <BottoneLike tipo="foto" contenutoId={aperta.id} compatto />
+                </span>
+              </div>
             </div>
           </div>
         </div>

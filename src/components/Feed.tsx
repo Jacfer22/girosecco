@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import BottoneLike from './BottoneLike';
 
 type VoceFeed =
   | { tipo: 'foto'; id: string; quando: string; autore: string; url: string; didascalia: string | null; itinerario: { slug: string; titolo: string } | null }
@@ -132,11 +133,14 @@ export default function Feed() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={v.url} alt={v.didascalia ?? ''} className="max-h-80 w-full rounded-app object-cover" />
               {v.didascalia && <p className="mt-2 text-sm text-asfalto/80">{v.didascalia}</p>}
-              {v.itinerario && (
-                <Link href={`/itinerari/${v.itinerario.slug}`} className="mt-1 inline-block font-mono text-xs uppercase text-bosco hover:underline">
-                  → {v.itinerario.titolo}
-                </Link>
-              )}
+              <div className="mt-2 flex items-center justify-between">
+                {v.itinerario ? (
+                  <Link href={`/itinerari/${v.itinerario.slug}`} className="font-mono text-xs uppercase text-bosco hover:underline">
+                    → {v.itinerario.titolo}
+                  </Link>
+                ) : <span />}
+                <BottoneLike tipo="foto" contenutoId={v.id} />
+              </div>
             </div>
           )}
 
@@ -152,12 +156,17 @@ export default function Feed() {
           )}
 
           {v.tipo === 'giro' && (
-            <div className="mt-2 flex items-center gap-4">
-              <span className="font-display text-3xl font-bold leading-none">{v.km} <span className="text-base">km</span></span>
-              {v.curve > 0 && (
-                <span className="font-mono text-sm text-asfalto/60">{v.curve} curve</span>
-              )}
-              <span className="font-display text-lg uppercase tracking-tight text-asfalto/70">{v.nome}</span>
+            <div className="mt-2">
+              <div className="flex items-center gap-4">
+                <span className="font-display text-3xl font-bold leading-none">{v.km} <span className="text-base">km</span></span>
+                {v.curve > 0 && (
+                  <span className="font-mono text-sm text-asfalto/60">{v.curve} curve</span>
+                )}
+                <span className="font-display text-lg uppercase tracking-tight text-asfalto/70">{v.nome}</span>
+              </div>
+              <div className="mt-2 flex justify-end">
+                <BottoneLike tipo="giro" contenutoId={v.id} />
+              </div>
             </div>
           )}
         </div>

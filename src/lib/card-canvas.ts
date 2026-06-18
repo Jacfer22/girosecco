@@ -103,6 +103,53 @@ interface AreaTracciato {
 // Disegna il tracciato in leggera prospettiva 3D: i punti sono proiettati su un
 // piano inclinato (effetto vista a volo d'uccello) e sollevati in base
 // all'altitudine, così salite e discese si "vedono". Effetto sobrio.
+// Disegna un piccolo profilo altimetrico (area chart) dai punti con altitudine.
+// Ritorna true se l'ha disegnato, false se non c'erano dati di quota.
+function disegnaProfiloAltimetrico(
+  ctx: CanvasRenderingContext2D,
+  punti: Punto[],
+  area: { x: number; y: number; w: number; h: number },
+  segnale: string
+): boolean {
+  const alt = punti
+    .map((p) => (typeof p.alt === 'number' ? p.alt : null))
+    .filter((a): a is number => a != null);
+  if (alt.length < 3) return false;
+
+  const minA = Math.min(...alt);
+  const maxA = Math.max(...alt);
+  if (maxA - minA < 5) return false; // pianeggiante: niente grafico
+
+  const n = alt.length;
+  const px = (i: number) => area.x + (i / (n - 1)) * area.w;
+  const py = (a: number) => area.y + area.h - ((a - minA) / (maxA - minA)) * area.h;
+
+  // area riempita
+  ctx.beginPath();
+  ctx.moveTo(area.x, area.y + area.h);
+  alt.forEach((a, i) => ctx.lineTo(px(i), py(a)));
+  ctx.lineTo(area.x + area.w, area.y + area.h);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, area.y, 0, area.y + area.h);
+  grad.addColorStop(0, 'rgba(242,183,5,0.5)');
+  grad.addColorStop(1, 'rgba(242,183,5,0.05)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // linea di cresta
+  ctx.beginPath();
+  alt.forEach((a, i) => {
+    if (i === 0) ctx.moveTo(px(i), py(a));
+    else ctx.lineTo(px(i), py(a));
+  });
+  ctx.strokeStyle = segnale;
+  ctx.lineWidth = 4;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  return true;
+}
+
 function disegnaTracciato3D(
   ctx: CanvasRenderingContext2D,
   punti: Punto[],
@@ -333,6 +380,19 @@ export async function generaCardGiro(dati: DatiCard): Promise<string> {
     const luogo = (dati.luogo || dati.titolo).toUpperCase();
     scriviTestoMultilinea(ctx, luogo, 64, ALTEZZA - 560, LARGHEZZA - 128, 70);
     ctx.shadowBlur = 0;
+
+    // Profilo altimetrico (se ci sono dati di quota): sopra le statistiche
+    const haProfilo = disegnaProfiloAltimetrico(
+      ctx,
+      dati.punti,
+      { x: 64, y: ALTEZZA - 700, w: LARGHEZZA - 128, h: 120 },
+      SEGNALE
+    );
+    if (haProfilo) {
+      ctx.fillStyle = 'rgba(240,241,242,0.5)';
+      ctx.font = `500 26px ${fontMono}`;
+      ctx.fillText('ALTIMETRIA', 64, ALTEZZA - 715);
+    }
 
     const linaY = ALTEZZA - 470;
     ctx.strokeStyle = conFoto ? 'rgba(240,241,242,0.3)' : 'rgba(240,241,242,0.15)';
