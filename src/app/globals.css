@@ -6,11 +6,67 @@
   --asfalto: #15181a;
   --cemento: #f0f1f2;
   --segnale: #f2b705;
+  /* superfici e testo del tema (chiaro di default) */
+  --sfondo-pagina: #f0f1f2;
+  --testo-pagina: #15181a;
+}
+
+.dark {
+  /* tema scuro: sfondi profondi, testo chiaro */
+  --sfondo-pagina: #0e1012;
+  --testo-pagina: #f0f1f2;
 }
 
 body {
-  background: var(--cemento);
-  color: var(--asfalto);
+  background: var(--sfondo-pagina);
+  color: var(--testo-pagina);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== DARK MODE: rimappa le superfici chiare in scure ===== */
+/* Il sito usa bg-white / bg-cemento per i pannelli chiari: in dark li scurisco
+   mantenendo la leggibilità, senza toccare ogni singolo componente. */
+.dark .bg-white {
+  background-color: #1c2024 !important;
+}
+.dark .bg-cemento {
+  background-color: #15181a !important;
+}
+.dark .bg-nebbia {
+  background-color: #1c2024 !important;
+}
+/* testo scuro -> chiaro */
+.dark .text-asfalto {
+  color: #f0f1f2 !important;
+}
+.dark .text-asfalto\/85 { color: rgba(240,241,242,0.85) !important; }
+.dark .text-asfalto\/80 { color: rgba(240,241,242,0.80) !important; }
+.dark .text-asfalto\/75 { color: rgba(240,241,242,0.75) !important; }
+.dark .text-asfalto\/70 { color: rgba(240,241,242,0.70) !important; }
+.dark .text-asfalto\/60 { color: rgba(240,241,242,0.55) !important; }
+.dark .text-asfalto\/55 { color: rgba(240,241,242,0.5) !important; }
+.dark .text-asfalto\/50 { color: rgba(240,241,242,0.45) !important; }
+.dark .text-asfalto\/45 { color: rgba(240,241,242,0.4) !important; }
+.dark .text-asfalto\/40 { color: rgba(240,241,242,0.38) !important; }
+/* bordi scuri -> chiari tenui */
+.dark .border-asfalto { border-color: rgba(240,241,242,0.25) !important; }
+.dark .border-asfalto\/15 { border-color: rgba(240,241,242,0.12) !important; }
+.dark .border-asfalto\/10 { border-color: rgba(240,241,242,0.1) !important; }
+.dark .border-asfalto\/20 { border-color: rgba(240,241,242,0.15) !important; }
+.dark .border-asfalto\/25 { border-color: rgba(240,241,242,0.18) !important; }
+/* la card app in dark */
+.dark .card-app {
+  background: #1c2024;
+  border-color: rgba(240,241,242,0.1);
+}
+/* il vetro chiaro in dark diventa scuro */
+.dark .vetro {
+  background: rgba(14, 16, 18, 0.8);
+}
+/* skeleton in dark */
+.dark .skeleton {
+  background: linear-gradient(90deg, rgba(240,241,242,0.06) 25%, rgba(240,241,242,0.1) 37%, rgba(240,241,242,0.06) 63%);
+  background-size: 400% 100%;
 }
 
 /* Firma visiva: linea di mezzeria stradale (tratteggio bianco su asfalto) */

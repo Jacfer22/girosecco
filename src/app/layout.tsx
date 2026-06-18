@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import { AuthProvider } from '@/components/AuthProvider';
+import { TemaProvider } from '@/components/TemaProvider';
 
 const display = Barlow_Condensed({
   subsets: ['latin'],
@@ -52,14 +53,22 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
+        {/* Applica il tema prima del render per evitare il lampo bianco */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('girosecco-tema');var s=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='scuro'||(!t&&s)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
       </head>
       <body className="font-body antialiased min-h-screen flex flex-col con-bottomnav">
-        <AuthProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <BottomNav />
-        </AuthProvider>
+        <TemaProvider>
+          <AuthProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <BottomNav />
+          </AuthProvider>
+        </TemaProvider>
       </body>
     </html>
   );

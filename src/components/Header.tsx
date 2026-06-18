@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthProvider';
+import InterruttoreTema from './InterruttoreTema';
 
 export default function Header() {
   const { user, profilo, loading, nonConfigurato } = useAuth();
@@ -78,18 +79,22 @@ export default function Header() {
               {user ? 'Hub' : 'Accedi'}
             </Link>
           )}
+          <InterruttoreTema />
         </nav>
 
-        {/* Bottone menu mobile */}
-        <button
-          type="button"
-          onClick={() => setMenuAperto((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center border border-guardrail/40 sm:hidden"
-          aria-label={menuAperto ? 'Chiudi menu' : 'Apri menu'}
-          aria-expanded={menuAperto}
-        >
-          <span className="font-mono text-lg">{menuAperto ? '✕' : '☰'}</span>
-        </button>
+        {/* Toggle tema + menu mobile */}
+        <div className="flex items-center gap-2 sm:hidden">
+          <InterruttoreTema />
+          <button
+            type="button"
+            onClick={() => setMenuAperto((v) => !v)}
+            className="flex h-10 w-10 items-center justify-center border border-guardrail/40"
+            aria-label={menuAperto ? 'Chiudi menu' : 'Apri menu'}
+            aria-expanded={menuAperto}
+          >
+            <span className="font-mono text-lg">{menuAperto ? '✕' : '☰'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Menu mobile a tendina */}
