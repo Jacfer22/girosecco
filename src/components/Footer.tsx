@@ -12,6 +12,11 @@ export default function Footer() {
           controlla le condizioni, e guida sempre con la testa sulle spalle.
         </p>
         <p className="mt-6 text-xs text-guardrail/70">GiroSecco · Italia</p>
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs uppercase tracking-wide text-guardrail/70">
+          <a href="/privacy" className="hover:text-segnale">Privacy</a>
+          <a href="/termini" className="hover:text-segnale">Termini</a>
+          <a href="mailto:info@girosecco.it" className="hover:text-segnale">Contatti</a>
+        </div>
       </div>
     </footer>
   );

@@ -207,6 +207,14 @@ export default function PaginaAccedi() {
               ? 'Accedi'
               : 'Crea account'}
         </button>
+
+        {modalita === 'registrati' && (
+          <p className="mt-3 text-center font-mono text-[11px] leading-relaxed text-asfalto/45">
+            Creando un account accetti i{' '}
+            <a href="/termini" className="underline hover:text-asfalto">Termini</a> e la{' '}
+            <a href="/privacy" className="underline hover:text-asfalto">Privacy Policy</a>.
+          </p>
+        )}
       </form>
 
       <button
