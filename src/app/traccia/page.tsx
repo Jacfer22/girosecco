@@ -5,50 +5,22 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/components/AuthProvider';
 import { distanzaMetri, formattaDurata, formattaKm, statisticheGiro, Punto } from '@/lib/geo';
-import { generaCardGiro } from '@/lib/card-canvas';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import {
+  giroDaSessione,
+  salvaGiroCloud,
+  salvaGiroLocale,
+  aggiornaGiroCloud,
+  type GiroUtente,
+} from '@/lib/giri-store';
+import EditorCardGiro from '@/components/EditorCardGiro';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
-const STORAGE_KEY = 'motogarage_giri';
-const SOGLIA_MOVIMENTO_M = 8; // ignora punti GPS che "ballano" da fermo
-const ACCURATEZZA_MAX_M = 35; // ignora letture GPS troppo imprecise
+const SOGLIA_MOVIMENTO_M = 8;
+const ACCURATEZZA_MAX_M = 35;
 
 type Stato = 'pronto' | 'in_corso' | 'in_pausa' | 'concluso';
-
-interface GiroSalvato {
-  id: string;
-  data: string; // ISO
-  km: number;
-  durataSec: number;
-  punti: Punto[];
-  velMediaKmh?: number;
-  velMaxKmh?: number;
-  dislivelloM?: number;
-  curve?: number;
-}
-
-function caricaStorico(): GiroSalvato[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as GiroSalvato[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function salvaStorico(giri: GiroSalvato[]) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(giri.slice(0, 20)));
-  } catch {
-    // storage non disponibile (es. modalità privata): il giro resta visibile solo in sessione
-  }
-}
-
-function formattaDataBreve(iso: string): string {
-  return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-}
 
 export default function PaginaTraccia() {
   const { user, loading } = useAuth();
@@ -58,23 +30,10 @@ export default function PaginaTraccia() {
   const [distanzaM, setDistanzaM] = useState(0);
   const [durataSec, setDurataSec] = useState(0);
   const [velCorrenteKmh, setVelCorrenteKmh] = useState(0);
-  const [temaCard, setTemaCard] = useState<'tracciato' | 'foto'>('tracciato');
-  const [paletteCard, setPaletteCard] = useState<'scuro' | 'chiaro'>('scuro');
   const [luogoCard, setLuogoCard] = useState('');
-  const [giroIdSalvato, setGiroIdSalvato] = useState<string | null>(null);
-  const [giroPubblico, setGiroPubblico] = useState(false);
-  // stat toggles
-  const [mostraMedia, setMostraMedia] = useState(true);
-  const [mostraMax, setMostraMax] = useState(false);
-  const [mostraCurve, setMostraCurve] = useState(true);
-  const [mostraDislivello, setMostraDislivello] = useState(true);
-  // offset tracciato 0.0–1.0
-  const [tracciatoX, setTracciatoX] = useState(0.5);
-  const [tracciatoY, setTracciatoY] = useState(0.5);
+  const [giroConcluso, setGiroConcluso] = useState<GiroUtente | null>(null);
+  const [salvataggioCloud, setSalvataggioCloud] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
-  const [storico, setStorico] = useState<GiroSalvato[]>([]);
-  const [cardUrl, setCardUrl] = useState<string | null>(null);
-  const [generandoCard, setGenerandoCard] = useState(false);
 
   const watchIdRef = useRef<number | null>(null);
   const inizioRef = useRef<number | null>(null);
@@ -120,10 +79,6 @@ export default function PaginaTraccia() {
     } catch { /* ignora */ }
     audioCtxRef.current = null;
   }
-
-  useEffect(() => {
-    setStorico(caricaStorico());
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -185,7 +140,7 @@ export default function PaginaTraccia() {
     setDistanzaM(0);
     setDurataSec(0);
     setVelCorrenteKmh(0);
-    setCardUrl(null);
+    setGiroConcluso(null);
     inizioRef.current = Date.now();
     pausaAccumulataRef.current = 0;
 
@@ -232,7 +187,7 @@ export default function PaginaTraccia() {
     setStato('in_corso');
   }
 
-  function terminaGiro() {
+  async function terminaGiro() {
     if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
     if (timerRef.current) clearInterval(timerRef.current);
     rilasciaWakeLock();
@@ -240,64 +195,81 @@ export default function PaginaTraccia() {
     aggiornaDurata();
     setStato('concluso');
 
-    if (puntiRef.current.length > 1) {
-      const stat = statisticheGiro(puntiRef.current, durataSec, distanzaM);
-      const nuovo: GiroSalvato = {
-        id: `${Date.now()}`,
-        data: new Date().toISOString(),
-        km: distanzaM,
-        durataSec,
-        punti: puntiRef.current,
-        velMediaKmh: stat.velMediaKmh,
-        velMaxKmh: stat.velMaxKmh,
-        dislivelloM: stat.dislivelloPositivoM,
-        curve: stat.curve,
-      };
-      setStorico((prev) => {
-        const aggiornato = [nuovo, ...prev];
-        salvaStorico(aggiornato);
-        return aggiornato;
+    if (puntiRef.current.length <= 1) return;
+
+    const durataFinale = inizioRef.current
+      ? (Date.now() - inizioRef.current - pausaAccumulataRef.current) / 1000
+      : durataSec;
+    setDurataSec(durataFinale);
+
+    const stat = statisticheGiro(puntiRef.current, durataFinale, distanzaM);
+    const titolo = luogoCard.trim() || 'Giro libero';
+    let giro = giroDaSessione(puntiRef.current, distanzaM, durataFinale, stat, titolo);
+    setGiroConcluso(giro);
+
+    const supabase = getSupabaseBrowser();
+    if (supabase && user) {
+      setSalvataggioCloud(true);
+      try {
+        giro = await salvaGiroCloud(supabase, user.id, giro, titolo);
+        setGiroConcluso(giro);
+      } catch {
+        salvaGiroLocale({
+          id: giro.id,
+          data: giro.data,
+          km: giro.km,
+          durataSec: giro.durataSec,
+          punti: giro.punti,
+          velMediaKmh: giro.velMediaKmh,
+          velMaxKmh: giro.velMaxKmh,
+          dislivelloM: giro.dislivelloM,
+          curve: giro.curve,
+        });
+        setErrore('Giro salvato solo in locale. Riprova quando hai connessione, oppure apri I miei giri più tardi.');
+      } finally {
+        setSalvataggioCloud(false);
+      }
+    } else {
+      salvaGiroLocale({
+        id: giro.id,
+        data: giro.data,
+        km: giro.km,
+        durataSec: giro.durataSec,
+        punti: giro.punti,
+        velMediaKmh: giro.velMediaKmh,
+        velMaxKmh: giro.velMaxKmh,
+        dislivelloM: giro.dislivelloM,
+        curve: giro.curve,
       });
-      // salvataggio nel cloud per chi è loggato (così resta su ogni dispositivo)
-      salvaGiroCloud(nuovo, stat);
     }
   }
 
-  async function salvaGiroCloud(
-    giro: GiroSalvato,
-    stat: ReturnType<typeof statisticheGiro>
-  ) {
-    const supabase = getSupabaseBrowser();
-    if (!supabase || !user) return;
-    try {
-      const { data } = await supabase
-        .from('giri')
-        .insert({
-          utente_id: user.id,
-          nome: luogoCard.trim() || 'Giro libero',
-          km: Number((giro.km / 1000).toFixed(2)),
-          durata_sec: Math.round(giro.durataSec),
-          vel_media_kmh: stat.velMediaKmh,
-          vel_max_kmh: stat.velMaxKmh,
-          dislivello_m: stat.dislivelloPositivoM,
-          curve: stat.curve,
-          tracciato: giro.punti.map((p) => [p.lat, p.lng]),
-          pubblico: false,
-        })
-        .select('id')
-        .single();
-      if (data?.id) setGiroIdSalvato(data.id as string);
-    } catch {
-      // se il salvataggio cloud fallisce, il giro resta comunque in locale
-    }
-  }
-
-  // Rende il giro appena salvato visibile (o no) nel feed community.
   async function impostaGiroPubblico(pubblico: boolean) {
-    setGiroPubblico(pubblico);
+    if (!giroConcluso?.cloudId) return;
     const supabase = getSupabaseBrowser();
-    if (!supabase || !giroIdSalvato) return;
-    await supabase.from('giri').update({ pubblico }).eq('id', giroIdSalvato);
+    if (!supabase) return;
+    try {
+      await aggiornaGiroCloud(supabase, giroConcluso.cloudId, { pubblico });
+      setGiroConcluso({ ...giroConcluso, pubblico });
+    } catch {
+      setErrore('Non riesco ad aggiornare la visibilità del giro.');
+    }
+  }
+
+  async function aggiornaNomeGiro(nome: string) {
+    if (!giroConcluso?.cloudId) {
+      setGiroConcluso((g) => g ? { ...g, nome } : g);
+      return;
+    }
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+    try {
+      await aggiornaGiroCloud(supabase, giroConcluso.cloudId, { nome });
+      setGiroConcluso({ ...giroConcluso, nome });
+      setLuogoCard(nome === 'Giro libero' ? '' : nome);
+    } catch {
+      setErrore('Non riesco a rinominare il giro.');
+    }
   }
 
   function nuovoGiro() {
@@ -306,108 +278,11 @@ export default function PaginaTraccia() {
     setDistanzaM(0);
     setDurataSec(0);
     setVelCorrenteKmh(0);
-    setCardUrl(null);
-    setGiroIdSalvato(null);
-    setGiroPubblico(false);
-    setTracciatoX(0.5);
-    setTracciatoY(0.5);
+    setGiroConcluso(null);
+    setLuogoCard('');
     rilasciaWakeLock();
     rilasciaAudioSilenzioso();
     puntiRef.current = [];
-  }
-
-  async function creaCard(
-    datiPunti: Punto[],
-    km: number,
-    durata: number,
-    data: string,
-    foto?: string | null
-  ) {
-    setGenerandoCard(true);
-    try {
-      const stat = statisticheGiro(datiPunti, durata, km);
-      const url = await generaCardGiro({
-        titolo: luogoCard.trim() || 'Giro libero',
-        km: formattaKm(km),
-        durata: formattaDurata(durata),
-        data: formattaDataBreve(data),
-        punti: datiPunti,
-        tema: temaCard,
-        palette: paletteCard,
-        luogo: luogoCard.trim() || null,
-        fotoDataUrl: foto ?? null,
-        dislivelloM: mostraDislivello ? stat.dislivelloPositivoM : null,
-        velMediaKmh: mostraMedia ? stat.velMediaKmh : null,
-        velMaxKmh: mostraMax ? stat.velMaxKmh : null,
-        curve: mostraCurve ? stat.curve : null,
-        tracciatoOffsetX: tracciatoX,
-        tracciatoOffsetY: tracciatoY,
-      });
-      setCardUrl(url);
-    } catch {
-      setErrore('Non sono riuscito a generare la card. Riprova.');
-    } finally {
-      setGenerandoCard(false);
-    }
-  }
-
-  // Legge la foto scelta come data URL (ridimensionata per non pesare troppo)
-  async function scegliFotoCard(file: File): Promise<string> {
-    const bitmap = await createImageBitmap(file);
-    const max = 1280;
-    let { width, height } = bitmap;
-    if (width > max || height > max) {
-      if (width >= height) {
-        height = Math.round((height * max) / width);
-        width = max;
-      } else {
-        width = Math.round((width * max) / height);
-        height = max;
-      }
-    }
-    const c = document.createElement('canvas');
-    c.width = width;
-    c.height = height;
-    const cx = c.getContext('2d');
-    if (cx) cx.drawImage(bitmap, 0, 0, width, height);
-    return c.toDataURL('image/jpeg', 0.85);
-  }
-
-  function scaricaCard() {
-    if (!cardUrl) return;
-    const a = document.createElement('a');
-    a.href = cardUrl;
-    a.download = 'motogarage-giro.png';
-    a.click();
-  }
-
-  async function condividiCard() {
-    if (!cardUrl) return;
-    const testo =
-      `${luogoCard.trim() ? luogoCard.trim() + ' · ' : ''}` +
-      `${formattaKm(distanzaM)} km in moto 🏍️\n` +
-      `Il mio giro su MotoGarage — itinerari moto in Italia`;
-    try {
-      const res = await fetch(cardUrl);
-      const blob = await res.blob();
-      const file = new File([blob], 'motogarage-giro.png', { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Il mio giro su MotoGarage',
-          text: testo,
-        });
-        return;
-      }
-      // fallback: prova a condividere almeno il testo+link
-      if (navigator.share) {
-        await navigator.share({ title: 'MotoGarage', text: testo });
-        return;
-      }
-    } catch {
-      // se la condivisione nativa non è disponibile, si scarica il file
-    }
-    scaricaCard();
   }
 
   // --- Render: stati account ---
@@ -546,7 +421,7 @@ export default function PaginaTraccia() {
       </div>
 
       {/* Riepilogo + card */}
-      {stato === 'concluso' && (
+      {stato === 'concluso' && giroConcluso && (
         <div className="mt-8 rounded-app-lg border border-segnale bg-white p-6 shadow-app animate-scale-in">
           <h2 className="font-display text-2xl font-bold uppercase tracking-tight">
             Giro registrato
@@ -577,244 +452,71 @@ export default function PaginaTraccia() {
           })()}
 
           <p className="mt-4 font-mono text-xs uppercase tracking-wide text-asfalto/50">
-            {user ? '✓ Salvato nei tuoi giri' : 'Accedi per salvare i tuoi giri e ritrovarli ovunque'}
+            {salvataggioCloud
+              ? 'Salvataggio nel cloud…'
+              : giroConcluso.cloudId
+                ? '✓ Salvato nel cloud — visibile da ogni dispositivo'
+                : user
+                  ? 'Salvato in locale — sincronizza da I miei giri'
+                  : 'Accedi per salvare nel cloud'}
           </p>
 
-          {user && giroIdSalvato && (
-            <button
-              type="button"
-              onClick={() => impostaGiroPubblico(!giroPubblico)}
-              className={`tap mt-3 flex w-full items-center justify-between gap-3 rounded-app border-2 p-3 text-left ${
-                giroPubblico ? 'border-bosco bg-bosco/10' : 'border-asfalto/15'
-              }`}
-            >
-              <span>
-                <span className="block font-mono text-sm font-medium uppercase">
-                  {giroPubblico ? '✓ Visibile nella community' : 'Condividi nella community'}
-                </span>
-                <span className="block font-mono text-[11px] text-asfalto/55">
-                  {giroPubblico ? 'Gli altri biker vedono questo giro nel feed' : 'Mostra questo giro nel feed pubblico'}
-                </span>
-              </span>
-              <span
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                  giroPubblico ? 'bg-bosco' : 'bg-asfalto/20'
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
-                    giroPubblico ? 'left-[22px]' : 'left-0.5'
-                  }`}
-                />
-              </span>
-            </button>
-          )}
-
-          {/* Editor card: sempre visibile quando giro concluso */}
-          <div className="mt-4 space-y-4">
-            <p className="font-mono text-xs uppercase tracking-wide text-asfalto/50">
-              Crea la card da condividere nelle storie
-            </p>
-
-            {/* Tema: scuro / chiaro */}
-            <div>
-              <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Tema</p>
-              <div className="flex gap-2">
-                {(['scuro', 'chiaro'] as const).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => { setPaletteCard(p); setCardUrl(null); }}
-                    className={`tap flex-1 rounded-app border-2 px-3 py-2.5 font-mono text-xs font-medium uppercase ${
-                      paletteCard === p
-                        ? 'border-segnale bg-segnale/10'
-                        : 'border-asfalto/15 text-asfalto/60'
-                    }`}
-                  >
-                    {p === 'scuro' ? '🌑 Tema scuro' : '☀️ Tema chiaro'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Stile layout */}
-            <div>
-              <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Stile</p>
-              <div className="flex gap-2">
-                {(['tracciato', 'foto'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => { setTemaCard(t); setCardUrl(null); }}
-                    className={`tap flex-1 rounded-app border-2 px-3 py-2.5 font-mono text-xs font-medium uppercase ${
-                      temaCard === t
-                        ? 'border-segnale bg-segnale/10'
-                        : 'border-asfalto/15 text-asfalto/60'
-                    }`}
-                  >
-                    {t === 'tracciato' ? 'Tracciato 3D' : 'Con foto'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Posizione tracciato */}
-            <div>
-              <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Posizione tracciato</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <span className="w-10 font-mono text-[11px] text-asfalto/40">SX-DX</span>
-                  <input type="range" min="0" max="1" step="0.05" value={tracciatoX}
-                    onChange={(e) => { setTracciatoX(Number(e.target.value)); setCardUrl(null); }}
-                    className="flex-1 accent-segnale" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="w-10 font-mono text-[11px] text-asfalto/40">SU-GIÙ</span>
-                  <input type="range" min="0" max="1" step="0.05" value={tracciatoY}
-                    onChange={(e) => { setTracciatoY(Number(e.target.value)); setCardUrl(null); }}
-                    className="flex-1 accent-segnale" />
-                </div>
-              </div>
-            </div>
-
-            {/* Statistiche da mostrare */}
-            <div>
-              <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Statistiche nella card</p>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Vel. media', attivo: mostraMedia, set: setMostraMedia },
-                  { label: 'Vel. massima', attivo: mostraMax, set: setMostraMax },
-                  { label: 'Curve', attivo: mostraCurve, set: setMostraCurve },
-                  { label: 'Dislivello', attivo: mostraDislivello, set: setMostraDislivello },
-                ].map(({ label, attivo, set }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => { set(!attivo); setCardUrl(null); }}
-                    className={`tap flex items-center gap-2 rounded-app border px-3 py-2 font-mono text-xs font-medium ${
-                      attivo ? 'border-bosco bg-bosco/10 text-bosco' : 'border-asfalto/15 text-asfalto/40'
-                    }`}
-                  >
-                    <span>{attivo ? '✓' : '○'}</span>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Luogo */}
-            <div>
-              <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Luogo (opzionale)</p>
-              <input
-                type="text"
-                value={luogoCard}
-                onChange={(e) => { setLuogoCard(e.target.value); setCardUrl(null); }}
-                placeholder="Es. Lago di Bracciano"
-                maxLength={40}
-                className="w-full rounded-app border border-asfalto/20 bg-transparent px-3 py-2 text-sm text-asfalto placeholder-asfalto/40 focus:border-segnale focus:outline-none"
-              />
-            </div>
-
-            {/* Card generata */}
-            {cardUrl && (
-              <div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cardUrl} alt="Card del giro" className="w-full max-w-xs rounded-app border-2 border-asfalto/20 shadow-app" />
-              </div>
-            )}
-
-            {/* Pulsanti genera / salva / condividi */}
-            <div className="flex flex-wrap gap-3">
-              <label className="tap cursor-pointer rounded-app bg-segnale px-5 py-2.5 font-mono text-sm font-medium uppercase text-asfalto hover:bg-white">
-                {generandoCard ? 'Genero…' : '📷 Con una foto'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    if (!f) return;
-                    const foto = await scegliFotoCard(f);
-                    await creaCard(punti, distanzaM, durataSec, new Date().toISOString(), foto);
-                  }}
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => creaCard(punti, distanzaM, durataSec, new Date().toISOString())}
-                disabled={generandoCard}
-                className="tap rounded-app border border-asfalto/20 px-5 py-2.5 font-mono text-sm font-medium uppercase hover:bg-asfalto hover:text-cemento disabled:opacity-60"
-              >
-                Senza foto
-              </button>
-            </div>
-
-            {cardUrl && (
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={condividiCard}
-                  className="tap rounded-app bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white"
-                >
-                  Condividi
-                </button>
-                <button
-                  type="button"
-                  onClick={scaricaCard}
-                  className="tap rounded-app border-2 border-asfalto px-5 py-2.5 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento"
-                >
-                  Salva card
-                </button>
-              </div>
-            )}
+          <div className="mt-4">
+            <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wide text-asfalto/40">Nome giro (opzionale)</p>
+            <input
+              type="text"
+              value={luogoCard}
+              onChange={(e) => setLuogoCard(e.target.value)}
+              placeholder="Es. Lago di Bracciano"
+              maxLength={40}
+              className="input-app w-full"
+            />
           </div>
 
-          <button
-            type="button"
-            onClick={nuovoGiro}
-            className="mt-4 block font-mono text-sm uppercase text-asfalto/60 underline hover:text-asfalto"
-          >
-            Traccia un altro giro
-          </button>
+          <div className="mt-4">
+            <EditorCardGiro
+              giro={giroConcluso}
+              onNomeChange={aggiornaNomeGiro}
+              onPubblicoChange={giroConcluso.cloudId ? impostaGiroPubblico : undefined}
+            />
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/giri"
+              className="rounded-app border border-asfalto/15 px-4 py-2.5 font-mono text-xs font-bold uppercase hover:border-brand hover:text-brand"
+            >
+              I miei giri — card più tardi
+            </Link>
+            <button
+              type="button"
+              onClick={nuovoGiro}
+              className="font-mono text-xs uppercase text-asfalto/60 underline hover:text-asfalto"
+            >
+              Traccia un altro giro
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Storico */}
-      {storico.length > 0 && stato === 'pronto' && (
-        <div className="mt-10">
-          <h2 className="font-display text-2xl font-bold uppercase tracking-tight">I tuoi giri</h2>
-          <ul className="mt-3 space-y-3">
-            {storico.map((g) => (
-              <li key={g.id} className="card-app flex items-center justify-between gap-4 p-4">
-                <div className="min-w-0">
-                  <p className="font-medium">{formattaDataBreve(g.data)}</p>
-                  <p className="mt-0.5 font-mono text-xs text-asfalto/50">
-                    {formattaKm(g.km)} km · {formattaDurata(g.durataSec)}
-                    {typeof g.velMediaKmh === 'number' && g.velMediaKmh > 0 && (
-                      <> · {g.velMediaKmh} km/h media</>
-                    )}
-                    {typeof g.curve === 'number' && g.curve > 0 && <> · {g.curve} curve</>}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => creaCard(g.punti, g.km, g.durataSec, g.data)}
-                  className="tap shrink-0 rounded-app border border-asfalto/15 px-3 py-1.5 font-mono text-xs font-medium uppercase hover:bg-asfalto hover:text-cemento"
-                >
-                  Card
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-2 font-mono text-xs text-asfalto/40">
-            Salvati solo su questo dispositivo.
+      {stato === 'pronto' && user && (
+        <div className="mt-10 rounded-app-lg border border-asfalto/10 bg-asfalto/[0.03] p-5">
+          <h2 className="font-display text-xl font-bold uppercase tracking-tight">I miei giri salvati</h2>
+          <p className="mt-2 text-sm text-asfalto/60">
+            Tutti i percorsi GPS sono nel cloud. Puoi tornare quando vuoi e creare la card da qualsiasi telefono.
           </p>
+          <Link href="/giri" className="tap mt-4 inline-block rounded-app bg-asfalto px-5 py-3 font-mono text-xs font-bold uppercase text-cemento hover:bg-brand hover:text-white">
+            Apri I miei giri
+          </Link>
         </div>
       )}
 
-      <p className="mt-10">
+      <p className="mt-10 flex flex-wrap gap-4">
+        <Link href="/giri" className="font-mono text-sm uppercase text-asfalto/60 underline hover:text-asfalto">
+          I miei giri
+        </Link>
         <Link href="/hub" className="font-mono text-sm uppercase text-asfalto/60 underline hover:text-asfalto">
-          ← Torna all&apos;hub
+          ← Hub
         </Link>
       </p>
     </section>
