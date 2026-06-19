@@ -359,9 +359,8 @@ export default function PaginaTraccia() {
         Traccia un giro
       </h1>
       <p className="mt-3 text-asfalto/70">
-        Registra il percorso via GPS. Funziona meglio all&apos;aperto e con il
-        telefono che resta sveglio (schermo acceso o blocco automatico
-        disattivato).
+        Il GPS registra sempre il tuo giro reale — km, curve e card social. Il navigatore
+        è solo uno strumento per orientarti verso una destinazione mentre sei in sella.
       </p>
 
       {errore && (
@@ -369,10 +368,10 @@ export default function PaginaTraccia() {
       )}
 
       {stato !== 'concluso' && (
-        <div className="mt-6">
+        <div id="navigatore" className="mt-6 scroll-mt-24">
           <PannelloNavigazione
             posizione={punti.length > 0 ? punti[punti.length - 1] : null}
-            attiva={stato === 'in_corso' || stato === 'in_pausa'}
+            attiva={stato === 'in_corso' || stato === 'in_pausa' || stato === 'pronto'}
             onDestinazioneChange={setDestinazioneNav}
             onRottaChange={(r) => setPercorsoNav(r?.percorso ?? [])}
             onPassoChange={() => {}}
@@ -413,12 +412,12 @@ export default function PaginaTraccia() {
       {/* Mappa: percorso nav + tracciato GPS */}
       {(punti.length > 0 || percorsoNav.length > 0) && (
         <div className="mt-6">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wide text-asfalto/45">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-asfalto/55">
             {percorsoNav.length > 0 && punti.length > 0
-              ? 'Blu = percorso stradale · Giallo = il tuo giro GPS'
+              ? 'Giallo = il tuo giro GPS reale · Blu = suggerimento stradale'
               : percorsoNav.length > 0
-                ? 'Percorso stradale verso destinazione'
-                : 'Tracciato GPS in tempo reale'}
+                ? 'Blu = percorso suggerito verso destinazione'
+                : 'Giallo = tracciato GPS in tempo reale'}
           </p>
           <MappaTraccia
             punti={punti}

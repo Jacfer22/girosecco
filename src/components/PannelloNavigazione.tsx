@@ -95,7 +95,7 @@ export default function PannelloNavigazione({
   }
 
   useEffect(() => {
-    if (navOn && rotta && posizione && attiva) {
+    if (navOn && rotta && posizione) {
       aggiornaPasso(rotta, posizione);
     }
   }, [navOn, rotta, posizione, attiva, aggiornaPasso]);
@@ -105,42 +105,45 @@ export default function PannelloNavigazione({
   const distanzaMano = passo && posizione ? distanzaAlPasso(posizione, passo) : null;
 
   return (
-    <div className="rounded-app-lg border border-asfalto/10 bg-white p-4 shadow-app">
-      <div className="flex items-start justify-between gap-3">
+    <div className="overflow-hidden rounded-app-lg border-2 border-brand/35 bg-gradient-to-br from-asfalto via-asfalto to-[#1e2428] p-5 shadow-[0_12px_40px_rgba(209,25,25,0.18)] sm:p-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">Navigazione</p>
-          <h2 className="font-display text-xl font-bold uppercase tracking-tight">Vai verso un punto</h2>
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-brand">Navigatore integrato</p>
+          <h2 className="mt-1 font-display text-2xl font-black uppercase leading-none tracking-tight text-white sm:text-3xl">
+            Dove vuoi andare?
+          </h2>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-cemento/75">
+            Strumento di supporto mentre guidi. Il <strong className="text-white">giro GPS resta sempre il tuo percorso reale</strong>
+            {' '}— la linea gialla sulla mappa è quella che conta per km, curve e card social.
+          </p>
         </div>
         {navOn && (
           <button
             type="button"
             onClick={disattiva}
-            className="font-mono text-[10px] uppercase text-asfalto/50 underline hover:text-asfalto"
+            className="shrink-0 rounded-app border border-white/15 px-3 py-1.5 font-mono text-[10px] font-bold uppercase text-cemento/70 transition-colors hover:border-white/30 hover:text-white"
           >
             Chiudi
           </button>
         )}
       </div>
-      <p className="mt-1 text-xs text-asfalto/55">
-        OpenStreetMap + OSRM (open source, gratuito). Indicazioni stradali mentre l&apos;app è aperta.
-      </p>
 
       {!navOn && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && cerca()}
-            placeholder="Es. Lago di Bracciano, Roma Termini…"
-            className="input-app min-w-0 flex-1"
+            placeholder="Passo, lago, bar, città…"
+            className="input-app min-w-0 flex-1 border-white/15 bg-white/95 text-asfalto placeholder:text-asfalto/40"
             maxLength={80}
           />
           <button
             type="button"
             onClick={cerca}
             disabled={caricamento || query.trim().length < 2}
-            className="shrink-0 rounded-app bg-asfalto px-4 py-2 font-mono text-[10px] font-bold uppercase text-cemento disabled:opacity-40"
+            className="shrink-0 rounded-app bg-brand px-6 py-3 font-mono text-xs font-bold uppercase text-white transition-colors hover:bg-brand-chiaro disabled:opacity-40"
           >
             Cerca
           </button>
@@ -148,13 +151,13 @@ export default function PannelloNavigazione({
       )}
 
       {risultati.length > 0 && (
-        <ul className="mt-2 max-h-40 overflow-y-auto rounded-app border border-asfalto/10">
+        <ul className="mt-3 max-h-44 overflow-y-auto rounded-app border border-white/10 bg-black/25">
           {risultati.map((r) => (
             <li key={`${r.lat}-${r.lng}`}>
               <button
                 type="button"
                 onClick={() => impostaDestinazione(r)}
-                className="w-full px-3 py-2.5 text-left text-sm hover:bg-asfalto/[0.04]"
+                className="w-full px-4 py-3 text-left text-sm text-cemento transition-colors hover:bg-brand/15 hover:text-white"
               >
                 {r.nome}
               </button>
@@ -164,32 +167,38 @@ export default function PannelloNavigazione({
       )}
 
       {errore && (
-        <p className="mt-2 rounded-app border border-red-500/25 bg-red-50 px-3 py-2 text-xs text-red-800">{errore}</p>
+        <p className="mt-3 rounded-app border border-red-400/30 bg-red-500/10 px-4 py-2.5 text-sm text-red-100">{errore}</p>
       )}
 
       {navOn && rotta && (
-        <div className="mt-4 rounded-app border-2 border-brand/30 bg-brand/5 p-4">
-          <p className="font-mono text-[10px] uppercase tracking-wide text-asfalto/45">Prossima manovra</p>
-          <p className="mt-1 font-display text-2xl font-bold uppercase leading-tight tracking-tight">
+        <div className="mt-5 rounded-app border-2 border-brand/50 bg-black/30 p-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand">Prossima manovra</p>
+          <p className="mt-2 font-display text-3xl font-black uppercase leading-tight tracking-tight text-white sm:text-4xl">
             {passo?.istruzione ?? 'Segui il percorso'}
           </p>
           {distanzaMano !== null && passo?.istruzione !== 'Sei arrivato a destinazione' && (
-            <p className="mt-2 font-display text-3xl font-black text-brand">
+            <p className="mt-3 font-display text-5xl font-black leading-none text-brand sm:text-6xl">
               {formattaDistanzaNav(distanzaMano)}
             </p>
           )}
-          <p className="mt-3 font-mono text-[10px] uppercase text-asfalto/45">
-            Destinazione: {destinazione?.nome}
-          </p>
-          <p className="font-mono text-[10px] uppercase text-asfalto/45">
-            Percorso: {formattaDistanzaNav(rotta.distanzaM)} · ~
-            {Math.max(1, Math.round(rotta.durataSec / 60))} min
-          </p>
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] uppercase tracking-wide text-cemento/55">
+            <span>Destinazione: {destinazione?.nome}</span>
+            <span>
+              Strada: {formattaDistanzaNav(rotta.distanzaM)} · ~
+              {Math.max(1, Math.round(rotta.durataSec / 60))} min
+            </span>
+          </div>
         </div>
       )}
 
       {caricamento && (
-        <p className="mt-2 font-mono text-[10px] uppercase text-asfalto/40">Calcolo percorso…</p>
+        <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-cemento/45">Calcolo percorso…</p>
+      )}
+
+      {!navOn && (
+        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-cemento/40">
+          Poi premi Inizia percorso — traccia e naviga insieme, senza confondere i km.
+        </p>
       )}
     </div>
   );

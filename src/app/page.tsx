@@ -72,7 +72,7 @@ export default async function HomePage() {
             <FeatureCard
               href="/traccia"
               titolo="Traccia un giro"
-              desc="GPS live, statistiche e card condivisibile per Instagram e TikTok."
+              desc="GPS live, navigatore integrato, statistiche e card condivisibile per Instagram e TikTok."
               inEvidenza
               delay={0}
             />
@@ -93,6 +93,51 @@ export default async function HomePage() {
               titolo="Community"
               desc="Foto, giri pubblici e commenti dalla community di biker."
               delay={180}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-asfalto/8 bg-asfalto text-cemento">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-brand">Navigatore + GPS</p>
+            <h2 className="mt-1 max-w-2xl font-display text-3xl font-black uppercase tracking-tight text-white sm:text-5xl">
+              Traccia il giro vero. Naviga dove vuoi.
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-cemento/70 sm:text-base">
+              MotoGarage non sostituisce il tuo GPS: registra ogni curva del percorso reale per km,
+              statistiche e card social. Il navigatore ti indica la strada verso passo, lago o tappa —
+              mentre il giro resta quello che fai davvero in sella.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/traccia"
+                className="tap rounded-app bg-brand px-8 py-3.5 font-mono text-sm font-bold uppercase tracking-wide text-white shadow-brand transition-colors hover:bg-brand-chiaro"
+              >
+                Traccia il mio giro
+              </Link>
+              <Link
+                href="/traccia#navigatore"
+                className="tap rounded-app border border-white/20 px-8 py-3.5 font-mono text-sm font-bold uppercase tracking-wide text-cemento/80 transition-colors hover:border-brand/40 hover:text-white"
+              >
+                Apri navigatore
+              </Link>
+            </div>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <NavHighlight
+              titolo="Giro GPS reale"
+              desc="La linea gialla è il tuo percorso vero — quello che finisce nella card e nei km contati."
+            />
+            <NavHighlight
+              titolo="Indicazioni live"
+              desc="Prossima manovra, distanza e tempo stimato mentre l'app è aperta. Zero fronzoli tecnici."
+            />
+            <NavHighlight
+              titolo="Tutto insieme"
+              desc="Imposta la destinazione, premi Inizia e parti: tracci e navighi senza cambiare app."
             />
           </div>
         </div>
@@ -124,6 +169,15 @@ export default async function HomePage() {
           </Reveal>
         </div>
       </section>
+    </div>
+  );
+}
+
+function NavHighlight({ titolo, desc }: { titolo: string; desc: string }) {
+  return (
+    <div className="rounded-app border border-white/10 bg-white/[0.04] p-5">
+      <h3 className="font-display text-lg font-bold uppercase tracking-tight text-white">{titolo}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-cemento/65">{desc}</p>
     </div>
   );
 }

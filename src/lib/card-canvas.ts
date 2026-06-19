@@ -272,7 +272,7 @@ export async function generaCardGiro(dati: DatiCard): Promise<string> {
 
   const tema = dati.tema ?? 'tracciato';
   const palette = dati.palette ?? 'scuro';
-  const chiaro = palette === 'chiaro';
+  const chiaro = palette === 'scuro';
 
   // Colori in base alla palette
   const SFONDO_CARD = chiaro ? '#f0f1f2' : ASFALTO;

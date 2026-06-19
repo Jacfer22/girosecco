@@ -22,8 +22,8 @@ export default function LandingHero({ itinerariCount }: Props) {
             <span className="block text-cemento/90">della tua moto</span>
           </h1>
           <p className="mt-5 max-w-lg text-sm leading-relaxed text-cemento/75 sm:text-base">
-            Garage virtuale, gemello 3D fotorealistico, itinerari verificati in Italia
-            e tracciamento GPS con card social. Per chi vive in sella.
+            Garage virtuale, gemello 3D fotorealistico, itinerari verificati in Italia,
+            tracciamento GPS con card social e navigatore integrato. Per chi vive in sella.
           </p>
         </Reveal>
 
@@ -38,14 +38,16 @@ export default function LandingHero({ itinerariCount }: Props) {
             <Metrica valore={String(itinerariCount)} label="Itinerari" />
             <Metrica valore="20" label="Regioni" />
             <Metrica valore="GPS" label="Tracciamento" />
+            <Metrica valore="NAV" label="Navigatore" />
             <Metrica valore="3D" label="Gemello digitale" />
           </div>
         </Reveal>
 
         <Reveal delay={200}>
           <div className="mt-8 flex flex-wrap gap-3">
+            <Pill href="/traccia" label="Traccia il mio giro" evidenziata />
+            <Pill href="/traccia#navigatore" label="Navigatore GPS" />
             <Pill href="/garage" label="Il mio Garage" />
-            <Pill href="/traccia" label="Traccia un giro" />
             <Pill href="/itinerari" label="Itinerari" />
             <Pill href="/community" label="Community" />
           </div>
@@ -64,11 +66,15 @@ function Metrica({ valore, label }: { valore: string; label: string }) {
   );
 }
 
-function Pill({ href, label }: { href: string; label: string }) {
+function Pill({ href, label, evidenziata }: { href: string; label: string; evidenziata?: boolean }) {
   return (
     <Link
       href={href}
-      className="rounded-full border border-white/15 bg-black/35 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-wide text-cemento/80 backdrop-blur transition-colors hover:border-brand/40 hover:bg-brand/15 hover:text-white"
+      className={`rounded-full border px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-wide backdrop-blur transition-colors ${
+        evidenziata
+          ? 'border-brand/50 bg-brand/25 text-white hover:bg-brand/40'
+          : 'border-white/15 bg-black/35 text-cemento/80 hover:border-brand/40 hover:bg-brand/15 hover:text-white'
+      }`}
     >
       {label}
     </Link>

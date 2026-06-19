@@ -242,7 +242,7 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
                 temaCard === t ? 'border-segnale bg-segnale/10' : 'border-asfalto/15 text-asfalto/60'
               }`}
             >
-              {t === 'tracciato' ? 'Tracciato 3D' : 'Con foto'}
+              {t === 'tracciato' ? 'Stats in basso' : 'Stats laterali'}
             </button>
           ))}
         </div>
