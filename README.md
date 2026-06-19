@@ -33,7 +33,34 @@ Il progetto open source è **TriplaneGaussian (TGS)**, spesso abbreviato informa
 
 - https://github.com/VAST-AI-Research/TriplaneGaussian
 
-## Flusso gratuito
+## Flusso gemello digitale (automatico)
+
+```text
+Utente carica 1–2 foto
+            ↓
+API /api/garage/generate (TriplaneGaussian su Hugging Face)
+            ↓
+PLY validato e pubblicato in modelli-3d
+            ↓
+Gemello visibile nel garage
+```
+
+Per tutti gli utenti registrati (non serve Pro). Il pannello admin resta come fallback manuale.
+
+### Configurazione Hugging Face
+
+1. Crea un token su https://huggingface.co/settings/tokens
+2. Aggiungi in `.env.local` e su Vercel:
+
+```env
+HUGGINGFACE_TOKEN=hf_...
+```
+
+3. Esegui `supabase/migration_garage_libero.sql` per aprire il garage a tutti gli utenti.
+
+Lo Space [VAST-AI/TriplaneGaussian](https://huggingface.co/spaces/VAST-AI/TriplaneGaussian) può impiegare 1–2 minuti per svegliarsi al primo utilizzo.
+
+## Flusso manuale (admin, fallback)
 
 ```text
 Utente Pro invia 1–2 foto

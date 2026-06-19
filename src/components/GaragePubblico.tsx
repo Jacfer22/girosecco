@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import type { GarageMoto } from '@/lib/garage';
 import { dataMoto, nomeMoto } from '@/lib/garage';
+import Logo from './Logo';
 
 const GarageModelViewer = dynamic(() => import('./GarageModelViewer'), {
   ssr: false,
@@ -30,7 +31,7 @@ export default function GaragePubblico({ username, moto }: { username: string; m
       {moto.length === 0 ? (
         <section className="mx-auto grid min-h-[520px] max-w-xl place-items-center px-4 text-center">
           <div>
-            <img src="/logo-motogarage.svg" alt="" className="mx-auto h-24 w-24 opacity-70" />
+            <Logo variante="card" className="mx-auto opacity-90" />
             <h2 className="mt-6 font-display text-4xl font-black uppercase">Garage ancora privato</h2>
             <p className="mt-3 text-sm text-cemento/55">Non ci sono gemelli digitali pubblici da visitare.</p>
           </div>

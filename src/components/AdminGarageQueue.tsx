@@ -9,6 +9,7 @@ interface Richiesta {
   modello: string;
   anno: number | null;
   stato: string;
+  provider: string | null;
   created_at: string;
   foto_principale_url: string | null;
   foto_secondaria_url: string | null;
@@ -71,6 +72,29 @@ export default function AdminGarageQueue() {
     setCaricando(null);
   }
 
+  async function avviaGenerazione(motoId: string) {
+    const accessToken = await token();
+    if (!accessToken) return;
+    setCaricando(motoId);
+    setErrore(null);
+    const risposta = await fetch('/api/admin/garage/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ motoId }),
+    });
+    const risultato = await risposta.json();
+    if (!risposta.ok) {
+      setErrore(risultato.errore ?? 'Avvio generazione non riuscito.');
+      setCaricando(null);
+      return;
+    }
+    setRichieste((attuali) => attuali?.map((item) => item.id === motoId ? { ...item, stato: 'elaborazione', provider: 'huggingface-tgs' } : item) ?? []);
+    setCaricando(null);
+  }
+
   return (
     <section className="mt-10 rounded-app-lg border-2 border-red-600 bg-white p-6 dark:bg-carbone">
       <div className="flex items-center justify-between gap-4">
@@ -81,7 +105,7 @@ export default function AdminGarageQueue() {
         {richieste && <span className="rounded-full bg-red-600 px-3 py-1 font-display text-2xl font-bold text-white">{richieste.length}</span>}
       </div>
       <p className="mt-2 text-sm text-asfalto/60 dark:text-cemento/60">
-        Scarica la foto, genera il Gaussian Splat con TriplaneGaussian e carica qui il file PLY.
+        Approva le richieste oltre il limite orario, avvia la generazione AI o carica manualmente il PLY.
       </p>
       {errore && <p className="mt-4 rounded-app bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-300">{errore}</p>}
 
@@ -98,13 +122,27 @@ export default function AdminGarageQueue() {
                   {item.proprietario?.username ?? item.id.slice(0, 8)} · {new Date(item.created_at).toLocaleDateString('it-IT')}
                 </p>
                 <h3 className="mt-1 font-display text-2xl font-black uppercase">{item.marca} {item.modello}</h3>
-                <p className="font-mono text-xs uppercase text-asfalto/45 dark:text-cemento/45">{item.anno ?? 'Anno n/d'} · {item.stato}</p>
+                <p className="font-mono text-xs uppercase text-asfalto/45 dark:text-cemento/45">
+                  {item.anno ?? 'Anno n/d'} · {item.stato}
+                  {item.provider === 'in-attesa-approvazione' && ' · richiede approvazione'}
+                </p>
               </div>
               <div className="flex gap-2">
                 {item.foto_principale_url && <a href={item.foto_principale_url} download className="rounded-app border border-asfalto/15 px-3 py-2 font-mono text-[10px] font-bold uppercase dark:border-white/15">Foto 1</a>}
                 {item.foto_secondaria_url && <a href={item.foto_secondaria_url} download className="rounded-app border border-asfalto/15 px-3 py-2 font-mono text-[10px] font-bold uppercase dark:border-white/15">Foto 2</a>}
               </div>
             </div>
+
+            {item.provider === 'in-attesa-approvazione' && item.stato === 'in_attesa' && (
+              <button
+                type="button"
+                disabled={caricando === item.id}
+                onClick={() => avviaGenerazione(item.id)}
+                className="mt-4 w-full rounded-app bg-brand px-5 py-3 font-mono text-xs font-bold uppercase text-white disabled:opacity-40"
+              >
+                {caricando === item.id ? 'Avvio…' : 'Avvia generazione AI'}
+              </button>
+            )}
 
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <label className="flex-1 cursor-pointer rounded-app border-2 border-dashed border-asfalto/15 px-4 py-3 font-mono text-xs uppercase dark:border-white/15">

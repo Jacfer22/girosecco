@@ -81,7 +81,7 @@ export default function BottomNav() {
                 attiva ? 'text-asfalto' : 'text-asfalto/45'
               }`}
             >
-              <span className={attiva ? 'text-segnale-scuro' : ''}>
+              <span className={attiva ? 'text-brand' : ''}>
                 <Icona attiva={attiva} />
               </span>
               <span className="font-mono text-[10px] uppercase tracking-wide">{label}</span>

@@ -12,16 +12,32 @@ interface Props {
   selezionataId: string | null;
   onSeleziona: (id: string) => void;
   modalitaViewer?: boolean;
+  modalitaHero?: boolean;
 }
 
-export default function GarageModelViewer({ moto, selezionataId, onSeleziona, modalitaViewer = false }: Props) {
+export default function GarageModelViewer({ moto, selezionataId, onSeleziona, modalitaViewer = false, modalitaHero = false }: Props) {
   const selezionata = moto.find((item) => item.id === selezionataId) ?? moto[0] ?? null;
   const splat = selezionata && isGaussianSplat(selezionata);
 
   if (splat) {
-    const splats = modalitaViewer ? [selezionata] : moto.filter(isGaussianSplat);
-    return <GaussianGarage moto={splats} selezionataId={selezionata.id} modalitaViewer={modalitaViewer} />;
+    const splats = modalitaViewer || modalitaHero ? [selezionata] : moto.filter(isGaussianSplat);
+    return (
+      <GaussianGarage
+        moto={splats}
+        selezionataId={selezionata.id}
+        modalitaViewer={modalitaViewer}
+        modalitaHero={modalitaHero}
+      />
+    );
   }
 
-  return <Garage3D moto={moto} selezionataId={selezionataId} onSeleziona={onSeleziona} modalitaViewer={modalitaViewer} />;
+  return (
+    <Garage3D
+      moto={moto}
+      selezionataId={selezionataId}
+      onSeleziona={onSeleziona}
+      modalitaViewer={modalitaViewer}
+      modalitaHero={modalitaHero}
+    />
+  );
 }

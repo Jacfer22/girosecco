@@ -51,23 +51,29 @@ export default async function PaginaRegione({
   const numSlotPro = slotProRegione(slug);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
-      <Link
-        href="/itinerari"
-        className="font-mono text-sm uppercase text-asfalto/60 hover:text-asfalto"
-      >
-        ← Tutte le regioni
-      </Link>
+    <div>
+      <section className="hero-asfalto border-b border-white/5">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+          <Link
+            href="/itinerari"
+            className="font-mono text-xs uppercase tracking-[0.18em] text-cemento/45 transition-colors hover:text-red-400"
+          >
+            ← Tutte le regioni
+          </Link>
 
-      <h1 className="mt-4 font-display text-5xl font-bold uppercase leading-none tracking-tight sm:text-7xl">
-        {nome}
-      </h1>
-      <p className="mt-3 text-lg text-asfalto/75">
-        {itinerari.length === 0
-          ? 'Ancora nessun itinerario qui.'
-          : `${itinerari.length} ${itinerari.length === 1 ? 'itinerario' : 'itinerari'} in ${nome}.`}
-      </p>
+          <h1 className="mt-4 font-display text-5xl font-black uppercase leading-[0.92] tracking-tight text-white sm:text-7xl">
+            {nome}
+          </h1>
+          <p className="mt-3 max-w-xl text-base text-cemento/60 sm:text-lg">
+            {itinerari.length === 0
+              ? 'Ancora nessun itinerario qui.'
+              : `${itinerari.length} ${itinerari.length === 1 ? 'itinerario' : 'itinerari'} in ${nome}.`}
+          </p>
+        </div>
+        <div className="strada-viva strada-viva-animata" aria-hidden="true" />
+      </section>
 
+      <div className="mx-auto max-w-6xl px-4 py-12">
       {itinerari.length === 0 ? (
         <div className="mt-10 border-2 border-dashed border-asfalto/25 p-8 text-center">
           <p className="font-display text-2xl font-bold uppercase tracking-tight text-asfalto/40">
@@ -132,6 +138,7 @@ export default async function PaginaRegione({
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

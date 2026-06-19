@@ -3,12 +3,14 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
     "start": "next start",
+    "clean": "node scripts/clean.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@gradio/client": "^2.3.0",
     "@mkkellogg/gaussian-splats-3d": "^0.4.7",
     "@supabase/supabase-js": "^2.45.0",
     "leaflet": "^1.9.4",

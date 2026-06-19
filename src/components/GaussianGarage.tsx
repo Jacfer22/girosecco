@@ -8,6 +8,7 @@ interface Props {
   moto: GarageMoto[];
   selezionataId?: string | null;
   modalitaViewer?: boolean;
+  modalitaHero?: boolean;
 }
 
 function posizione(index: number, totale: number): [number, number, number] {
@@ -23,19 +24,19 @@ function posizione(index: number, totale: number): [number, number, number] {
   return posizioni[index] ?? [0, 0, index * 1.8];
 }
 
-export default function GaussianGarage({ moto, selezionataId, modalitaViewer = false }: Props) {
+export default function GaussianGarage({ moto, selezionataId, modalitaViewer = false, modalitaHero = false }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [caricamento, setCaricamento] = useState(true);
   const [errore, setErrore] = useState<string | null>(null);
 
   const scene = useMemo(() => {
     const pronte = moto.filter((item) => item.stato === 'pronto' && urlModello(item));
-    if (modalitaViewer && selezionataId) {
+    if ((modalitaViewer || modalitaHero) && selezionataId) {
       const scelta = pronte.find((item) => item.id === selezionataId);
       return scelta ? [scelta] : pronte.slice(0, 1);
     }
     return pronte.slice(0, 5);
-  }, [moto, selezionataId, modalitaViewer]);
+  }, [moto, selezionataId, modalitaViewer, modalitaHero]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -50,10 +51,11 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
         const GaussianSplats3D = await import('@mkkellogg/gaussian-splats-3d');
         if (annullato || !host) return;
 
+        const hero = modalitaHero && scene.length === 1;
         viewer = new GaussianSplats3D.Viewer({
           rootElement: host,
           cameraUp: [0, -1, -0.6],
-          initialCameraPosition: [0, -4.2, 4.8],
+          initialCameraPosition: hero ? [0, -2.4, 2.6] : [0, -4.2, 4.8],
           initialCameraLookAt: [0, 0, 0],
           sharedMemoryForWorkers: false,
           gpuAcceleratedSort: false,
@@ -72,7 +74,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
               ? GaussianSplats3D.SceneFormat.Splat
               : GaussianSplats3D.SceneFormat.Ply;
           const [x, y, z] = posizione(index, scene.length);
-          const scala = scene.length === 1 ? 1.7 : 1.15;
+          const scala = hero ? 3.4 : scene.length === 1 ? 1.7 : 1.15;
           return {
             path: urlModello(item)!,
             format,
@@ -101,7 +103,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
       viewer?.dispose();
       host.replaceChildren();
     };
-  }, [scene]);
+  }, [scene, modalitaHero]);
 
   async function fullscreen() {
     const host = hostRef.current;
@@ -111,8 +113,9 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
   }
 
   return (
-    <div className="relative h-full min-h-[460px] w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_30%),#030405] sm:min-h-[580px]">
+    <div className={`relative h-full w-full overflow-hidden ${modalitaHero ? 'min-h-0 bg-transparent' : 'min-h-[460px] bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_30%),#030405] sm:min-h-[580px]'}`}>
       <div ref={hostRef} className="absolute inset-0" aria-label="Viewer Gaussian Splat 3D interattivo" />
+      {!modalitaHero && (
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3">
         <span className="rounded-full border border-white/10 bg-black/60 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/65 backdrop-blur">
           Gaussian Splat · trascina · zoom · pan
@@ -121,6 +124,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
           Fullscreen
         </button>
       </div>
+      )}
       {caricamento && (
         <div className="pointer-events-none absolute inset-0 grid place-items-center bg-black/20">
           <p className="rounded-full border border-white/10 bg-black/70 px-5 py-3 font-mono text-xs uppercase tracking-wide text-white/70 backdrop-blur">

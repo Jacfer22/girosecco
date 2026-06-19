@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const { admin } = await verificaAdmin(req);
     const { data, error } = await admin
       .from('moto')
-      .select('id, utente_id, marca, modello, anno, stato, foto_sx_url, foto_dx_url, model_format, model_url, glb_url, created_at, proprietario:profiles(username)')
+      .select('id, utente_id, marca, modello, anno, stato, provider, foto_sx_url, foto_dx_url, model_format, model_url, glb_url, created_at, proprietario:profiles(username)')
       .in('stato', ['in_attesa', 'elaborazione', 'errore'])
       .order('created_at', { ascending: true });
     if (error) throw new Error(error.message);

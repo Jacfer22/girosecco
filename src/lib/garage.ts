@@ -18,6 +18,7 @@ export interface GarageMoto {
   task_id: string | null;
   progress?: number | null;
   errore: string | null;
+  provider?: string | null;
   is_public?: boolean;
   created_at: string;
   updated_at: string;
@@ -43,10 +44,11 @@ export function formatoModello(moto: Pick<GarageMoto, 'model_format' | 'model_ur
   return 'glb';
 }
 
-export function statoMotoLabel(stato: StatoMoto): string {
+export function statoMotoLabel(stato: StatoMoto, provider?: string | null): string {
   if (stato === 'pronto') return 'Gemello digitale pronto';
-  if (stato === 'in_attesa') return 'In attesa di lavorazione';
-  if (stato === 'elaborazione') return 'In lavorazione';
+  if (stato === 'in_attesa' && provider === 'in-attesa-approvazione') return 'In attesa di approvazione';
+  if (stato === 'in_attesa') return 'In coda';
+  if (stato === 'elaborazione') return 'Generazione 3D in corso';
   if (stato === 'errore') return 'Da revisionare';
   return 'Foto caricate';
 }

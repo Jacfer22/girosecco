@@ -7,13 +7,15 @@ const config: Config = {
     extend: {
       colors: {
         asfalto: '#15181A',
-        // superfici per dare profondità (dal più scuro al più chiaro)
         notte: '#0E1012',
         carbone: '#1C2024',
         cemento: '#F0F1F2',
         nebbia: '#FBFBFC',
-        segnale: '#F2B705',
-        'segnale-scuro': '#D99F04',
+        brand: '#D11919',
+        'brand-scuro': '#A01111',
+        'brand-chiaro': '#E83333',
+        segnale: '#D11919',
+        'segnale-scuro': '#A01111',
         cartello: '#8A5A2B',
         bosco: '#3E5C45',
         guardrail: '#C6CACD',
@@ -35,7 +37,8 @@ const config: Config = {
         'app-md': '0 4px 8px rgba(21,24,26,0.07), 0 8px 24px rgba(21,24,26,0.10)',
         'app-lg': '0 8px 16px rgba(21,24,26,0.08), 0 16px 40px rgba(21,24,26,0.14)',
         'app-up': '0 -4px 16px rgba(21,24,26,0.10)',
-        segnale: '0 4px 16px rgba(242,183,5,0.35)',
+        segnale: '0 4px 16px rgba(209,25,25,0.35)',
+        brand: '0 4px 16px rgba(209,25,25,0.35)',
       },
       transitionTimingFunction: {
         app: 'cubic-bezier(0.22, 1, 0.36, 1)',

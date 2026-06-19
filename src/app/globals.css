@@ -5,8 +5,8 @@
 :root {
   --asfalto: #15181a;
   --cemento: #f0f1f2;
-  --segnale: #f2b705;
-  /* superfici e testo del tema (chiaro di default) */
+  --brand: #d11919;
+  --segnale: #d11919;
   --sfondo-pagina: #f0f1f2;
   --testo-pagina: #15181a;
 }
@@ -69,31 +69,129 @@ body {
   background-size: 400% 100%;
 }
 
-/* Firma visiva: linea di mezzeria stradale (tratteggio bianco su asfalto) */
+/* ── Strada scorrevole — sezione trasversale realistica ── */
+.strada-viva,
 .mezzeria {
-  height: 14px;
-  background-color: var(--asfalto);
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 28px,
-    #fff 28px 64px
-  );
-  background-position: center;
-  background-size: 92px 4px;
-  background-repeat: repeat-x;
+  --strada-larghezza-tratto: 72px;
+  position: relative;
+  height: 16px;
+  overflow: hidden;
+  background-color: #181b1f;
+  background-image:
+    /* mezzeria tratteggiata */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      rgba(255, 255, 255, 0.94) 22px 38px,
+      transparent 38px var(--strada-larghezza-tratto)
+    ),
+    /* bordo destro */
+    linear-gradient(270deg, rgba(245, 245, 240, 0.88) 0, rgba(245, 245, 240, 0.88) 2px, transparent 2px),
+    /* bordo sinistro */
+    linear-gradient(90deg, rgba(245, 245, 240, 0.88) 0, rgba(245, 245, 240, 0.88) 2px, transparent 2px),
+    /* texture asfalto */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 2px,
+      rgba(0, 0, 0, 0.12) 2px 3px
+    ),
+    /* sfumatura profondità */
+    linear-gradient(180deg, #23282e 0%, #1a1e23 45%, #12151a 100%);
+  background-size:
+    var(--strada-larghezza-tratto) 3px,
+    100% 100%,
+    100% 100%,
+    100% 4px,
+    100% 100%;
+  background-position: center, 0 0, 0 0, 0 0, 0 0;
+  background-repeat: repeat-x, no-repeat, no-repeat, repeat, no-repeat;
 }
 
+.strada-viva-hero {
+  height: 28px;
+}
+
+.strada-viva-animata,
 .mezzeria-animata {
-  animation: scorri 2.4s linear infinite;
+  animation: strada-scorre 1.8s linear infinite;
 }
 
-@keyframes scorri {
-  from { background-position-x: 0; }
-  to { background-position-x: -92px; }
+@keyframes strada-scorre {
+  from {
+    background-position: 0 center, 0 0, 0 0, 0 0, 0 0;
+  }
+  to {
+    background-position: calc(-1 * var(--strada-larghezza-tratto)) center, 0 0, 0 0, 0 0, 0 0;
+  }
+}
+
+/* Spalle strada — bordi erbosi scuri ai lati */
+.strada-viva::before,
+.mezzeria::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(30, 42, 28, 0.55) 0, transparent 8%, transparent 92%, rgba(30, 42, 28, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Riflesso sottile sulla superficie */
+.strada-viva::after,
+.mezzeria::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 40%, rgba(0, 0, 0, 0.08) 100%);
+  pointer-events: none;
+}
+
+/* Hero scuro con texture asfalto */
+.hero-asfalto {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgba(220, 38, 38, 0.08), transparent 50%),
+    linear-gradient(165deg, #0a0c0e 0%, #111418 40%, #0d0f12 100%);
+  color: #f0f1f2;
+}
+
+/* Card regione itinerari */
+.card-regione {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.08);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(21, 24, 26, 0.06), 0 1px 3px rgba(21, 24, 26, 0.08);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease;
+}
+.card-regione:hover {
+  transform: translateY(-3px);
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: 0 8px 16px rgba(21, 24, 26, 0.08), 0 16px 40px rgba(21, 24, 26, 0.12);
+}
+.card-regione-vuota {
+  opacity: 0.55;
+}
+.dark .card-regione {
+  background: #1c2024;
+  border-color: rgba(240, 241, 242, 0.08);
+}
+.dark .card-regione:hover {
+  border-color: rgba(220, 38, 38, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mezzeria-animata { animation: none; }
+  .strada-viva-animata,
+  .mezzeria-animata {
+    animation: none;
+  }
+  .card-regione:hover {
+    transform: none;
+  }
 }
 
 /* Chip dati stile computer di bordo */
@@ -223,6 +321,45 @@ body {
   transform: translateY(0);
 }
 
+/* Card feature — testo sempre leggibile su sfondo bianco */
+.card-feature {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.08);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(21, 24, 26, 0.06), 0 1px 3px rgba(21, 24, 26, 0.08);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease;
+}
+.card-feature:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(21, 24, 26, 0.08), 0 16px 40px rgba(21, 24, 26, 0.12);
+}
+.card-feature-evidenza {
+  border-left: 4px solid var(--brand);
+  border-color: rgba(209, 25, 25, 0.2);
+}
+.card-feature h3 {
+  color: var(--asfalto);
+}
+.card-feature p {
+  color: rgba(21, 24, 26, 0.68);
+}
+.dark .card-feature {
+  background: #1c2024;
+  border-color: rgba(240, 241, 242, 0.1);
+}
+.dark .card-feature h3 {
+  color: #f0f1f2;
+}
+.dark .card-feature p {
+  color: rgba(240, 241, 242, 0.65);
+}
+
 /* Card app: superficie bianca, bordo sottile, elevazione che reagisce */
 .card-app {
   background: #fff;
@@ -285,4 +422,604 @@ body {
   .reveal { opacity: 1; transform: none; transition: none; }
   .card-app:hover { transform: none; }
   .skeleton { animation: none; }
+}
+
+/* ============ GARAGE AMBIENTE INTERATTIVO ============ */
+
+.garage-ambiente-loader {
+  min-height: 100dvh;
+  background: #050608;
+}
+
+.garage-ambiente {
+  position: relative;
+  min-height: calc(100dvh - 64px);
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.garage-ambiente-bg {
+  position: absolute;
+  inset: -2%;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 18%, rgba(209, 25, 25, 0.22), transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0, 0, 0, 0.85), transparent 55%),
+    linear-gradient(180deg, #0a0c10 0%, #12151a 38%, #08090c 100%);
+  transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(1.04);
+  transition: transform 0.35s ease-out;
+  will-change: transform;
+}
+
+.garage-ambiente-bg-foto {
+  background-image: url('/garage-ambient.webp');
+  background-size: cover;
+  background-position: center 42%;
+  filter: saturate(1.08) contrast(1.05) brightness(0.92);
+}
+
+.garage-ambiente-bg-foto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 55%, transparent 20%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(180deg, rgba(5, 6, 8, 0.35) 0%, transparent 30%, rgba(5, 6, 8, 0.75) 100%);
+  pointer-events: none;
+}
+
+.garage-neon {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(0.5px);
+  animation: garage-neon-pulse 3.2s ease-in-out infinite;
+}
+
+.garage-neon-sx {
+  left: 4%;
+  top: 18%;
+  width: 3px;
+  height: 42%;
+  background: linear-gradient(180deg, transparent, #d11919, #ff4d4d, #d11919, transparent);
+  box-shadow: 0 0 18px rgba(209, 25, 25, 0.8), 0 0 40px rgba(209, 25, 25, 0.35);
+  transform: translate3d(calc(var(--px, 0) * 0.4), calc(var(--py, 0) * 0.2), 0);
+}
+
+.garage-neon-dx {
+  right: 5%;
+  top: 22%;
+  width: 3px;
+  height: 36%;
+  background: linear-gradient(180deg, transparent, #d11919, #ff3030, transparent);
+  box-shadow: 0 0 16px rgba(209, 25, 25, 0.7);
+  animation-delay: 1.1s;
+  transform: translate3d(calc(var(--px, 0) * -0.35), calc(var(--py, 0) * 0.15), 0);
+}
+
+.garage-neon-alto {
+  left: 50%;
+  top: 8%;
+  width: 28%;
+  height: 2px;
+  transform: translateX(-50%) translate3d(calc(var(--px, 0) * 0.2), 0, 0);
+  background: linear-gradient(90deg, transparent, #d11919, #ff5555, #d11919, transparent);
+  box-shadow: 0 0 20px rgba(209, 25, 25, 0.6);
+  animation-delay: 0.6s;
+}
+
+@keyframes garage-neon-pulse {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+
+.garage-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 280px at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+    rgba(255, 255, 255, 0.07),
+    transparent 65%
+  );
+  mix-blend-mode: screen;
+}
+
+.garage-pavimento {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5) 40%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 48px);
+  transform: perspective(600px) rotateX(12deg) translate3d(calc(var(--px, 0) * -0.15), 0, 0);
+  transform-origin: bottom center;
+}
+
+.garage-insegna {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  transform: translateX(-50%) translate3d(calc(var(--px, 0) * 0.1), calc(var(--py, 0) * 0.05), 0);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 12px rgba(209, 25, 25, 0.5));
+}
+
+.garage-insegna-moto {
+  color: #f0f1f2;
+}
+
+.garage-insegna-garage {
+  color: #d11919;
+}
+
+.garage-palco {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  z-index: 3;
+  width: min(92vw, 920px);
+  height: min(52vh, 520px);
+  transform: translateX(-50%) translate3d(calc(var(--px, 0) * 0.08), calc(var(--py, 0) * 0.04), 0);
+}
+
+.garage-palco > div {
+  height: 100%;
+  min-height: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.garage-palco .relative {
+  background: transparent !important;
+  min-height: 100% !important;
+}
+
+.garage-stage-loader {
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(209, 25, 25, 0.12), transparent 55%);
+  animation: shimmer 1.4s ease infinite;
+}
+
+.garage-palco-vuoto {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.garage-pedana {
+  width: min(70%, 420px);
+  height: 12px;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(209, 25, 25, 0.45), transparent 70%);
+  box-shadow: 0 0 40px rgba(209, 25, 25, 0.25);
+}
+
+.garage-anteprima-foto {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1.5rem;
+}
+
+.garage-anteprima-foto img {
+  max-height: 72%;
+  max-width: 88%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.65));
+  transform: translate3d(calc(var(--px, 0) * 0.05), calc(var(--py, 0) * 0.03), 0);
+}
+
+.garage-anteprima-label {
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(240, 241, 242, 0.45);
+}
+
+.garage-ui-layer {
+  position: relative;
+  z-index: 10;
+  min-height: calc(100dvh - 64px);
+  pointer-events: none;
+}
+
+.garage-ui-pannello {
+  pointer-events: auto;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: min(100% - 2rem, 380px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 9, 11, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  padding: 1rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.garage-ui-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.garage-ui-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+}
+
+@media (max-width: 767px) {
+  .garage-ambiente {
+    min-height: 100dvh;
+  }
+
+  .garage-palco {
+    bottom: auto;
+    top: 42%;
+    height: 36vh;
+    transform: translate(-50%, -50%) translate3d(calc(var(--px, 0) * 0.05), calc(var(--py, 0) * 0.03), 0);
+  }
+
+  .garage-ui-pannello {
+    right: 0.75rem;
+    left: 0.75rem;
+    top: auto;
+    bottom: 5.5rem;
+    width: auto;
+    max-height: 48vh;
+  }
+
+  .garage-insegna {
+    top: 4%;
+    font-size: 1.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garage-ambiente-bg,
+  .garage-neon,
+  .garage-anteprima-foto img {
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ============ TUNING GARAGE (landing + garage) ============ */
+
+.tuning-garage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tuning-garage-landing {
+  min-height: min(92dvh, 900px);
+}
+
+.tuning-garage-garage {
+  min-height: 100dvh;
+}
+
+.tuning-garage-bg {
+  position: absolute;
+  inset: -3%;
+  background:
+    linear-gradient(135deg, #2a1a0e 0%, #1a120a 40%, #0e0c0a 100%);
+  transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(1.05);
+  transition: transform 0.4s ease-out;
+}
+
+.tuning-garage-bg-foto {
+  background-image: url('/garage-tuning.webp');
+  background-size: cover;
+  background-position: center 40%;
+  filter: saturate(1.05) contrast(1.04) brightness(0.88);
+}
+
+.tuning-garage-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 50% 62%, transparent 10%, rgba(8, 7, 5, 0.45) 70%),
+    linear-gradient(90deg, rgba(10, 8, 6, 0.75) 0%, transparent 22%, transparent 78%, rgba(10, 8, 6, 0.75) 100%),
+    linear-gradient(180deg, rgba(8, 7, 5, 0.55) 0%, transparent 28%, rgba(8, 7, 5, 0.35) 65%, rgba(8, 7, 5, 0.85) 100%);
+}
+
+.tuning-garage-landing .tuning-garage-overlay {
+  background:
+    radial-gradient(ellipse 60% 55% at 28% 50%, rgba(8, 7, 5, 0.15) 0%, rgba(8, 7, 5, 0.72) 68%),
+    linear-gradient(90deg, rgba(12, 9, 6, 0.88) 0%, rgba(12, 9, 6, 0.55) 42%, transparent 72%),
+    linear-gradient(180deg, rgba(8, 7, 5, 0.5) 0%, transparent 35%, rgba(8, 7, 5, 0.8) 100%);
+}
+
+.tuning-garage-garage .tuning-garage-overlay {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 58%, transparent 5%, rgba(8, 7, 5, 0.25) 45%, rgba(8, 7, 5, 0.7) 100%),
+    linear-gradient(180deg, rgba(8, 7, 5, 0.45) 0%, transparent 25%, rgba(8, 7, 5, 0.55) 100%);
+}
+
+.tuning-garage-luci {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tuning-luce {
+  position: absolute;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 248, 230, 0.85), transparent);
+  box-shadow: 0 0 24px rgba(255, 240, 200, 0.35);
+  opacity: 0.7;
+}
+
+.tuning-luce-1 { top: 8%; left: 12%; width: 34%; }
+.tuning-luce-2 { top: 8%; right: 10%; width: 28%; }
+.tuning-luce-3 { top: 11%; left: 38%; width: 22%; opacity: 0.45; }
+
+.tuning-garage-pavimento {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent, rgba(30, 28, 26, 0.35) 30%, rgba(18, 17, 16, 0.75) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 64px);
+}
+
+.tuning-garage-legno-sx,
+.tuning-garage-legno-dx {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18%;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.tuning-garage-legno-sx {
+  left: 0;
+  background: linear-gradient(90deg, rgba(120, 72, 32, 0.5), transparent);
+}
+
+.tuning-garage-legno-dx {
+  right: 0;
+  background: linear-gradient(270deg, rgba(120, 72, 32, 0.45), transparent);
+}
+
+.tuning-garage-pedana {
+  position: absolute;
+  left: 50%;
+  bottom: 22%;
+  width: min(72vw, 680px);
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(209, 25, 25, 0.35), transparent 72%);
+  box-shadow: 0 0 50px rgba(209, 25, 25, 0.2);
+  pointer-events: none;
+}
+
+.tuning-garage-garage .tuning-garage-pedana {
+  bottom: 18%;
+  width: min(80vw, 820px);
+}
+
+/* Landing hero content */
+.landing-tuning-hero {
+  display: flex;
+  align-items: center;
+}
+
+.landing-tuning-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 5rem 1rem 4rem;
+}
+
+.tuning-cta-finale {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(209, 25, 25, 0.12), transparent 55%),
+    linear-gradient(180deg, #12151a, #08090b);
+  color: #f0f1f2;
+}
+
+/* Garage page layout */
+.garage-pagina-wrap {
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: #080706;
+  color: #f0f1f2;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .garage-pagina-wrap {
+    padding-bottom: 0;
+  }
+}
+
+.garage-tuning-wrap {
+  min-height: 100dvh;
+}
+
+.garage-palco-hero {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: min(96vw, 1100px);
+  height: min(78dvh, 820px);
+  transform: translate(-50%, -52%);
+  pointer-events: auto;
+}
+
+.garage-palco-hero > div {
+  height: 100%;
+  min-height: 0;
+}
+
+.garage-palco-hero .relative {
+  background: transparent !important;
+  min-height: 100% !important;
+}
+
+.garage-ui-layer {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  pointer-events: none;
+}
+
+.garage-ui-pannello {
+  pointer-events: auto;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: min(100% - 2rem, 360px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 10, 8, 0.78);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  padding: 1rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.garage-ui-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.garage-ui-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+}
+
+.garage-moto-scroll-mobile {
+  display: none;
+}
+
+.garage-moto-list-desktop {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .garage-palco-hero {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    height: 72dvh;
+    margin-top: 0.5rem;
+  }
+
+  .garage-tuning-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .garage-ui-layer {
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .garage-moto-scroll-mobile {
+    display: block;
+    pointer-events: auto;
+    order: 2;
+    padding: 0.75rem 1rem 0;
+    z-index: 12;
+  }
+
+  .garage-moto-scroll-track {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .garage-moto-chip {
+    flex: 0 0 auto;
+    min-width: 9.5rem;
+    scroll-snap-align: start;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+  }
+
+  .garage-moto-chip-attiva {
+    border-color: rgba(209, 25, 25, 0.55);
+    background: rgba(209, 25, 25, 0.15);
+  }
+
+  .garage-moto-list-desktop {
+    display: none;
+  }
+
+  .garage-ui-pannello {
+    position: relative;
+    order: 3;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: auto;
+    margin: 0.75rem;
+    max-height: none;
+  }
+
+  .tuning-garage-pedana {
+    bottom: 8%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tuning-garage-bg {
+    transform: none;
+    transition: none;
+  }
 }

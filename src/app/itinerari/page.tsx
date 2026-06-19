@@ -1,106 +1,158 @@
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getItinerario, getItinerari } from '@/lib/supabase';
-import { accessoItinerario } from '@/lib/accesso';
-import AvvisoBanner from '@/components/AvvisoBanner';
-import ContenutoItinerario from '@/components/ContenutoItinerario';
-import SezioneFotoItinerario from '@/components/SezioneFotoItinerario';
-import CommentiItinerario from '@/components/CommentiItinerario';
-import CondividiItinerario from '@/components/CondividiItinerario';
-import { ChipDato, ChipDifficolta } from '@/components/Chips';
+import { getItinerari, getItinerariConAvvisi } from '@/lib/supabase';
+import { REGIONI } from '@/lib/regioni';
+import Reveal from '@/components/Reveal';
 
 export const revalidate = 3600;
 
-export default async function PaginaItinerario({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const [itinerario, tuttiItinerari] = await Promise.all([
-    getItinerario(slug),
-    getItinerari(),
-  ]);
-  if (!itinerario) notFound();
+export const metadata = {
+  title: 'Itinerari moto in Italia',
+  description:
+    'Scopri gli itinerari moto regione per regione: mappe, tappe, GPX e strade verificate dai motociclisti italiani.',
+};
 
-  const accesso = accessoItinerario(itinerario, tuttiItinerari);
-  const tappe = itinerario.tappe ?? [];
+interface RegioneCard {
+  slug: string;
+  nome: string;
+  count: number;
+  avvisi: number;
+}
+
+export default async function PaginaItinerari() {
+  const [itinerari, idConAvvisi] = await Promise.all([
+    getItinerari(),
+    getItinerariConAvvisi(),
+  ]);
+
+  const conteggio = new Map<string, number>();
+  const avvisi = new Map<string, number>();
+
+  for (const item of itinerari) {
+    for (const slug of item.regioni ?? []) {
+      conteggio.set(slug, (conteggio.get(slug) ?? 0) + 1);
+      if (idConAvvisi.has(item.id)) {
+        avvisi.set(slug, (avvisi.get(slug) ?? 0) + 1);
+      }
+    }
+  }
+
+  const regioni: RegioneCard[] = REGIONI.map((r) => ({
+    slug: r.slug,
+    nome: r.nome,
+    count: conteggio.get(r.slug) ?? 0,
+    avvisi: avvisi.get(r.slug) ?? 0,
+  })).sort((a, b) => {
+    if (a.count > 0 && b.count === 0) return -1;
+    if (a.count === 0 && b.count > 0) return 1;
+    return a.nome.localeCompare(b.nome, 'it');
+  });
+
+  const totale = itinerari.filter((i) => !i.is_placeholder).length;
+  const conItinerari = regioni.filter((r) => r.count > 0).length;
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-10">
-      <Link
-        href="/itinerari"
-        className="font-mono text-sm uppercase text-asfalto/60 hover:text-asfalto"
-      >
-        ← Tutti gli itinerari
-      </Link>
+    <div>
+      <section className="hero-asfalto border-b border-white/5">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-[0.28em] text-red-400">
+              Italia · regione per regione
+            </p>
+            <h1 className="mt-3 font-display text-5xl font-black uppercase leading-[0.92] tracking-tight text-white sm:text-7xl">
+              Itinerari
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-cemento/65 sm:text-lg">
+              Strade verificate, mappe interattive, tappe e GPX. Il primo giro di ogni
+              regione è libero; gli altri si sbloccano con un account gratuito.
+            </p>
+          </Reveal>
 
-      <header className="mt-4">
-        <p className="font-mono text-sm uppercase tracking-widest text-cartello">
-          {itinerario.zona}
-        </p>
-        <h1 className="mt-1 font-display text-5xl font-bold uppercase leading-none tracking-tight sm:text-7xl">
-          {itinerario.titolo}
-        </h1>
-        <p className="mt-3 text-lg text-asfalto/70">{itinerario.sottotitolo}</p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <ChipDato label="km" value={String(itinerario.km)} />
-          <ChipDato label="ore" value={`~${itinerario.durata_ore}`} />
-          <ChipDifficolta value={itinerario.difficolta} />
-          <ChipDato label="quando" value={itinerario.periodo_ideale} />
+          <Reveal delay={80}>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <StatBadge label="Itinerari" valore={String(totale)} />
+              <StatBadge label="Regioni attive" valore={String(conItinerari)} />
+              <StatBadge label="Regioni totali" valore="20" />
+            </div>
+          </Reveal>
         </div>
-        <div className="mt-4">
-          <CondividiItinerario
-            itinerarioId={itinerario.id}
-            titolo={itinerario.titolo}
-            zona={itinerario.zona}
-            km={itinerario.km}
-            durataOre={itinerario.durata_ore}
-            tracciato={itinerario.tracciato ?? []}
-          />
-        </div>
-      </header>
-
-      {itinerario.origine === 'classico' && (
-        <div className="mt-6 border-2 border-asfalto/20 bg-cemento p-4">
-          <p className="font-mono text-xs uppercase tracking-wide text-cartello">
-            Percorso classico
-          </p>
-          <p className="mt-1 text-sm text-asfalto/70">
-            Una delle strade-icona della zona, descritta da fonti pubbliche. La
-            traccia GPS di dettaglio non è ancora rifinita: se lo conosci e vuoi
-            aggiungere tappe o GPX, scrivici dal blog.
-          </p>
-        </div>
-      )}
-
-      {/* Avvisi: info di sicurezza, visibili a tutti indipendentemente dall'account */}
-      <AvvisoBanner avvisi={itinerario.avvisi ?? []} />
-
-      <section className="mt-8">
-        <h2 className="font-display text-3xl font-bold uppercase tracking-tight">
-          Il giro
-        </h2>
-        <p className="mt-3 whitespace-pre-line leading-relaxed text-asfalto/85">
-          {itinerario.descrizione}
-        </p>
+        <div className="strada-viva strada-viva-animata" aria-hidden="true" />
       </section>
 
-      {/* Mappa, roadbook, GPX (+ variante/weekend se Pro): in base al livello account */}
-      <ContenutoItinerario
-        titolo={itinerario.titolo}
-        accesso={accesso}
-        tappe={tappe}
-        tracciato={itinerario.tracciato ?? []}
-        strada={itinerario.strada ?? null}
-        stradaFonte={itinerario.strada_fonte ?? null}
-        proExtra={itinerario.pro_extra}
-        gpxUrl={itinerario.gpx_url}
-      />
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:py-14">
+        <Reveal>
+          <div className="flex items-end justify-between gap-4 border-b border-asfalto/10 pb-4">
+            <h2 className="font-display text-2xl font-bold uppercase tracking-tight sm:text-3xl">
+              Scegli la regione
+            </h2>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-asfalto/40">
+              Tocca per esplorare
+            </span>
+          </div>
+        </Reveal>
 
-      <SezioneFotoItinerario itinerarioId={itinerario.id} />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {regioni.map((r, i) => (
+            <Reveal key={r.slug} delay={Math.min(i * 40, 320)}>
+              <Link
+                href={`/itinerari/regione/${r.slug}`}
+                className={`card-regione group ${r.count === 0 ? 'card-regione-vuota' : ''}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-display text-xl font-bold uppercase leading-tight tracking-tight transition-colors group-hover:text-red-600">
+                    {r.nome}
+                  </h3>
+                  {r.avvisi > 0 && (
+                    <span className="shrink-0 rounded-full bg-amber-500/15 px-2 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wide text-amber-700 dark:text-amber-400">
+                      Avvisi
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 font-mono text-xs uppercase tracking-wide text-asfalto/45">
+                  {r.count === 0
+                    ? 'In arrivo'
+                    : `${r.count} ${r.count === 1 ? 'itinerario' : 'itinerari'}`}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-asfalto/35 transition-colors group-hover:text-red-600">
+                  Esplora
+                  <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
 
-      <CommentiItinerario itinerarioId={itinerario.id} />
-    </article>
+        <Reveal delay={120}>
+          <div className="mt-14 rounded-app-lg border border-asfalto/10 bg-asfalto/[0.03] p-6 sm:p-8">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-asfalto/40">
+              Conosci una strada?
+            </p>
+            <h3 className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">
+              Proponi un nuovo giro
+            </h3>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-asfalto/60">
+              Se hai un percorso che vale la pena condividere, raccontacelo dal blog.
+              Lo trasformiamo in itinerario con mappa, tappe e GPX.
+            </p>
+            <Link
+              href="/blog/nuovo"
+              className="tap mt-5 inline-flex items-center rounded-app bg-asfalto px-5 py-3 font-mono text-xs font-bold uppercase tracking-wide text-cemento transition-colors hover:bg-red-600"
+            >
+              Scrivi la tua proposta
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+    </div>
+  );
+}
+
+function StatBadge({ label, valore }: { label: string; valore: string }) {
+  return (
+    <div className="rounded-app border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-sm">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/45">{label}</p>
+      <p className="mt-0.5 font-display text-2xl font-black text-white">{valore}</p>
+    </div>
   );
 }

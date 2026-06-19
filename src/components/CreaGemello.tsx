@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { useAuth } from './AuthProvider';
+import Logo from './Logo';
 
 interface Props {
-  onInviato: () => void;
+  onInviato: (motoId: string, tipo: 'generazione' | 'approvazione') => void;
 }
 
 const MARCHE = [
@@ -18,7 +18,7 @@ const MAX_FILE_BYTES = 15 * 1024 * 1024;
 type Step = 'dati' | 'foto' | 'conferma';
 
 export default function CreaGemello({ onInviato }: Props) {
-  const { user, profilo } = useAuth();
+  const { user } = useAuth();
   const [step, setStep] = useState<Step>('dati');
   const [marca, setMarca] = useState('');
   const [modello, setModello] = useState('');
@@ -29,10 +29,10 @@ export default function CreaGemello({ onInviato }: Props) {
   const [previewSecondaria, setPreviewSecondaria] = useState('');
   const [caricando, setCaricando] = useState(false);
   const [errore, setErrore] = useState('');
+  const [confermaTipo, setConfermaTipo] = useState<'generazione' | 'approvazione' | null>(null);
   const refPrincipale = useRef<HTMLInputElement>(null);
   const refSecondaria = useRef<HTMLInputElement>(null);
   const urlsCreate = useRef<string[]>([]);
-  const abilitato = Boolean(profilo?.is_pro || profilo?.is_admin);
 
   useEffect(() => () => {
     urlsCreate.current.forEach((url) => URL.revokeObjectURL(url));
@@ -60,7 +60,7 @@ export default function CreaGemello({ onInviato }: Props) {
   }
 
   async function inviaRichiesta() {
-    if (!user || !abilitato || !fotoPrincipale || !marca.trim() || !modello.trim()) return;
+    if (!user || !fotoPrincipale || !marca.trim() || !modello.trim()) return;
     const supabase = getSupabaseBrowser();
     if (!supabase) {
       setErrore('Supabase non è configurato.');
@@ -70,6 +70,9 @@ export default function CreaGemello({ onInviato }: Props) {
     setErrore('');
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Sessione scaduta. Accedi di nuovo.');
+
       const annoNumero = anno ? Number.parseInt(anno, 10) : null;
       const { data: moto, error: erroreMoto } = await supabase
         .from('moto')
@@ -110,7 +113,28 @@ export default function CreaGemello({ onInviato }: Props) {
         .update({ foto_sx_url: pathPrincipale, foto_dx_url: pathSecondaria })
         .eq('id', moto.id);
       if (aggiornamento) throw new Error(aggiornamento.message);
+
+      const risposta = await fetch('/api/garage/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ motoId: moto.id }),
+      });
+      const json = await risposta.json() as { errore?: string; richiedeApprovazione?: boolean };
+      if (!risposta.ok) throw new Error(json.errore ?? 'Avvio generazione fallito.');
+
+      if (json.richiedeApprovazione) {
+        setConfermaTipo('approvazione');
+        setStep('conferma');
+        onInviato(moto.id, 'approvazione');
+        return;
+      }
+
+      setConfermaTipo('generazione');
       setStep('conferma');
+      onInviato(moto.id, 'generazione');
     } catch (error) {
       setErrore(error instanceof Error ? error.message : 'Errore imprevisto.');
     } finally {
@@ -118,34 +142,21 @@ export default function CreaGemello({ onInviato }: Props) {
     }
   }
 
-  if (!abilitato) {
-    return (
-      <section className="mx-auto max-w-2xl rounded-[30px] border border-asfalto/10 bg-white p-7 text-center shadow-app-lg dark:bg-carbone sm:p-10">
-        <img src="/logo-motogarage.svg" alt="" className="mx-auto h-20 w-20" />
-        <p className="mt-6 font-mono text-xs uppercase tracking-[0.25em] text-red-600">Funzione Pro</p>
-        <h1 className="mt-2 font-display text-4xl font-black uppercase leading-none sm:text-5xl">Il gemello digitale è riservato ai Pro</h1>
-        <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-asfalto/60 dark:text-cemento/60">
-          Il modello viene generato e controllato dal team MotoGarage, poi pubblicato nel tuo garage in formato Gaussian Splat.
-        </p>
-        <Link href="/pro" className="mt-7 inline-block rounded-app bg-red-600 px-6 py-3 font-mono text-sm font-bold uppercase text-white">
-          Scopri MotoGarage Pro
-        </Link>
-      </section>
-    );
-  }
-
   if (step === 'conferma') {
+    const inApprovazione = confermaTipo === 'approvazione';
     return (
-      <section className="mx-auto max-w-2xl rounded-[30px] border border-emerald-500/25 bg-white p-8 text-center shadow-app-lg dark:bg-carbone">
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-[24px] bg-emerald-500 text-4xl text-white">✓</div>
-        <h1 className="mt-6 font-display text-5xl font-black uppercase leading-none">Richiesta ricevuta</h1>
-        <p className="mt-4 text-asfalto/60 dark:text-cemento/60">
-          Realizzeremo il Gaussian Splat della tua {marca} {modello}. Quando il file PLY sarà approvato comparirà automaticamente nel garage.
+      <section className="mx-auto max-w-2xl rounded-[30px] border border-white/10 bg-black/75 p-8 text-center text-cemento shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+        <div className={`mx-auto grid h-20 w-20 place-items-center rounded-[24px] text-4xl text-white ${inApprovazione ? 'bg-amber-500' : 'bg-emerald-500'}`}>
+          {inApprovazione ? '⏳' : '✓'}
+        </div>
+        <h1 className="mt-6 font-display text-4xl font-black uppercase leading-none sm:text-5xl">
+          {inApprovazione ? 'Richiesta inviata' : 'Generazione avviata'}
+        </h1>
+        <p className="mt-4 text-sm leading-6 text-cemento/65">
+          {inApprovazione
+            ? `Hai già usato la generazione automatica nell'ultima ora. La tua ${marca} ${modello} è in coda: verrà elaborata dopo la mia approvazione.`
+            : `Stiamo creando il gemello digitale della tua ${marca} ${modello} con TriplaneGaussian.`}
         </p>
-        <p className="mt-3 font-mono text-xs uppercase tracking-wide text-asfalto/40 dark:text-cemento/40">Tempo indicativo: 24–72 ore</p>
-        <button type="button" onClick={onInviato} className="mt-7 rounded-app bg-red-600 px-6 py-3 font-mono text-sm font-bold uppercase text-white">
-          Torna al garage
-        </button>
       </section>
     );
   }
@@ -153,15 +164,15 @@ export default function CreaGemello({ onInviato }: Props) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
       <section className="rounded-[30px] border border-asfalto/10 bg-white p-5 shadow-app-lg dark:bg-carbone sm:p-8">
-        <p className="font-mono text-xs uppercase tracking-[0.28em] text-red-600">Gemello digitale Pro</p>
+        <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand">Gemello digitale</p>
         <h1 className="mt-3 font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-6xl">La tua moto in Gaussian Splat</h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-asfalto/60 dark:text-cemento/60">
-          Basta una buona foto laterale. La seconda è facoltativa ma può aiutarci a ricostruire meglio il lato nascosto.
+          Carica una foto laterale pulita: TriplaneGaussian su Hugging Face genera automaticamente il modello 3D nel tuo garage. Una generazione automatica all&apos;ora; le successive richiedono approvazione.
         </p>
 
         <div className="mt-7 grid grid-cols-2 gap-2">
-          <span className="h-2 rounded-full bg-red-600" />
-          <span className={`h-2 rounded-full ${step === 'foto' ? 'bg-red-600' : 'bg-asfalto/10 dark:bg-white/10'}`} />
+          <span className="h-2 rounded-full bg-brand" />
+          <span className={`h-2 rounded-full ${step === 'foto' ? 'bg-brand' : 'bg-asfalto/10 dark:bg-white/10'}`} />
         </div>
 
         {step === 'dati' && (
@@ -178,7 +189,7 @@ export default function CreaGemello({ onInviato }: Props) {
             <Campo label="Anno">
               <input type="number" value={anno} onChange={(event) => setAnno(event.target.value)} placeholder="es. 2024" className="input-app" min={1950} max={new Date().getFullYear() + 1} />
             </Campo>
-            <button type="button" disabled={!marca || !modello.trim()} onClick={() => setStep('foto')} className="w-full rounded-app bg-red-600 py-4 font-mono text-sm font-bold uppercase text-white disabled:opacity-40">
+            <button type="button" disabled={!marca || !modello.trim()} onClick={() => setStep('foto')} className="w-full rounded-app bg-brand py-4 font-mono text-sm font-bold uppercase text-white disabled:opacity-40">
               Continua con le foto →
             </button>
           </div>
@@ -195,8 +206,8 @@ export default function CreaGemello({ onInviato }: Props) {
             {errore && <p role="alert" className="rounded-app border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">{errore}</p>}
             <div className="flex gap-3">
               <button type="button" onClick={() => setStep('dati')} className="flex-1 rounded-app border border-asfalto/15 py-4 font-mono text-xs font-bold uppercase dark:border-white/15">← Indietro</button>
-              <button type="button" disabled={!fotoPrincipale || caricando} onClick={inviaRichiesta} className="flex-[2] rounded-app bg-red-600 py-4 font-mono text-xs font-bold uppercase text-white disabled:opacity-40">
-                {caricando ? 'Caricamento…' : 'Invia richiesta Pro'}
+              <button type="button" disabled={!fotoPrincipale || caricando} onClick={inviaRichiesta} className="flex-[2] rounded-app bg-brand py-4 font-mono text-xs font-bold uppercase text-white disabled:opacity-40">
+                {caricando ? 'Avvio generazione…' : 'Genera gemello digitale'}
               </button>
             </div>
           </div>
@@ -204,18 +215,19 @@ export default function CreaGemello({ onInviato }: Props) {
       </section>
 
       <aside className="rounded-[30px] border border-white/10 bg-[#08090d] p-5 text-cemento shadow-app-lg sm:p-6">
-        <p className="font-mono text-xs uppercase tracking-[0.24em] text-red-400">Come fotografarla</p>
-        <h2 className="mt-2 font-display text-3xl font-black uppercase leading-none">Una foto pulita vale più di dieci confuse</h2>
-        <div className="mt-5 overflow-hidden rounded-[22px] border border-emerald-500/30 bg-emerald-500/10 p-3">
-          <img src="/og-motogarage.png" alt="" className="aspect-video w-full rounded-app object-cover object-[50%_70%]" />
-          <p className="mt-3 font-mono text-xs font-bold uppercase text-emerald-400">✓ Moto intera e laterale</p>
-        </div>
+        <Logo variante="card" className="mx-auto mb-5" />
+        <p className="font-mono text-xs uppercase tracking-[0.24em] text-brand-chiaro">Come fotografarla</p>
+        <h2 className="mt-2 font-display text-3xl font-black uppercase leading-none">Una foto pulita basta</h2>
         <ul className="mt-5 space-y-2 font-mono text-[11px] uppercase tracking-wide text-cemento/55">
+          <li>✓ Moto intera, vista laterale</li>
           <li>✓ Sfondo semplice</li>
           <li>✓ Luce naturale e uniforme</li>
-          <li>✓ Ruote e specchietti completamente visibili</li>
-          <li>× Niente persone o oggetti davanti</li>
+          <li>✓ Ruote e specchietti visibili</li>
+          <li>× Niente persone davanti</li>
         </ul>
+        <p className="mt-6 text-xs leading-relaxed text-cemento/45">
+          La generazione usa TriplaneGaussian su Hugging Face. Al primo utilizzo lo Space può impiegare 1–2 minuti per svegliarsi.
+        </p>
       </aside>
     </div>
   );
@@ -227,7 +239,7 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
 
 function UploadBox({ titolo, nota, anteprima, onClick }: { titolo: string; nota: string; anteprima: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className={`min-h-52 overflow-hidden rounded-[22px] border-2 border-dashed text-left ${anteprima ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-asfalto/15 hover:border-red-500 dark:border-white/15'}`}>
+    <button type="button" onClick={onClick} className={`min-h-52 overflow-hidden rounded-[22px] border-2 border-dashed text-left ${anteprima ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-asfalto/15 hover:border-brand dark:border-white/15'}`}>
       {anteprima ? (
         <>
           <img src={anteprima} alt={`Anteprima ${titolo.toLowerCase()}`} className="h-44 w-full bg-black/5 object-contain" />
@@ -238,7 +250,7 @@ function UploadBox({ titolo, nota, anteprima, onClick }: { titolo: string; nota:
           <div>
             <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-asfalto text-2xl text-white">＋</div>
             <p className="mt-3 font-mono text-xs font-bold uppercase">{titolo}</p>
-            <p className="mt-1 font-mono text-[10px] uppercase text-red-500">{nota} · max 15 MB</p>
+            <p className="mt-1 font-mono text-[10px] uppercase text-brand">{nota} · max 15 MB</p>
           </div>
         </div>
       )}

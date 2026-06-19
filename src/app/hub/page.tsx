@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Logo from '@/components/Logo';
 import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { etichettaCategoria } from '@/lib/categorie-moto';
@@ -117,7 +117,7 @@ export default function PaginaHub() {
                 <img src={profilo.avatar_url} alt="" className="h-20 w-20 border-2 border-red-600 object-cover sm:h-24 sm:w-24" />
               ) : (
                 <div className="flex h-20 w-20 items-center justify-center border-2 border-red-600 bg-asfalto sm:h-24 sm:w-24">
-                  <Image src="/logo-motogarage.svg" alt="" width={52} height={52} />
+                  <Logo variante="icon" />
                 </div>
               )}
               {(isAdmin || isPro) && (
@@ -149,7 +149,7 @@ export default function PaginaHub() {
             )}
           </div>
         </div>
-        <div className="mezzeria mezzeria-animata" aria-hidden="true" />
+        <div className="strada-viva strada-viva-animata" aria-hidden="true" />
       </section>
 
       <section className="mx-auto -mt-8 max-w-6xl px-4">

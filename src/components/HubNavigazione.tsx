@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Logo from './Logo';
 import { useAuth } from './AuthProvider';
 
 interface Tile {
@@ -93,7 +93,7 @@ export default function HubNavigazione() {
             <img src={profilo.avatar_url} alt="" className="h-14 w-14 rounded-2xl border-2 border-red-600 object-cover" />
           ) : (
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-red-600 bg-asfalto">
-              <Image src="/logo-motogarage.svg" alt="" width={38} height={44} />
+              <Logo variante="icon" />
             </div>
           )}
           <div>

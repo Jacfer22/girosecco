@@ -11,6 +11,7 @@ interface Props {
   selezionataId: string | null;
   onSeleziona: (id: string) => void;
   modalitaViewer?: boolean;
+  modalitaHero?: boolean;
 }
 
 function posizioniMoto(numero: number): THREE.Vector3[] {
@@ -102,7 +103,7 @@ function preparaModello(root: THREE.Group, index: number, posizione: THREE.Vecto
   });
 }
 
-export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaViewer = false }: Props) {
+export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaViewer = false, modalitaHero = false }: Props) {
   const contenitoreRef = useRef<HTMLDivElement>(null);
   const controlliRef = useRef<OrbitControls | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
