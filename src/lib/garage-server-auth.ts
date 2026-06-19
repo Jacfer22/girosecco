@@ -4,18 +4,32 @@ import {
   supabaseAnonKey,
   supabaseServiceRoleKey,
   supabaseUrlServer,
-  verificaConfigServer,
+  verificaConfigMinima,
 } from '@/lib/env-server';
 
 export function adminClient(): SupabaseClient {
-  verificaConfigServer();
-  return createClient(supabaseUrlServer(), supabaseServiceRoleKey(), {
+  const serviceKey = supabaseServiceRoleKey();
+  if (!serviceKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY non disponibile sul server.');
+  }
+  return createClient(supabaseUrlServer(), serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }
 
-export async function verificaUtente(req: NextRequest): Promise<{ user: User; admin: SupabaseClient }> {
-  verificaConfigServer();
+function clientUtente(token: string): SupabaseClient {
+  return createClient(supabaseUrlServer(), supabaseAnonKey(), {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+}
+
+export async function verificaUtente(req: NextRequest): Promise<{
+  user: User;
+  admin: SupabaseClient;
+  usaServiceRole: boolean;
+}> {
+  verificaConfigMinima();
   const url = supabaseUrlServer();
   const anon = supabaseAnonKey();
   const authorization = req.headers.get('authorization');
@@ -28,7 +42,14 @@ export async function verificaUtente(req: NextRequest): Promise<{ user: User; ad
   const { data, error } = await authClient.auth.getUser(token);
   if (error || !data.user) throw new Error('Sessione non valida.');
 
-  return { user: data.user, admin: adminClient() };
+  const serviceKey = supabaseServiceRoleKey();
+  const admin = serviceKey
+    ? createClient(url, serviceKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      })
+    : clientUtente(token);
+
+  return { user: data.user, admin, usaServiceRole: !!serviceKey };
 }
 
 export function rispostaErroreApi(error: unknown, fallback = 'Errore imprevisto.') {
@@ -39,6 +60,8 @@ export function rispostaErroreApi(error: unknown, fallback = 'Errore imprevisto.
       ? 403
       : /configurazione server|environment variables|\.env\.local/i.test(messaggio)
         ? 503
-        : 500;
+        : /gestiti dal server|non consentita|row-level security/i.test(messaggio)
+          ? 503
+          : 500;
   return { messaggio, status };
 }

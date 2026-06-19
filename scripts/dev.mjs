@@ -1,9 +1,11 @@
+import { loadEnvConfig } from '@next/env';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+loadEnvConfig(root);
 const nextDir = path.join(root, '.next');
 
 function rimuoviNext() {
@@ -38,7 +40,7 @@ const child = spawn('npx', ['next', 'dev'], {
   cwd: root,
   stdio: 'inherit',
   shell: true,
-  env: process.env,
+  env: { ...process.env },
 });
 
 child.on('exit', (code) => process.exit(code ?? 0));
