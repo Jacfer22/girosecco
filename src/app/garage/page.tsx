@@ -30,6 +30,7 @@ export default function PaginaGarage() {
   const [selezionataId, setSelezionataId] = useState<string | null>(null);
   const [generazioneId, setGenerazioneId] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [errore, setErrore] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) router.replace('/accedi');
@@ -122,6 +123,74 @@ export default function PaginaGarage() {
       setMoto((elenco) => elenco.map((item) => item.id === selezionata.id ? { ...item, ...valori } : item));
     }
     setSalvando(false);
+  }
+
+  async function eliminaMoto() {
+    if (!selezionata || !user) return;
+    const conferma = window.confirm(
+      `Eliminare ${nomeMoto(selezionata)} dal garage?\n\nFoto e gemello 3D verranno rimossi. L'operazione non si può annullare.`,
+    );
+    if (!conferma) return;
+
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+
+    setSalvando(true);
+    setErrore(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Sessione scaduta. Accedi di nuovo.');
+
+      const risposta = await fetch('/api/garage/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ motoId: selezionata.id }),
+      });
+      const json = await risposta.json() as { errore?: string };
+      if (!risposta.ok) throw new Error(json.errore ?? 'Eliminazione non riuscita.');
+
+      const idRimosso = selezionata.id;
+      if (generazioneId === idRimosso) {
+        setGenerazioneId(null);
+        setVista('garage');
+      }
+
+      const { data } = await supabase
+        .from('moto')
+        .select('*')
+        .eq('utente_id', user.id)
+        .order('created_at', { ascending: false });
+      const elenco = (data ?? []) as GarageMoto[];
+      const arricchite = await Promise.all(elenco.map(async (item) => {
+        const [principale, secondaria] = await Promise.all([
+          item.foto_sx_url
+            ? supabase.storage.from('foto-moto').createSignedUrl(item.foto_sx_url, 3600)
+            : Promise.resolve({ data: null }),
+          item.foto_dx_url
+            ? supabase.storage.from('foto-moto').createSignedUrl(item.foto_dx_url, 3600)
+            : Promise.resolve({ data: null }),
+        ]);
+        return {
+          ...item,
+          foto_sx_signed_url: principale.data?.signedUrl ?? null,
+          foto_dx_signed_url: secondaria.data?.signedUrl ?? null,
+        };
+      }));
+
+      setMoto(arricchite);
+      setSelezionataId((attuale) => {
+        if (attuale && attuale !== idRimosso) return attuale;
+        return arricchite[0]?.id ?? null;
+      });
+    } catch (error) {
+      setErrore(error instanceof Error ? error.message : 'Eliminazione non riuscita.');
+    } finally {
+      setSalvando(false);
+    }
   }
 
   if (loading || (!user && !loading)) {
@@ -290,7 +359,20 @@ export default function PaginaGarage() {
                           Anteprima visitatore
                         </Link>
                       )}
+                      <button
+                        type="button"
+                        onClick={eliminaMoto}
+                        disabled={salvando}
+                        className="rounded-app border border-red-500/35 bg-red-500/10 px-4 py-3 font-mono text-[10px] font-bold uppercase text-red-300 transition-colors hover:bg-red-500/20 disabled:opacity-40"
+                      >
+                        {salvando ? 'Eliminazione…' : 'Elimina moto'}
+                      </button>
                     </div>
+                    {errore && (
+                      <p className="mt-3 rounded-app border border-red-500/30 bg-red-950/50 px-3 py-2 text-xs text-red-200">
+                        {errore}
+                      </p>
+                    )}
                   </>
                 ) : (
                   <p className="mt-3 text-sm text-cemento/55">Non hai ancora moto nel garage.</p>
