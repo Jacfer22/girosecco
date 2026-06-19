@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { useAuth } from '@/components/AuthProvider';
 import AdminGarageQueue from '@/components/AdminGarageQueue';
@@ -23,15 +24,6 @@ interface RigaProfilo {
   is_admin: boolean;
 }
 
-interface RigaArticolo {
-  id: string;
-  titolo: string;
-  contenuto: string;
-  stato: 'in_revisione' | 'pubblicato' | 'rifiutato';
-  created_at: string;
-  autore: { username: string | null } | null;
-}
-
 interface RigaListaAttesa {
   id: string;
   email: string;
@@ -45,7 +37,6 @@ export default function PaginaAdmin() {
   const supabase = getSupabaseBrowser();
   const [avvisi, setAvvisi] = useState<RigaAvviso[] | null>(null);
   const [profili, setProfili] = useState<RigaProfilo[] | null>(null);
-  const [articoli, setArticoli] = useState<RigaArticolo[] | null>(null);
   const [listaAttesa, setListaAttesa] = useState<RigaListaAttesa[] | null>(null);
   const [errore, setErrore] = useState<string | null>(null);
   const autorizzato = Boolean(profilo?.is_admin);
@@ -56,14 +47,12 @@ export default function PaginaAdmin() {
     Promise.all([
       supabase.from('avvisi').select('id, tipo, titolo, data, attivo, fonte, itinerari(slug, titolo)').order('data', { ascending: false }),
       supabase.from('profiles').select('id, username, is_pro, is_admin').order('created_at', { ascending: false }),
-      supabase.from('articoli').select('id, titolo, contenuto, stato, created_at, autore:profiles(username)').eq('stato', 'in_revisione').order('created_at', { ascending: true }),
       supabase.from('lista_attesa_pro').select('id, email, piano_interesse, created_at').order('created_at', { ascending: false }),
-    ]).then(([avvisiRes, profiliRes, articoliRes, attesaRes]) => {
-      const primoErrore = avvisiRes.error || profiliRes.error || articoliRes.error;
+    ]).then(([avvisiRes, profiliRes, attesaRes]) => {
+      const primoErrore = avvisiRes.error || profiliRes.error;
       if (primoErrore) setErrore(primoErrore.message);
       if (avvisiRes.data) setAvvisi(avvisiRes.data as unknown as RigaAvviso[]);
       if (profiliRes.data) setProfili(profiliRes.data as RigaProfilo[]);
-      if (articoliRes.data) setArticoli(articoliRes.data as unknown as RigaArticolo[]);
       if (attesaRes.data) setListaAttesa(attesaRes.data as RigaListaAttesa[]);
     });
   }, [supabase, autorizzato]);
@@ -80,15 +69,6 @@ export default function PaginaAdmin() {
     const { error } = await supabase.from('profiles').update({ is_pro: !valore }).eq('id', id);
     if (error) return setErrore(error.message);
     setProfili((attuali) => attuali?.map((item) => item.id === id ? { ...item, is_pro: !valore } : item) ?? null);
-  }
-
-  async function moderaArticolo(id: string, decisione: 'pubblicato' | 'rifiutato') {
-    if (!supabase) return;
-    const aggiornamento: Record<string, unknown> = { stato: decisione };
-    if (decisione === 'pubblicato') aggiornamento.pubblicato_at = new Date().toISOString();
-    const { error } = await supabase.from('articoli').update(aggiornamento).eq('id', id);
-    if (error) return setErrore(error.message);
-    setArticoli((attuali) => attuali?.filter((item) => item.id !== id) ?? null);
   }
 
   if (nonConfigurato) {
@@ -133,21 +113,6 @@ export default function PaginaAdmin() {
         ) : <p className="mt-3 font-mono text-sm text-asfalto/50">Ancora nessuna iscrizione.</p>}
       </div>
 
-      <TitoloSezione titolo="Articoli da revisionare" descrizione="Pubblica o rifiuta gli articoli inviati dagli utenti." />
-      <div className="mt-4 divide-y-2 divide-asfalto/10 border-2 border-asfalto bg-white dark:bg-carbone">
-        {articoli === null ? <Caricamento /> : articoli.length === 0 ? <Vuoto testo="Nessun articolo da revisionare." /> : articoli.map((item) => (
-          <div key={item.id} className="p-4">
-            <p className="font-mono text-xs uppercase text-asfalto/50">{item.autore?.username ?? 'utente'} · {new Date(item.created_at).toLocaleDateString('it-IT')}</p>
-            <p className="mt-1 font-display text-xl font-bold uppercase tracking-tight">{item.titolo}</p>
-            <p className="mt-1 line-clamp-3 text-sm text-asfalto/70">{item.contenuto}</p>
-            <div className="mt-3 flex gap-2">
-              <button type="button" onClick={() => moderaArticolo(item.id, 'pubblicato')} className="border-2 border-asfalto bg-segnale px-3 py-1.5 font-mono text-xs font-medium uppercase text-asfalto">Pubblica</button>
-              <button type="button" onClick={() => moderaArticolo(item.id, 'rifiutato')} className="border-2 border-asfalto px-3 py-1.5 font-mono text-xs font-medium uppercase">Rifiuta</button>
-            </div>
-          </div>
-        ))}
-      </div>
-
       <TitoloSezione titolo="Avvisi" descrizione="Attiva o disattiva gli aggiornamenti stradali." />
       <div className="mt-4 divide-y-2 divide-asfalto/10 border-2 border-asfalto bg-white dark:bg-carbone">
         {avvisi === null ? <Caricamento /> : avvisi.length === 0 ? <Vuoto testo="Nessun avviso." /> : avvisi.map((item) => (
@@ -168,7 +133,14 @@ export default function PaginaAdmin() {
       <div className="mt-4 divide-y-2 divide-asfalto/10 border-2 border-asfalto bg-white dark:bg-carbone">
         {profili === null ? <Caricamento /> : profili.map((item) => (
           <div key={item.id} className="flex items-center justify-between gap-4 p-4">
-            <p className="font-mono text-sm">{item.username ?? item.id.slice(0, 8)}{item.is_admin && <span className="ml-2 text-cartello">· admin</span>}</p>
+            <div>
+              <p className="font-mono text-sm">{item.username ?? item.id.slice(0, 8)}{item.is_admin && <span className="ml-2 text-cartello">· admin</span>}</p>
+              {item.username && (
+                <Link href={`/profilo/${item.username}`} className="font-mono text-[10px] uppercase text-bosco hover:underline">
+                  Apri profilo
+                </Link>
+              )}
+            </div>
             <button type="button" onClick={() => togglePro(item.id, item.is_pro)} className={`shrink-0 border-2 border-asfalto px-3 py-1.5 font-mono text-xs font-medium uppercase ${item.is_pro ? 'bg-segnale text-asfalto' : 'bg-white text-asfalto/50'}`}>
               {item.is_pro ? 'Pro' : 'Free'}
             </button>

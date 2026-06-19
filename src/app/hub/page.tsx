@@ -31,7 +31,8 @@ const AZIONI: AzioneHub[] = [
   { href: '/itinerari', icona: 'strada', titolo: 'Itinerari', sotto: 'Gli itinerari, regione per regione' },
   { href: '/traccia', icona: 'gps', titolo: 'Traccia un giro', sotto: 'Registra percorso e statistiche' },
   { href: '/community', icona: 'foto', titolo: 'Community', sotto: 'Foto, commenti e giri dei biker' },
-  { href: '/blog', icona: 'blog', titolo: 'Blog', sotto: 'Strade e storie da chi guida' },
+  { href: '/giri', icona: 'gps', titolo: 'I miei giri', sotto: 'Percorsi salvati e card social' },
+  { href: '/community/classifica', icona: 'classifica', titolo: 'Classifica km', sotto: 'I rider con più chilometri' },
   { href: '/account', icona: 'profilo', titolo: 'Il tuo profilo', sotto: 'Foto, username e moto' },
   { href: '/pro', icona: 'pro', titolo: 'MotoGarage Pro', sotto: 'Gemello digitale, GPX e contenuti premium', soloFree: true },
   { href: '/admin', icona: 'admin', titolo: 'Pannello admin', sotto: 'Gemelli, utenti e moderazione', soloAdmin: true },
@@ -56,8 +57,8 @@ function IconaHub({ nome }: { nome: string }) {
       return <svg {...props}><circle cx="12" cy="10" r="3" /><path d="M12 2a8 8 0 0 0-8 8c0 5.5 8 12 8 12s8-6.5 8-12a8 8 0 0 0-8-8z" /></svg>;
     case 'foto':
       return <svg {...props}><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="8.5" cy="10" r="1.5" /><path d="m21 16-4.5-4.5L7 21" /></svg>;
-    case 'blog':
-      return <svg {...props}><path d="M4 4h16v16H4z" /><path d="M8 9h8M8 13h6" /></svg>;
+    case 'classifica':
+      return <svg {...props}><path d="M8 21h8" /><path d="M12 17V7" /><path d="M7 7h10L12 3z" /></svg>;
     case 'profilo':
       return <svg {...props}><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6" /></svg>;
     case 'pro':

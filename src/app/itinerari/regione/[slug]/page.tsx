@@ -83,12 +83,12 @@ export default async function PaginaRegione({
             Conosci un bel giro in {nome}? Raccontacelo: lo trasformiamo in un
             itinerario con mappa e GPX, e lo pubblichiamo qui.
           </p>
-          <Link
-            href="/blog/nuovo"
+          <a
+            href="mailto:info@motogarage.it?subject=Proposta%20itinerario%20MotoGarage"
             className="mt-4 inline-block bg-segnale px-5 py-2.5 font-mono text-sm font-medium uppercase text-asfalto hover:bg-asfalto hover:text-cemento"
           >
             Proponi un giro
-          </Link>
+          </a>
         </div>
       ) : (
         <>

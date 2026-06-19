@@ -120,7 +120,9 @@ export default function Feed() {
         <div key={`${v.tipo}-${v.id}`} className="card-app overflow-hidden p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="font-mono text-xs uppercase tracking-wide text-asfalto/55">
-              <span className="font-medium text-asfalto">{v.autore}</span>
+              <Link href={`/profilo/${v.autore}`} className="font-medium text-asfalto hover:text-brand hover:underline">
+                {v.autore}
+              </Link>
               {v.tipo === 'foto' && ' ha aggiunto una foto'}
               {v.tipo === 'commento' && ' ha commentato'}
               {v.tipo === 'giro' && ' ha registrato un giro'}

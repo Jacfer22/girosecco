@@ -128,6 +128,21 @@ export default function PaginaProfilo() {
           </p>
         )}
 
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <Link
+            href={`/garage/${profilo.username}`}
+            className="rounded-app border border-asfalto/15 px-4 py-2 font-mono text-[10px] font-bold uppercase hover:border-brand hover:text-brand"
+          >
+            Garage pubblico
+          </Link>
+          <Link
+            href="/community/classifica"
+            className="rounded-app border border-asfalto/15 px-4 py-2 font-mono text-[10px] font-bold uppercase hover:border-brand hover:text-brand"
+          >
+            Classifica km
+          </Link>
+        </div>
+
         {/* Statistiche veloci */}
         {giri.length > 0 && (
           <div className="mt-4 flex gap-6">

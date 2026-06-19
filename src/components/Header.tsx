@@ -43,8 +43,8 @@ export default function Header() {
         <nav className="hidden items-center gap-5 sm:flex">
           <Voce href="/itinerari" label="Itinerari" attivo={attivo('/itinerari')} />
           <Voce href="/community" label="Community" attivo={attivo('/community')} />
-          <Voce href="/blog" label="Blog" attivo={attivo('/blog')} />
           {isLogged && <Voce href="/garage" label="Garage" attivo={attivo('/garage')} evidenza />}
+          {isLogged && <Voce href="/giri" label="I miei giri" attivo={attivo('/giri')} />}
           {isAdmin && <Voce href="/admin" label="Admin" attivo={attivo('/admin')} />}
           {!loading && !nonConfigurato && (
             <Voce
@@ -81,8 +81,8 @@ export default function Header() {
         <nav className="border-t border-white/10 bg-asfalto px-4 pb-4">
           <MenuMobile href="/itinerari" label="Itinerari" onClick={chiudiMenu} />
           <MenuMobile href="/community" label="Community" onClick={chiudiMenu} />
-          <MenuMobile href="/blog" label="Blog" onClick={chiudiMenu} />
           {isLogged && <MenuMobile href="/garage" label="Il mio Garage" onClick={chiudiMenu} />}
+          {isLogged && <MenuMobile href="/giri" label="I miei giri" onClick={chiudiMenu} />}
           {!loading && !nonConfigurato && (
             <MenuMobile href={user ? '/hub' : '/accedi'} label={user ? 'Hub' : 'Accedi'} onClick={chiudiMenu} />
           )}

@@ -69,7 +69,7 @@ export default async function PaginaItinerario({
           <p className="mt-1 text-sm text-asfalto/70">
             Una delle strade-icona della zona, descritta da fonti pubbliche. La
             traccia GPS di dettaglio non è ancora rifinita: se lo conosci e vuoi
-            aggiungere tappe o GPX, scrivici dal blog.
+            aggiungere tappe o GPX, scrivici a info@motogarage.it.
           </p>
         </div>
       )}

@@ -132,15 +132,16 @@ export default async function PaginaItinerari() {
               Proponi un nuovo giro
             </h3>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-asfalto/60">
-              Se hai un percorso che vale la pena condividere, raccontacelo dal blog.
+              Se hai un percorso che vale la pena condividere, scrivici a{' '}
+              <a href="mailto:info@motogarage.it" className="text-brand hover:underline">info@motogarage.it</a>.
               Lo trasformiamo in itinerario con mappa, tappe e GPX.
             </p>
-            <Link
-              href="/blog/nuovo"
+            <a
+              href="mailto:info@motogarage.it?subject=Proposta%20itinerario%20MotoGarage"
               className="tap mt-5 inline-flex items-center rounded-app bg-asfalto px-5 py-3 font-mono text-xs font-bold uppercase tracking-wide text-cemento transition-colors hover:bg-red-600"
             >
-              Scrivi la tua proposta
-            </Link>
+              Proponi un giro
+            </a>
           </div>
         </Reveal>
       </section>

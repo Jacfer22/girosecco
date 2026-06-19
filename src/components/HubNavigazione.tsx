@@ -41,10 +41,10 @@ const TILES: Tile[] = [
     icona: '🤝',
   },
   {
-    href: '/blog',
-    titolo: 'Blog',
-    sotto: 'Strade, moto e storie da chi guida davvero',
-    icona: '📖',
+    href: '/community/classifica',
+    titolo: 'Classifica km',
+    sotto: 'I rider con più chilometri registrati',
+    icona: '🏆',
   },
   {
     href: '/account',
