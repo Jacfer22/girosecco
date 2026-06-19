@@ -58,6 +58,21 @@ HUGGINGFACE_TOKEN=hf_...
 
 3. Esegui `supabase/migration_garage_libero.sql` per aprire il garage a tutti gli utenti.
 
+### Variabili obbligatorie su Vercel
+
+La generazione gemelli usa API server-side. Su **Vercel → Settings → Environment Variables** aggiungi anche:
+
+| Variabile | Note |
+|-----------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Già presente se il login funziona |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Già presente se il login funziona |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Chiave service_role** da Supabase (non la anon) |
+| `HUGGINGFACE_TOKEN` | Token HF con permesso lettura |
+
+Dopo ogni modifica alle variabili: **Redeploy** su Vercel.
+
+Verifica rapida: apri `/api/garage/health` — deve rispondere `"ok": true`.
+
 Lo Space [VAST-AI/TriplaneGaussian](https://huggingface.co/spaces/VAST-AI/TriplaneGaussian) può impiegare 1–2 minuti per svegliarsi al primo utilizzo.
 
 ## Flusso manuale (admin, fallback)

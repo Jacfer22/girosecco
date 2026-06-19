@@ -4,6 +4,7 @@ import { eseguiGenerazioneGemello } from '@/lib/garage-generate';
 import { aggiornaProgressoGarage } from '@/lib/garage-model';
 import { PROVIDER_APPROVAZIONE, PROVIDER_HF, puoGenerareAutomaticamente } from '@/lib/garage-limite';
 import { rispostaErroreApi, verificaUtente } from '@/lib/garage-server-auth';
+import { verificaConfigGenerazione } from '@/lib/env-server';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -11,6 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
+    verificaConfigGenerazione();
     const { user, admin } = await verificaUtente(req);
     const body = await req.json() as { motoId?: string };
     const motoId = String(body.motoId ?? '').trim();

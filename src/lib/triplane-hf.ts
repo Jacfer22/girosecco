@@ -19,14 +19,16 @@ function estraiUrlFile(valore: unknown): string | null {
   return null;
 }
 
+import { huggingFaceToken } from '@/lib/env-server';
+
 export async function generaSplatDaImmagine(
   imageBytes: Uint8Array,
   mimeType: string,
   onProgress?: (progress: number, messaggio: string) => Promise<void> | void,
 ): Promise<Uint8Array> {
-  const token = process.env.HUGGINGFACE_TOKEN?.trim();
+  const token = huggingFaceToken();
   if (!token) {
-    throw new Error('HUGGINGFACE_TOKEN non configurato sul server.');
+    throw new Error('HUGGINGFACE_TOKEN non configurato. Aggiungilo su Vercel e in .env.local.');
   }
 
   await onProgress?.(15, 'Connessione a TriplaneGaussian su Hugging Face…');

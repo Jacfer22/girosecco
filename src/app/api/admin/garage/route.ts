@@ -1,23 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import {
+  supabaseAnonKey,
+  supabaseServiceRoleKey,
+  supabaseUrlServer,
+  verificaConfigServer,
+} from '@/lib/env-server';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
 function adminClient() {
-  if (!url || !serviceRole) throw new Error('Supabase server non configurato.');
-  return createClient(url, serviceRole, {
+  verificaConfigServer();
+  return createClient(supabaseUrlServer(), supabaseServiceRoleKey(), {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }
 
 async function verificaAdmin(req: NextRequest): Promise<{ user: User; admin: SupabaseClient }> {
-  if (!url || !anon) throw new Error('Supabase non configurato.');
+  verificaConfigServer();
+  const url = supabaseUrlServer();
+  const anon = supabaseAnonKey();
   const authorization = req.headers.get('authorization');
   const token = authorization?.startsWith('Bearer ') ? authorization.slice(7) : null;
   if (!token) throw new Error('Autenticazione richiesta.');
