@@ -2,7 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 export const LIMITE_RICHIESTE_MS = 60 * 60 * 1000;
 export const PROVIDER_APPROVAZIONE = 'in-attesa-approvazione';
-export const PROVIDER_HF = 'huggingface-tgs';
+export const PROVIDER_HF = 'huggingface-triposplat';
 
 /** True se l'utente può avviare una generazione automatica (max 1/ora). */
 export async function puoGenerareAutomaticamente(

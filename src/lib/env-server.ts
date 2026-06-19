@@ -1,6 +1,18 @@
+import { loadEnvConfig } from '@next/env';
+import path from 'path';
+
 const MESSAGGIO_MANCANTE = 'Configurazione server incompleta. Aggiungi su Vercel (Settings → Environment Variables) e in .env.local:';
 
+let envCaricato = false;
+
+function assicuraEnv() {
+  if (envCaricato) return;
+  loadEnvConfig(path.join(process.cwd()));
+  envCaricato = true;
+}
+
 function leggiEnv(...nomi: string[]): string {
+  assicuraEnv();
   for (const nome of nomi) {
     const valore = process.env[nome]?.trim();
     if (valore) return valore;
@@ -29,29 +41,41 @@ export function huggingFaceToken(): string {
   return leggiEnv('HUGGINGFACE_TOKEN', 'HF_TOKEN');
 }
 
-export function verificaConfigServer(): void {
+/** Space HF per generazione gemello (default: TripoSplat, attivo su ZeroGPU). */
+export function hfGarageSpace(): string {
+  return leggiEnv('HF_GARAGE_SPACE', 'HUGGINGFACE_GARAGE_SPACE') || 'VAST-AI/TripoSplat';
+}
+
+export function verificaConfigMinima(): void {
   const mancanti: string[] = [];
   if (!supabaseUrlServer()) mancanti.push('NEXT_PUBLIC_SUPABASE_URL');
   if (!supabaseAnonKey()) mancanti.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
-  if (!supabaseServiceRoleKey()) mancanti.push('SUPABASE_SERVICE_ROLE_KEY');
   if (mancanti.length > 0) {
     throw new Error(`${MESSAGGIO_MANCANTE} ${mancanti.join(', ')}`);
   }
 }
 
+/** Richiede solo Supabase pubblico (anon). La service role è opzionale. */
+export function verificaConfigServer(): void {
+  verificaConfigMinima();
+}
+
 export function verificaConfigGenerazione(): void {
-  verificaConfigServer();
+  verificaConfigMinima();
   if (!huggingFaceToken()) {
     throw new Error(`${MESSAGGIO_MANCANTE} HUGGINGFACE_TOKEN`);
   }
 }
 
 export function statoConfigServer() {
+  assicuraEnv();
+  const serviceRole = !!supabaseServiceRoleKey();
   return {
     supabaseUrl: !!supabaseUrlServer(),
     anonKey: !!supabaseAnonKey(),
-    serviceRole: !!supabaseServiceRoleKey(),
+    serviceRole,
     huggingFace: !!huggingFaceToken(),
+    modalita: serviceRole ? 'service_role' : 'utente',
     ambiente: process.env.NODE_ENV ?? 'unknown',
     variabiliServiceRole: {
       SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY?.trim(),

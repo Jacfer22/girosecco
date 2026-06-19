@@ -96,7 +96,9 @@ export default function PaginaGarage() {
         const json = await risposta.json() as { moto?: GarageMoto };
         if (!json.moto) return;
 
-        setMoto((elenco) => elenco.map((item) => item.id === json.moto!.id ? { ...item, ...json.moto } : item));
+        setMoto((elenco) => elenco.map((item) => (
+          item.id === json.moto!.id ? { ...item, ...json.moto } : item
+        )));
 
         if (json.moto.stato === 'pronto') {
           setSelezionataId(json.moto.id);
@@ -125,10 +127,11 @@ export default function PaginaGarage() {
     setSalvando(false);
   }
 
-  async function eliminaMoto() {
-    if (!selezionata || !user) return;
+  async function eliminaMoto(motoId?: string) {
+    const target = motoId ? moto.find((item) => item.id === motoId) : selezionata;
+    if (!target || !user) return;
     const conferma = window.confirm(
-      `Eliminare ${nomeMoto(selezionata)} dal garage?\n\nFoto e gemello 3D verranno rimossi. L'operazione non si può annullare.`,
+      `Eliminare ${nomeMoto(target)} dal garage?\n\nFoto e gemello 3D verranno rimossi. L'operazione non si può annullare.`,
     );
     if (!conferma) return;
 
@@ -148,12 +151,12 @@ export default function PaginaGarage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ motoId: selezionata.id }),
+        body: JSON.stringify({ motoId: target.id }),
       });
       const json = await risposta.json() as { errore?: string };
       if (!risposta.ok) throw new Error(json.errore ?? 'Eliminazione non riuscita.');
 
-      const idRimosso = selezionata.id;
+      const idRimosso = target.id;
       if (generazioneId === idRimosso) {
         setGenerazioneId(null);
         setVista('garage');
@@ -224,6 +227,7 @@ export default function PaginaGarage() {
         selezionataId={selezionataId}
         onSeleziona={setSelezionataId}
         fotoAnteprima={pronte.length === 0 ? fotoAnteprima : null}
+        mostraViewer={vista === 'garage'}
       >
         {/* Mobile: selettore moto sotto il viewer */}
         {moto.length > 1 && vista === 'garage' && (
@@ -231,15 +235,25 @@ export default function PaginaGarage() {
             <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/50">Le tue moto</p>
             <div className="garage-moto-scroll-track">
               {moto.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSelezionataId(item.id)}
-                  className={`garage-moto-chip ${item.id === selezionata?.id ? 'garage-moto-chip-attiva' : ''}`}
-                >
-                  <span className="block truncate font-display text-sm font-black uppercase text-white">{nomeMoto(item)}</span>
-                  <span className="font-mono text-[9px] uppercase text-cemento/45">{statoMotoLabel(item.stato, item.provider)}</span>
-                </button>
+                <div key={item.id} className="garage-moto-chip-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setSelezionataId(item.id)}
+                    className={`garage-moto-chip ${item.id === selezionata?.id ? 'garage-moto-chip-attiva' : ''}`}
+                  >
+                    <span className="block truncate font-display text-sm font-black uppercase text-white">{nomeMoto(item)}</span>
+                    <span className="font-mono text-[9px] uppercase text-cemento/45">{statoMotoLabel(item.stato, item.provider)}</span>
+                  </button>
+                  <button
+                    type="button"
+                    title={`Elimina ${nomeMoto(item)}`}
+                    disabled={salvando}
+                    onClick={() => eliminaMoto(item.id)}
+                    className="garage-moto-chip-elimina"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -287,7 +301,9 @@ export default function PaginaGarage() {
                 completato={motoGenerazione.stato === 'pronto'}
                 errore={motoGenerazione.stato === 'errore' ? motoGenerazione.errore : null}
                 onApriGarage={async () => {
+                  const id = generazioneId;
                   await caricaMoto();
+                  if (id) setSelezionataId(id);
                   setVista('garage');
                   setGenerazioneId(null);
                 }}
@@ -361,7 +377,7 @@ export default function PaginaGarage() {
                       )}
                       <button
                         type="button"
-                        onClick={eliminaMoto}
+                        onClick={() => eliminaMoto()}
                         disabled={salvando}
                         className="rounded-app border border-red-500/35 bg-red-500/10 px-4 py-3 font-mono text-[10px] font-bold uppercase text-red-300 transition-colors hover:bg-red-500/20 disabled:opacity-40"
                       >
@@ -384,15 +400,25 @@ export default function PaginaGarage() {
                   <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/45">Le tue moto</p>
                   <div className="max-h-40 space-y-2 overflow-y-auto">
                     {moto.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => setSelezionataId(item.id)}
-                        className={`w-full rounded-app border p-2.5 text-left ${item.id === selezionata?.id ? 'border-brand bg-brand/10' : 'border-white/10 bg-black/20'}`}
-                      >
-                        <span className="block truncate font-display text-base font-black uppercase text-white">{nomeMoto(item)}</span>
-                        <span className="font-mono text-[9px] uppercase text-cemento/45">{statoMotoLabel(item.stato, item.provider)}</span>
-                      </button>
+                      <div key={item.id} className="flex items-stretch gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setSelezionataId(item.id)}
+                          className={`min-w-0 flex-1 rounded-app border p-2.5 text-left ${item.id === selezionata?.id ? 'border-brand bg-brand/10' : 'border-white/10 bg-black/20'}`}
+                        >
+                          <span className="block truncate font-display text-base font-black uppercase text-white">{nomeMoto(item)}</span>
+                          <span className="font-mono text-[9px] uppercase text-cemento/45">{statoMotoLabel(item.stato, item.provider)}</span>
+                        </button>
+                        <button
+                          type="button"
+                          title={`Elimina ${nomeMoto(item)}`}
+                          disabled={salvando}
+                          onClick={() => eliminaMoto(item.id)}
+                          className="shrink-0 rounded-app border border-red-500/30 bg-red-500/10 px-2.5 font-mono text-sm text-red-300 hover:bg-red-500/20 disabled:opacity-40"
+                        >
+                          ×
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>

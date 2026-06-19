@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     const { data: moto, error } = await admin
       .from('moto')
-      .select('id, utente_id, marca, modello, anno, stato, progress, errore, provider, model_url, model_format')
+      .select('id, utente_id, marca, modello, anno, stato, progress, errore, provider, model_url, model_format, updated_at')
       .eq('id', motoId)
       .single();
 

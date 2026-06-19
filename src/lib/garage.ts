@@ -30,8 +30,15 @@ export function nomeMoto(moto: Pick<GarageMoto, 'marca' | 'modello'>): string {
   return `${moto.marca} ${moto.modello}`.trim();
 }
 
-export function urlModello(moto: Pick<GarageMoto, 'model_url' | 'glb_url'>): string | null {
-  return moto.model_url || moto.glb_url || null;
+export function urlModello(
+  moto: Pick<GarageMoto, 'model_url' | 'glb_url'> & { updated_at?: string },
+  cacheBust = true,
+): string | null {
+  const base = moto.model_url || moto.glb_url || null;
+  if (!base || !cacheBust) return base;
+  const stamp = moto.updated_at ? new Date(moto.updated_at).getTime() : Date.now();
+  const separatore = base.includes('?') ? '&' : '?';
+  return `${base}${separatore}v=${stamp}`;
 }
 
 export function formatoModello(moto: Pick<GarageMoto, 'model_format' | 'model_url' | 'glb_url'>): FormatoModello {

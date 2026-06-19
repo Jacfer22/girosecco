@@ -1,7 +1,8 @@
 import { Client } from '@gradio/client';
+import { hfGarageSpace, huggingFaceToken } from '@/lib/env-server';
 
-const HF_SPACE = 'VAST-AI/TriplaneGaussian';
-const CAM_DIST = 1.9;
+const TENTATIVI_CONN = 3;
+const PAUSA_RITENTO_MS = 10_000;
 
 interface FileRef {
   url?: string;
@@ -19,7 +20,30 @@ function estraiUrlFile(valore: unknown): string | null {
   return null;
 }
 
-import { huggingFaceToken } from '@/lib/env-server';
+function messaggioErroreHf(errore: unknown, space: string): string {
+  const msg = errore instanceof Error ? errore.message : String(errore);
+  if (/could not resolve app config/i.test(msg)) {
+    if (space.includes('TriplaneGaussian')) {
+      return 'TriplaneGaussian su Hugging Face è offline (GPU non disponibili). MotoGarage usa TripoSplat: imposta HF_GARAGE_SPACE=VAST-AI/TripoSplat su Vercel e rifai deploy.';
+    }
+    return 'Il laboratorio AI su Hugging Face non risponde (spazio spento o in avvio). Attendi 1–2 minuti e riprova.';
+  }
+  if (/503|502|504|unavailable/i.test(msg)) {
+    return 'Il laboratorio AI è temporaneamente sovraccarico. Riprova tra qualche minuto.';
+  }
+  return msg;
+}
+
+async function connettiSpace(space: string, token: string) {
+  return Client.connect(space, {
+    token: token as `hf_${string}`,
+    status_callback: (status) => {
+      if (process.env.NODE_ENV === 'development' && status.status !== 'running') {
+        console.info(`[HF ${space}]`, status.status, status.detail ?? '');
+      }
+    },
+  });
+}
 
 export async function generaSplatDaImmagine(
   imageBytes: Uint8Array,
@@ -31,25 +55,60 @@ export async function generaSplatDaImmagine(
     throw new Error('HUGGINGFACE_TOKEN non configurato. Aggiungilo su Vercel e in .env.local.');
   }
 
-  await onProgress?.(15, 'Connessione a TriplaneGaussian su Hugging Face…');
+  const space = hfGarageSpace();
+  await onProgress?.(15, `Connessione a ${space}…`);
 
-  const client = await Client.connect(HF_SPACE, {
-    token: token as `hf_${string}`,
-  });
+  let client: Awaited<ReturnType<typeof Client.connect>> | null = null;
+  let ultimoErrore: unknown = null;
 
-  await onProgress?.(30, 'Rimozione sfondo e ricostruzione 3D…');
+  for (let tentativo = 0; tentativo < TENTATIVI_CONN; tentativo += 1) {
+    try {
+      if (tentativo > 0) {
+        await onProgress?.(18, 'Attendo che il laboratorio AI si svegli…');
+        await new Promise((resolve) => setTimeout(resolve, PAUSA_RITENTO_MS * tentativo));
+      }
+      client = await connettiSpace(space, token);
+      break;
+    } catch (errore) {
+      ultimoErrore = errore;
+    }
+  }
+
+  if (!client) {
+    throw new Error(messaggioErroreHf(ultimoErrore, space));
+  }
+
+  await onProgress?.(30, 'Generazione Gaussian Splat da foto…');
 
   const blob = new Blob([Buffer.from(imageBytes)], { type: mimeType || 'image/jpeg' });
-  const risultato = await client.predict('/run_example', [blob]);
+
+  let risultato: Awaited<ReturnType<typeof client.predict>>;
+  try {
+    if (space.includes('TriplaneGaussian')) {
+      risultato = await client.predict('/run_example', [blob]);
+    } else {
+      risultato = await client.predict('/generate', {
+        image: blob,
+        seed: 42,
+        steps: 20,
+        guidance_scale: 3,
+        num_gaussians: 131_072,
+        output_format: 'ply',
+      });
+    }
+  } catch (errore) {
+    throw new Error(messaggioErroreHf(errore, space));
+  }
 
   const dati = risultato?.data;
   if (!Array.isArray(dati) || dati.length < 2) {
-    throw new Error('Risposta inattesa da TriplaneGaussian.');
+    throw new Error('Risposta inattesa dal laboratorio AI.');
   }
 
-  const plyUrl = estraiUrlFile(dati[1]);
+  const indicePly = space.includes('TriplaneGaussian') ? 1 : 1;
+  const plyUrl = estraiUrlFile(dati[indicePly]);
   if (!plyUrl) {
-    throw new Error('TriplaneGaussian non ha restituito un file PLY.');
+    throw new Error('Il laboratorio AI non ha restituito un file PLY.');
   }
 
   await onProgress?.(80, 'Download del modello Gaussian Splat…');
@@ -59,6 +118,5 @@ export async function generaSplatDaImmagine(
     throw new Error(`Download PLY fallito (${risposta.status}).`);
   }
 
-  const buffer = await risposta.arrayBuffer();
-  return new Uint8Array(buffer);
+  return new Uint8Array(await risposta.arrayBuffer());
 }

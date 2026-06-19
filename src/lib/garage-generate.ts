@@ -20,7 +20,7 @@ export async function eseguiGenerazioneGemello(admin: SupabaseClient, moto: Moto
     stato: 'elaborazione',
     progress: 5,
     errore: null,
-    provider: 'huggingface-tgs',
+    provider: 'huggingface-triposplat',
   });
 
   const { data: signed, error: signedError } = await admin.storage
@@ -40,5 +40,5 @@ export async function eseguiGenerazioneGemello(admin: SupabaseClient, moto: Moto
   const ply = await generaSplatDaImmagine(bytes, mime, progresso);
 
   await progresso(92, 'Pubblicazione nel garage…');
-  await pubblicaModelloGarage(admin, moto.id, ply, 'ply', 'huggingface-tgs');
+  await pubblicaModelloGarage(admin, moto.id, ply, 'ply', 'huggingface-triposplat');
 }

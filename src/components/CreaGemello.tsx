@@ -155,7 +155,7 @@ export default function CreaGemello({ onInviato }: Props) {
         <p className="mt-4 text-sm leading-6 text-cemento/65">
           {inApprovazione
             ? `Hai già usato la generazione automatica nell'ultima ora. La tua ${marca} ${modello} è in coda: verrà elaborata dopo la mia approvazione.`
-            : `Stiamo creando il gemello digitale della tua ${marca} ${modello} con TriplaneGaussian.`}
+            : `Stiamo creando il gemello digitale della tua ${marca} ${modello} con TripoSplat AI.`}
         </p>
       </section>
     );
@@ -167,7 +167,7 @@ export default function CreaGemello({ onInviato }: Props) {
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand">Gemello digitale</p>
         <h1 className="mt-3 font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-6xl">La tua moto in Gaussian Splat</h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-asfalto/60 dark:text-cemento/60">
-          Carica una foto laterale pulita: TriplaneGaussian su Hugging Face genera automaticamente il modello 3D nel tuo garage. Una generazione automatica all&apos;ora; le successive richiedono approvazione.
+          Carica una foto laterale pulita: TripoSplat su Hugging Face genera automaticamente il modello 3D nel tuo garage. Una generazione automatica all&apos;ora; le successive richiedono approvazione.
         </p>
 
         <div className="mt-7 grid grid-cols-2 gap-2">
@@ -184,7 +184,15 @@ export default function CreaGemello({ onInviato }: Props) {
               </select>
             </Campo>
             <Campo label="Modello">
-              <input value={modello} onChange={(event) => setModello(event.target.value)} placeholder="es. Monster 937, MT-07, R 1300 GS" className="input-app" maxLength={60} />
+              <input
+                value={modello}
+                onChange={(event) => setModello(event.target.value)}
+                placeholder="es. Panigale V4, Monster 937, MT-07"
+                className="input-app"
+                maxLength={60}
+                autoComplete="off"
+                spellCheck={false}
+              />
             </Campo>
             <Campo label="Anno">
               <input type="number" value={anno} onChange={(event) => setAnno(event.target.value)} placeholder="es. 2024" className="input-app" min={1950} max={new Date().getFullYear() + 1} />
@@ -226,7 +234,7 @@ export default function CreaGemello({ onInviato }: Props) {
           <li>× Niente persone davanti</li>
         </ul>
         <p className="mt-6 text-xs leading-relaxed text-cemento/45">
-          La generazione usa TriplaneGaussian su Hugging Face. Al primo utilizzo lo Space può impiegare 1–2 minuti per svegliarsi.
+          La generazione usa TripoSplat su Hugging Face. Al primo utilizzo lo Space può impiegare 1–2 minuti per svegliarsi.
         </p>
       </aside>
     </div>

@@ -66,7 +66,7 @@ export default function GenerazioneProgress({
     return () => window.clearInterval(timer);
   }, [completato, percentualeReale]);
 
-  const posizioneMoto = useMemo(() => Math.min(91, Math.max(5, percentuale * 0.88 + 5)), [percentuale]);
+  const posizioneMoto = useMemo(() => Math.min(88, Math.max(8, percentuale * 0.8 + 8)), [percentuale]);
   const nome = `${marca} ${modello}${anno ? ` · ${anno}` : ''}`;
 
   if (completato) {
@@ -107,12 +107,13 @@ export default function GenerazioneProgress({
               ))}
             </div>
             <div className="absolute bottom-20 transition-all duration-1000 ease-linear" style={{ left: `${posizioneMoto}%`, transform: 'translateX(-50%)' }}>
-              <div className="relative">
+              <div className="relative" style={{ transform: 'scaleX(-1)' }}>
                 <div className="absolute inset-x-0 bottom-0 h-5 rounded-full bg-red-500/35 blur-xl" />
-                <div className="text-5xl drop-shadow-[0_0_18px_rgba(239,68,68,0.58)]">🏍️</div>
+                <div className="text-5xl drop-shadow-[0_0_18px_rgba(239,68,68,0.58)]" aria-hidden="true">🏍️</div>
               </div>
             </div>
-            <div className="absolute bottom-16 right-5 text-5xl">🏁</div>
+            <div className="absolute bottom-16 right-5 text-5xl" aria-hidden="true" title="Arrivo">🏁</div>
+            <div className="absolute bottom-16 left-5 font-mono text-2xl text-white/25" aria-hidden="true">🏁</div>
             <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/35 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/55">
               Elaborazione sicura lato server
             </div>

@@ -15,6 +15,7 @@ interface Props {
   selezionataId: string | null;
   onSeleziona: (id: string) => void;
   fotoAnteprima?: string | null;
+  mostraViewer?: boolean;
   children?: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ export default function GarageAmbiente({
   selezionataId,
   onSeleziona,
   fotoAnteprima,
+  mostraViewer = true,
   children,
 }: Props) {
   const motoInPalco = useMemo(() => {
@@ -33,7 +35,7 @@ export default function GarageAmbiente({
     return scelta ? [scelta] : [motoPronte[0]];
   }, [motoPronte, selezionataId]);
 
-  const haModello = motoInPalco.length > 0;
+  const haModello = mostraViewer && motoInPalco.length > 0;
 
   return (
     <TuningGarageScene variant="garage" className="garage-tuning-wrap">

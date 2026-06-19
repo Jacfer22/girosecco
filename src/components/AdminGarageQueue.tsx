@@ -91,7 +91,7 @@ export default function AdminGarageQueue() {
       setCaricando(null);
       return;
     }
-    setRichieste((attuali) => attuali?.map((item) => item.id === motoId ? { ...item, stato: 'elaborazione', provider: 'huggingface-tgs' } : item) ?? []);
+    setRichieste((attuali) => attuali?.map((item) => item.id === motoId ? { ...item, stato: 'elaborazione', provider: 'huggingface-triposplat' } : item) ?? []);
     setCaricando(null);
   }
 

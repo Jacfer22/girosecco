@@ -981,15 +981,39 @@ body {
     -webkit-overflow-scrolling: touch;
   }
 
+  .garage-moto-chip-wrap {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: stretch;
+    gap: 0.35rem;
+    scroll-snap-align: start;
+  }
+
   .garage-moto-chip {
     flex: 0 0 auto;
-    min-width: 9.5rem;
+    min-width: 8.5rem;
     scroll-snap-align: start;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(0, 0, 0, 0.45);
     padding: 0.65rem 0.75rem;
     text-align: left;
+  }
+
+  .garage-moto-chip-elimina {
+    flex: 0 0 auto;
+    width: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    line-height: 1;
+    color: rgba(252, 165, 165, 0.95);
+  }
+
+  .garage-moto-chip-elimina:disabled {
+    opacity: 0.4;
   }
 
   .garage-moto-chip-attiva {

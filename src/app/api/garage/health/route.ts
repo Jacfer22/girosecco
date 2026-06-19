@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
-import { statoConfigServer } from '@/lib/env-server';
+import { hfGarageSpace, statoConfigServer } from '@/lib/env-server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const stato = statoConfigServer();
-  const ok = stato.supabaseUrl && stato.anonKey && stato.serviceRole && stato.huggingFace;
+  const ok = stato.supabaseUrl && stato.anonKey && stato.huggingFace;
   return NextResponse.json({
     ok,
     ...stato,
+    hfSpace: hfGarageSpace(),
     messaggio: ok
-      ? 'Server configurato per la generazione gemelli.'
-      : `Mancano variabili server (${stato.ambiente}). Su Vercel aggiungi SUPABASE_SERVICE_ROLE_KEY (service_role da Supabase, non anon) e HUGGINGFACE_TOKEN, poi Redeploy. In locale riavvia npm run dev dopo aver modificato .env.local.`,
+      ? stato.serviceRole
+        ? 'Server configurato (modalità service_role).'
+        : 'Server configurato (modalità utente). Esegui migration_garage_generazione_utente.sql su Supabase se la generazione fallisce.'
+      : `Mancano variabili (${stato.ambiente}). Servono almeno NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY e HUGGINGFACE_TOKEN.`,
   });
 }

@@ -24,6 +24,16 @@ function posizione(index: number, totale: number): [number, number, number] {
   return posizioni[index] ?? [0, 0, index * 1.8];
 }
 
+function disabilitaTastieraViewer(viewer: import('@mkkellogg/gaussian-splats-3d').Viewer) {
+  const v = viewer as import('@mkkellogg/gaussian-splats-3d').Viewer & {
+    perspectiveControls?: { stopListenToKeyEvents?: () => void };
+    orthographicControls?: { stopListenToKeyEvents?: () => void };
+  };
+  for (const ctrl of [v.perspectiveControls, v.orthographicControls]) {
+    ctrl?.stopListenToKeyEvents?.();
+  }
+}
+
 export default function GaussianGarage({ moto, selezionataId, modalitaViewer = false, modalitaHero = false }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [caricamento, setCaricamento] = useState(true);
@@ -37,6 +47,11 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
     }
     return pronte.slice(0, 5);
   }, [moto, selezionataId, modalitaViewer, modalitaHero]);
+
+  const sceneKey = useMemo(
+    () => scene.map((item) => `${item.id}:${item.updated_at}:${urlModello(item)}`).join('|'),
+    [scene],
+  );
 
   useEffect(() => {
     const host = hostRef.current;
@@ -88,6 +103,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
         }));
         if (annullato) return;
         viewer.start();
+        disabilitaTastieraViewer(viewer);
         setCaricamento(false);
       } catch (error) {
         if (!annullato) {
@@ -103,7 +119,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
       viewer?.dispose();
       host.replaceChildren();
     };
-  }, [scene, modalitaHero]);
+  }, [sceneKey, modalitaHero]);
 
   async function fullscreen() {
     const host = hostRef.current;
