@@ -39,7 +39,7 @@ export default function Header() {
         <Link href="/" onClick={chiudiMenu} className="tap flex shrink-0 items-center gap-2.5 sm:gap-3">
           <Logo variante="header" />
           <span className="font-display text-base font-bold uppercase leading-none tracking-tight text-cemento sm:text-lg">
-            Moto Garage
+            MotoGarage
           </span>
         </Link>
 

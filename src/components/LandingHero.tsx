@@ -15,15 +15,16 @@ export default function LandingHero({ itinerariCount }: Props) {
       <div className="landing-tuning-content">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-amber-200/80">
-            Solo per veri bikers
+            Per motociclisti italiani
           </p>
-          <h1 className="mt-4 max-w-3xl font-display text-[2.6rem] font-black uppercase leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-[4.5rem]">
-            La casa digitale
-            <span className="block text-cemento/90">della tua moto</span>
+          <h1 className="mt-4 max-w-3xl font-display text-[2.6rem] font-black uppercase leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-[4.2rem]">
+            Traccia il giro.
+            <span className="block text-brand">Crea la card.</span>
+            <span className="block text-cemento/90">Condividi.</span>
           </h1>
           <p className="mt-5 max-w-lg text-sm leading-relaxed text-cemento/75 sm:text-base">
-            Garage virtuale, avatar 3D fotorealistico, itinerari verificati in Italia,
-            tracciamento GPS con card social e navigatore integrato. Registra un giro — anche senza account puoi esplorare, ma per tracciare serve un profilo gratuito.
+            GPS reale, statistiche e card pronta per Instagram — più garage 3D, itinerari e community.
+            Registrati gratis per salvare tutto nel cloud.
           </p>
         </Reveal>
 
@@ -34,22 +35,18 @@ export default function LandingHero({ itinerariCount }: Props) {
         </Reveal>
 
         <Reveal delay={160}>
-          <div className="mt-10 flex flex-wrap gap-5 border-t border-white/10 pt-8">
+          <div className="mt-10 flex flex-wrap gap-6 border-t border-white/10 pt-8">
             <Metrica valore={String(itinerariCount)} label="Itinerari" />
             <Metrica valore="20" label="Regioni" />
             <Metrica valore="GPS" label="Tracciamento" />
-            <Metrica valore="NAV" label="Navigatore" />
-            <Metrica valore="3D" label="Avatar moto" />
           </div>
         </Reveal>
 
         <Reveal delay={200}>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Pill href="/traccia" label="Traccia il mio giro" evidenziata />
-            <Pill href="/naviga" label="Navigatore GPS" />
-            <Pill href="/garage" label="Il mio Garage" />
+            <Pill href="/traccia" label="Traccia giro" evidenziata />
+            <Pill href="/naviga" label="Navigatore" />
             <Pill href="/itinerari" label="Itinerari" />
-            <Pill href="/community" label="Community" />
           </div>
         </Reveal>
       </div>

@@ -13,6 +13,15 @@ const VANTAGGI = [
   'Nuovi itinerari e funzioni in anteprima',
 ];
 
+const CONFRONTO = [
+  { voce: 'Tracciamento GPS e card social', free: true, pro: true },
+  { voce: 'Itinerari e community', free: true, pro: true },
+  { voce: 'Prima moto avatar 3D', free: true, pro: true },
+  { voce: 'GPX itinerari premium', free: false, pro: true },
+  { voce: 'Garage pubblico + download PLY', free: false, pro: true },
+  { voce: 'Itinerari weekend e anteprime', free: false, pro: true },
+];
+
 export default function PaginaPro() {
   const { user, profilo } = useAuth();
   const [email, setEmail] = useState('');
@@ -59,6 +68,27 @@ export default function PaginaPro() {
         La tua moto ha finalmente una casa digitale.
       </h1>
 
+      <div className="mt-8 overflow-hidden rounded-app-lg border border-asfalto/10 dark:border-white/10">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-asfalto/10 bg-asfalto/[0.03] dark:border-white/10">
+              <th className="p-4 text-left font-mono text-[10px] uppercase tracking-wide text-asfalto/50">Funzione</th>
+              <th className="p-4 text-center font-mono text-[10px] uppercase tracking-wide text-asfalto/50">Free</th>
+              <th className="p-4 text-center font-mono text-[10px] uppercase tracking-wide text-brand">Pro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CONFRONTO.map((riga) => (
+              <tr key={riga.voce} className="border-b border-asfalto/8 last:border-0 dark:border-white/8">
+                <td className="p-4">{riga.voce}</td>
+                <td className="p-4 text-center font-mono text-xs">{riga.free ? '✓' : '—'}</td>
+                <td className="p-4 text-center font-mono text-xs text-brand">✓</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <ul className="card-app space-y-3 p-6">
           {VANTAGGI.map((voce) => (
@@ -95,8 +125,8 @@ export default function PaginaPro() {
 
       {giaPro ? (
         <div className="mt-8 rounded-app border-2 border-emerald-500 bg-emerald-500/10 p-6 text-center">
-          <p className="font-display text-2xl font-bold uppercase tracking-tight">Il tuo account Pro è attivo ✓</p>
-          <Link href="/garage" className="mt-3 inline-block rounded-app bg-red-600 px-5 py-2.5 font-mono text-sm uppercase text-white">
+          <p className="font-display text-2xl font-bold uppercase tracking-tight">Account Pro attivo</p>
+          <Link href="/garage" className="tap btn-primary mt-3 inline-flex">
             Crea l&apos;avatar 3D
           </Link>
         </div>
@@ -104,8 +134,8 @@ export default function PaginaPro() {
         <div className="mt-8 rounded-app-lg border-2 border-asfalto bg-cemento p-6">
           {stato === 'fatto' ? (
             <div className="text-center">
-              <p className="font-display text-2xl font-bold uppercase tracking-tight text-bosco">Ci sei! Ti avvisiamo noi 🏍️</p>
-              <p className="mt-2 text-asfalto/70">Sei in lista. Ti scriveremo quando apriremo ufficialmente MotoGarage Pro.</p>
+              <p className="font-display text-2xl font-bold uppercase tracking-tight text-bosco">Sei in lista</p>
+              <p className="mt-2 text-asfalto/70">Ti scriveremo quando apriremo ufficialmente MotoGarage Pro.</p>
             </div>
           ) : (
             <>
@@ -119,8 +149,8 @@ export default function PaginaPro() {
                 ))}
               </div>
               <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder={user?.email || 'la-tua@email.it'} className="flex-1 rounded-app border border-asfalto/20 px-4 py-3 text-sm focus:border-red-600 focus:outline-none" />
-                <button type="button" onClick={iscriviti} disabled={stato === 'invio'} className="rounded-app bg-red-600 px-6 py-3 font-mono text-sm font-medium uppercase text-white disabled:opacity-60">
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder={user?.email || 'la-tua@email.it'} className="input-app flex-1" />
+                <button type="button" onClick={iscriviti} disabled={stato === 'invio'} className="btn-primary shrink-0">
                   {stato === 'invio' ? 'Invio…' : 'Candidati'}
                 </button>
               </div>

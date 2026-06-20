@@ -7,6 +7,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { etichettaCategoria } from '@/lib/categorie-moto';
 import BadgeUtente from '@/components/BadgeUtente';
+import ChecklistHub from '@/components/ChecklistHub';
 
 interface AvvisoHub {
   id: string;
@@ -152,6 +153,11 @@ export default function PaginaHub() {
         </div>
         <div className="strada-viva strada-viva-animata" aria-hidden="true" />
       </section>
+
+      <ChecklistHub
+        utenteId={user.id}
+        profiloOk={Boolean(profilo?.username && profilo?.avatar_url)}
+      />
 
       <section className="mx-auto -mt-8 max-w-6xl px-4">
         <div className="rounded-app-lg bg-asfalto p-1"><BadgeUtente /></div>

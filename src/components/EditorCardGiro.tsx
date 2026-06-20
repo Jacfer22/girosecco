@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { formattaDurata, formattaKm, statisticheGiro } from '@/lib/geo';
 import { generaCardGiro } from '@/lib/card-canvas';
 import type { GiroUtente } from '@/lib/giri-store';
+import { useFeedback } from '@/components/FeedbackProvider';
 
 function formattaDataBreve(iso: string): string {
   return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -37,6 +38,7 @@ interface Props {
 }
 
 export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }: Props) {
+  const { toast } = useFeedback();
   const [temaCard, setTemaCard] = useState<'tracciato' | 'foto'>('tracciato');
   const [paletteCard, setPaletteCard] = useState<'scuro' | 'chiaro'>('scuro');
   const [luogoCard, setLuogoCard] = useState(giro.nome === 'Giro libero' ? '' : giro.nome);
@@ -57,7 +59,6 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [generandoCard, setGenerandoCard] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
-  const [copiato, setCopiato] = useState(false);
   const rigeneraAbilitato = useRef(false);
   const fotoSalvataRef = useRef(fotoSalvata);
   const preferFotoRef = useRef(preferFoto);
@@ -178,8 +179,7 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
     const testo = testoDidascalia();
     try {
       await navigator.clipboard.writeText(testo);
-      setCopiato(true);
-      window.setTimeout(() => setCopiato(false), 2000);
+      toast('Didascalia copiata negli appunti');
     } catch {
       setErrore('Non sono riuscito a copiare la didascalia.');
     }
@@ -459,22 +459,16 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
 
       {cardUrl && (
         <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={condividiCard} className="tap rounded-app bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white">
+          <button type="button" onClick={condividiCard} className="tap btn-primary">
             Condividi
           </button>
-          <button type="button" onClick={() => void copiaDidascalia()} className="tap rounded-app border-2 border-asfalto px-5 py-2.5 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento">
+          <button type="button" onClick={() => void copiaDidascalia()} className="tap btn-ghost">
             Copia didascalia
           </button>
-          <button type="button" onClick={scaricaCard} className="tap rounded-app border-2 border-asfalto px-5 py-2.5 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento">
+          <button type="button" onClick={scaricaCard} className="tap btn-ghost">
             Salva card
           </button>
         </div>
-      )}
-
-      {copiato && (
-        <p className="rounded-app border border-bosco/30 bg-bosco/10 px-4 py-2 font-mono text-xs uppercase text-bosco">
-          Didascalia copiata negli appunti
-        </p>
       )}
     </div>
   );

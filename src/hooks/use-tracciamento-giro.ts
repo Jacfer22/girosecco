@@ -11,6 +11,7 @@ import {
   salvaGiroLocale,
   type GiroUtente,
 } from '@/lib/giri-store';
+import { useFeedback } from '@/components/FeedbackProvider';
 
 const SOGLIA_MOVIMENTO_M = 8;
 const ACCURATEZZA_MAX_M = 35;
@@ -27,6 +28,7 @@ function distanzaDaPunti(punti: Punto[]): number {
 }
 
 export function useTracciamentoGiro(userId: string | undefined) {
+  const { conferma } = useFeedback();
   const [stato, setStato] = useState<StatoTraccia>('pronto');
   const [punti, setPunti] = useState<Punto[]>([]);
   const [distanzaM, setDistanzaM] = useState(0);
@@ -324,8 +326,14 @@ export function useTracciamentoGiro(userId: string | undefined) {
     setStato('in_corso');
   }, []);
 
-  const annullaPercorso = useCallback(() => {
-    if (!window.confirm('Annullare il giro in corso? Non verrà salvato.')) return;
+  const annullaPercorso = useCallback(async () => {
+    const ok = await conferma({
+      titolo: 'Annulla giro',
+      messaggio: 'Annullare il giro in corso? Non verrà salvato.',
+      conferma: 'Annulla giro',
+      pericolo: true,
+    });
+    if (!ok) return;
     fermaGps();
     puntiRef.current = [];
     distanzaRef.current = 0;
@@ -339,7 +347,7 @@ export function useTracciamentoGiro(userId: string | undefined) {
     setVelCorrenteKmh(0);
     setGiroConcluso(null);
     setInfo(null);
-  }, []);
+  }, [conferma]);
 
   const nuovoGiro = useCallback(() => {
     fermaGps();
@@ -389,7 +397,13 @@ export function useTracciamentoGiro(userId: string | undefined) {
 
   async function eliminaGiroConcluso() {
     if (!giroConcluso) return;
-    if (!window.confirm('Eliminare questo giro salvato?')) return;
+    const ok = await conferma({
+      titolo: 'Elimina giro',
+      messaggio: 'Eliminare questo giro salvato?',
+      conferma: 'Elimina',
+      pericolo: true,
+    });
+    if (!ok) return;
     const supabase = getSupabaseBrowser();
     setSalvataggioCloud(true);
     try {

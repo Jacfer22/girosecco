@@ -13,6 +13,7 @@ import {
   type GiroUtente,
 } from '@/lib/giri-store';
 import EditorCardGiro from '@/components/EditorCardGiro';
+import { useFeedback } from '@/components/FeedbackProvider';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
@@ -22,6 +23,7 @@ function formattaDataBreve(iso: string): string {
 
 export default function PaginaMieiGiri() {
   const { user, loading } = useAuth();
+  const { conferma, toast } = useFeedback();
   const [giri, setGiri] = useState<GiroUtente[] | null>(null);
   const [selezionatoId, setSelezionatoId] = useState<string | null>(null);
   const [errore, setErrore] = useState<string | null>(null);
@@ -79,9 +81,15 @@ export default function PaginaMieiGiri() {
 
   async function eliminaGiro(giro: GiroUtente) {
     const msg = giro.km < 50
-      ? 'Eliminare questo giro? Sembra avviato per errore — nessun problema.'
+      ? 'Eliminare questo giro? Sembra avviato per errore.'
       : `Eliminare il giro del ${formattaDataBreve(giro.data)} (${formattaKm(giro.km)} km)? Non si può annullare.`;
-    if (!window.confirm(msg)) return;
+    const ok = await conferma({
+      titolo: 'Elimina giro',
+      messaggio: msg,
+      conferma: 'Elimina',
+      pericolo: true,
+    });
+    if (!ok) return;
 
     const supabase = getSupabaseBrowser();
     setSalvando(true);
@@ -93,6 +101,7 @@ export default function PaginaMieiGiri() {
         setSelezionatoId((attuale) => (attuale === giro.id ? nuovo[0]?.id ?? null : attuale));
         return nuovo;
       });
+      toast('Giro eliminato');
     } catch (error) {
       setErrore(error instanceof Error ? error.message : 'Eliminazione non riuscita.');
     } finally {
@@ -119,7 +128,7 @@ export default function PaginaMieiGiri() {
       <p className="font-mono text-sm uppercase tracking-widest text-cartello">MotoGarage</p>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="font-display text-5xl font-bold uppercase leading-none tracking-tight">I miei giri</h1>
-        <Link href="/traccia" className="rounded-app bg-segnale px-4 py-2.5 font-mono text-xs font-bold uppercase text-asfalto hover:bg-white">
+        <Link href="/traccia" className="btn-primary text-center">
           + Traccia giro
         </Link>
       </div>

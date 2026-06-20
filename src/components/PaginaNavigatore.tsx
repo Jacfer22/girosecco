@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import RiepilogoGiroConcluso from '@/components/RiepilogoGiroConcluso';
 import { useTracciamentoGiro } from '@/hooks/use-tracciamento-giro';
+import { useFeedback } from '@/components/FeedbackProvider';
 import {
   calcolaRotta,
   cercaDestinazione,
@@ -20,6 +21,7 @@ const MappaNavigatore = dynamic(() => import('./MappaNavigatore'), { ssr: false 
 
 export default function PaginaNavigatore() {
   const { user } = useAuth();
+  const { conferma } = useFeedback();
   const track = useTracciamentoGiro(user?.id);
   const [query, setQuery] = useState('');
   const [risultati, setRisultati] = useState<DestinazioneNav[]>([]);
@@ -74,9 +76,14 @@ export default function PaginaNavigatore() {
     }
   }
 
-  function chiudiNav() {
-    if (track.stato === 'in_corso' && !window.confirm('Chiudere le indicazioni? Il tracciamento GPS continua.')) {
-      return;
+  async function chiudiNav() {
+    if (track.stato === 'in_corso') {
+      const ok = await conferma({
+        titolo: 'Chiudi navigatore',
+        messaggio: 'Chiudere le indicazioni? Il tracciamento GPS continua.',
+        conferma: 'Chiudi',
+      });
+      if (!ok) return;
     }
     setNavOn(false);
     setDestinazione(null);

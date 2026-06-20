@@ -4,10 +4,19 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import CardDemoAnteprima from '@/components/CardDemoAnteprima';
+import Logo from '@/components/Logo';
 
 type Modalita = 'accedi' | 'registrati';
 
 const USERNAME_REGEX = /^[a-z0-9_]{3,20}$/;
+
+const PERCHE = [
+  'Giri GPS salvati nel cloud',
+  'Card social pronta da condividere',
+  'Garage con avatar 3D della moto',
+  'Itinerari e community di biker',
+];
 
 export default function PaginaAccedi() {
   const router = useRouter();
@@ -28,7 +37,6 @@ export default function PaginaAccedi() {
     }
   }, []);
 
-  // Se già loggato, mostra banner e rimanda alla home dopo 1 secondo
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
@@ -46,11 +54,7 @@ export default function PaginaAccedi() {
           Accesso non disponibile
         </h1>
         <p className="mt-3 text-asfalto/70">
-          Il sito non è ancora collegato a Supabase, quindi login e
-          registrazione non funzionano in questo ambiente. Configura le
-          variabili <code className="font-mono text-sm">NEXT_PUBLIC_SUPABASE_URL</code> e{' '}
-          <code className="font-mono text-sm">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> per
-          attivarlo.
+          Configura le variabili Supabase per attivare login e registrazione.
         </p>
       </section>
     );
@@ -76,7 +80,7 @@ export default function PaginaAccedi() {
           error.message.includes('Invalid login')
             ? 'Email o password non corretti.'
             : error.message.includes('not confirmed')
-              ? 'Devi prima confermare l’email: controlla la posta e clicca sul link di conferma.'
+              ? 'Conferma l\'email: controlla la posta e clicca sul link.'
               : error.message
         );
         return;
@@ -96,13 +100,13 @@ export default function PaginaAccedi() {
       if (error) {
         setErrore(
           error.message.includes('already registered')
-            ? 'Questa email è già registrata. Prova ad accedere.'
+            ? 'Email già registrata. Prova ad accedere.'
             : error.message
         );
         return;
       }
       setMessaggio(
-        `Ti abbiamo inviato un'email a ${email} con un link di conferma. Apri il link, poi torna qui e accedi.`
+        `Email inviata a ${email}. Conferma il link, poi accedi.`
       );
       setModalita('accedi');
       setPassword('');
@@ -110,130 +114,127 @@ export default function PaginaAccedi() {
   }
 
   return (
-    <section className="mx-auto max-w-md px-4 py-14">
-      <p className="font-mono text-sm uppercase tracking-widest text-cartello">
-        MotoGarage
-      </p>
-      <h1 className="mt-1 font-display text-5xl font-bold uppercase leading-none tracking-tight">
-        {modalita === 'accedi' ? 'Accedi' : 'Crea il tuo account'}
-      </h1>
-
-      {giaLoggato && (
-        <div className="mt-6 border-2 border-segnale bg-segnale/10 p-4">
-          <p className="font-medium text-asfalto">
-            Sei già loggato — ti riportiamo all'hub…{' '}
-            <a href="/hub" className="underline">vai subito →</a>
-          </p>
+    <div className="auth-shell">
+      <aside className="auth-hero">
+        <Logo variante="footer" />
+        <p className="mt-6 font-mono text-xs uppercase tracking-[0.28em] text-brand">MotoGarage</p>
+        <h1 className="mt-3 max-w-md font-display text-5xl font-black uppercase leading-none tracking-tight">
+          Il tuo garage digitale in tasca
+        </h1>
+        <ul className="mt-8 space-y-3">
+          {PERCHE.map((voce) => (
+            <li key={voce} className="flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-cemento/75">
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-brand text-[10px] font-bold text-white">✓</span>
+              {voce}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-10 hidden lg:block">
+          <CardDemoAnteprima />
         </div>
-      )}
-      <p className="mt-3 text-asfalto/70">
-        {modalita === 'accedi'
-          ? 'Garage, giri GPS e community — tutto salvato nel cloud.'
-          : 'Un account per il garage digitale, i giri tracciati e la community di biker.'}
-      </p>
+      </aside>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        {modalita === 'registrati' && (
-          <div>
-            <label htmlFor="username" className="font-mono text-xs uppercase text-asfalto/60">
-              Username
+      <section className="mx-auto flex w-full max-w-md flex-col justify-center px-4 py-10 sm:py-14">
+        <p className="font-mono text-xs uppercase tracking-[0.22em] text-asfalto/40 lg:hidden">MotoGarage</p>
+
+        <div className="mt-2 flex rounded-app border border-asfalto/10 p-1 dark:border-white/10">
+          {(['accedi', 'registrati'] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => {
+                setModalita(m);
+                setErrore(null);
+                setMessaggio(null);
+              }}
+              className={`tap flex-1 rounded-app py-2.5 font-mono text-xs font-bold uppercase tracking-wide transition-colors ${
+                modalita === m ? 'bg-brand text-white' : 'text-asfalto/55 dark:text-cemento/55'
+              }`}
+            >
+              {m === 'accedi' ? 'Accedi' : 'Registrati'}
+            </button>
+          ))}
+        </div>
+
+        <h2 className="mt-6 font-display text-4xl font-black uppercase leading-none tracking-tight">
+          {modalita === 'accedi' ? 'Bentornato' : 'Crea account'}
+        </h2>
+        <p className="mt-2 text-sm text-asfalto/65 dark:text-cemento/65">
+          {modalita === 'accedi'
+            ? 'Accedi per giri, garage e community.'
+            : 'Gratis — nessuna carta richiesta.'}
+        </p>
+
+        {giaLoggato && (
+          <p className="auth-successo mt-4">
+            Sei già loggato — <Link href="/hub" className="underline">vai all&apos;hub</Link>
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {modalita === 'registrati' && (
+            <label className="block">
+              <span className="label-app">Username</span>
+              <input
+                id="username"
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                className="input-app lowercase"
+                placeholder="es. jacopo_rm"
+                pattern="[a-z0-9_]{3,20}"
+                autoCapitalize="none"
+              />
             </label>
+          )}
+
+          <label className="block">
+            <span className="label-app">Email</span>
             <input
-              id="username"
-              type="text"
+              id="email"
+              type="email"
               required
-              value={username}
-              onChange={(e) => setUsername(e.target.value.toLowerCase())}
-              className="mt-1 w-full border-2 border-asfalto bg-white px-3 py-2 font-mono lowercase focus:outline-none"
-              placeholder="es. jacopo_rm"
-              pattern="[a-z0-9_]{3,20}"
-              autoCapitalize="none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-app"
+              placeholder="nome@esempio.it"
             />
-            <p className="mt-1 font-mono text-xs text-asfalto/40">
-              3-20 caratteri: lettere minuscole, numeri, underscore.
+          </label>
+
+          <label className="block">
+            <span className="label-app">Password</span>
+            <input
+              id="password"
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-app"
+              placeholder="Almeno 6 caratteri"
+            />
+          </label>
+
+          {errore && <p className="auth-errore">{errore}</p>}
+          {messaggio && <p className="auth-successo">{messaggio}</p>}
+
+          <button type="submit" disabled={caricamento} className="btn-primary w-full">
+            {caricamento ? 'Un momento…' : modalita === 'accedi' ? 'Accedi' : 'Crea account'}
+          </button>
+
+          {modalita === 'registrati' && (
+            <p className="text-center font-mono text-[10px] leading-relaxed text-asfalto/45">
+              Accetti <Link href="/termini" className="underline">Termini</Link> e{' '}
+              <Link href="/privacy" className="underline">Privacy</Link>.
             </p>
-          </div>
-        )}
+          )}
+        </form>
 
-        <div>
-          <label htmlFor="email" className="font-mono text-xs uppercase text-asfalto/60">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full border-2 border-asfalto bg-white px-3 py-2 focus:outline-none"
-            placeholder="nome@esempio.it"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="font-mono text-xs uppercase text-asfalto/60">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full border-2 border-asfalto bg-white px-3 py-2 focus:outline-none"
-            placeholder="Almeno 6 caratteri"
-          />
-        </div>
-
-        {errore && (
-          <p className="border-2 border-red-700 bg-red-50 p-3 text-sm text-red-900">
-            {errore}
-          </p>
-        )}
-        {messaggio && (
-          <p className="border-2 border-bosco bg-bosco/10 p-3 text-sm text-bosco">
-            {messaggio}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={caricamento}
-          className="w-full bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white disabled:opacity-60"
-        >
-          {caricamento
-            ? 'Un momento…'
-            : modalita === 'accedi'
-              ? 'Accedi'
-              : 'Crea account'}
-        </button>
-
-        {modalita === 'registrati' && (
-          <p className="mt-3 text-center font-mono text-[11px] leading-relaxed text-asfalto/45">
-            Creando un account accetti i{' '}
-            <a href="/termini" className="underline hover:text-asfalto">Termini</a> e la{' '}
-            <a href="/privacy" className="underline hover:text-asfalto">Privacy Policy</a>.
-          </p>
-        )}
-      </form>
-
-      <button
-        type="button"
-        onClick={() => {
-          setModalita(modalita === 'accedi' ? 'registrati' : 'accedi');
-          setErrore(null);
-          setMessaggio(null);
-        }}
-        className="mt-4 font-mono text-sm uppercase text-asfalto/60 underline hover:text-asfalto"
-      >
-        {modalita === 'accedi' ? 'Non hai un account? Registrati' : 'Hai già un account? Accedi'}
-      </button>
-
-      <p className="mt-8 font-mono text-xs text-asfalto/40">
-        <Link href="/" className="underline">
-          ← Torna alla home
-        </Link>
-      </p>
-    </section>
+        <p className="mt-6 font-mono text-xs text-asfalto/40">
+          <Link href="/" className="underline hover:text-brand">← Torna alla home</Link>
+        </p>
+      </section>
+    </div>
   );
 }

@@ -119,6 +119,19 @@ body {
 .input-app::placeholder {
   color: rgba(21, 24, 26, 0.42);
 }
+.label-app {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(21, 24, 26, 0.55);
+}
+.dark .label-app {
+  color: rgba(240, 241, 242, 0.5);
+}
 
 /* FAB mappa: icona sempre visibile */
 .btn-ricentra {
@@ -1146,4 +1159,137 @@ body {
     transform: none;
     transition: none;
   }
+}
+
+/* ── Bottoni design system ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 14px;
+  background: var(--brand);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(209, 25, 25, 0.28);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #e01f1f;
+}
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.15);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.dark .btn-ghost {
+  border-color: rgba(240, 241, 242, 0.18);
+  color: #f0f1f2;
+}
+.btn-danger {
+  background: #b91c1c;
+  color: #fff;
+  border-radius: 14px;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ── Toast ── */
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(92vw, 360px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .toast-stack {
+    bottom: 1.5rem;
+  }
+}
+.toast-item {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(21, 24, 26, 0.94);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f0f1f2;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  animation: toast-in 0.28s ease;
+}
+.toast-item-ok { border-color: rgba(34, 197, 94, 0.35); }
+.toast-item-errore { border-color: rgba(239, 68, 68, 0.45); }
+.toast-item-info { border-color: rgba(209, 25, 25, 0.35); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Auth layout ── */
+.auth-shell {
+  min-height: calc(100dvh - 120px);
+  display: grid;
+}
+@media (min-width: 1024px) {
+  .auth-shell {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.auth-hero {
+  display: none;
+  background: radial-gradient(circle at 20% 20%, rgba(209, 25, 25, 0.22), transparent 42%),
+    linear-gradient(145deg, #08090b, #15181a);
+  color: #f0f1f2;
+  padding: 3rem 2.5rem;
+}
+@media (min-width: 1024px) {
+  .auth-hero { display: flex; flex-direction: column; justify-content: center; }
+}
+.auth-errore {
+  border-radius: 14px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  color: #fecaca;
+}
+.auth-successo {
+  border-radius: 14px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  color: #bbf7d0;
 }

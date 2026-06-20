@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo, Barlow_Condensed, Caveat, IBM_Plex_Mono } from 'next/font/google';
+import { Archivo, Barlow_Condensed, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import InstallaPwa from '@/components/InstallaPwa';
 import MainShell from '@/components/MainShell';
+import FeedbackProvider from '@/components/FeedbackProvider';
 import { AuthProvider } from '@/components/AuthProvider';
 import { TemaProvider } from '@/components/TemaProvider';
 
 const display = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-display' });
 const body = Archivo({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-body' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
-const hand = Caveat({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-hand' });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://motogarage.vercel.app';
 
@@ -79,7 +79,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="it" className={`dark ${display.variable} ${body.variable} ${mono.variable} ${hand.variable}`}>
+    <html lang="it" className={`dark ${display.variable} ${body.variable} ${mono.variable}`}>
       <head>
         <link
           rel="stylesheet"
@@ -96,11 +96,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="con-bottomnav flex min-h-screen flex-col font-body antialiased">
         <TemaProvider>
           <AuthProvider>
-            <Header />
-            <MainShell>{children}</MainShell>
-            <Footer />
-            <InstallaPwa />
-            <BottomNav />
+            <FeedbackProvider>
+              <Header />
+              <MainShell>{children}</MainShell>
+              <Footer />
+              <InstallaPwa />
+              <BottomNav />
+            </FeedbackProvider>
           </AuthProvider>
         </TemaProvider>
       </body>

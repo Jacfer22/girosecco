@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from './AuthProvider';
 
 const CHIAVE = 'motogarage-tutorial-v1';
 
@@ -32,15 +33,16 @@ const PASSI = [
 ];
 
 export default function TutorialPrimoAccesso() {
+  const { user, loading } = useAuth();
   const [visibile, setVisibile] = useState(false);
   const [passo, setPasso] = useState(0);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || loading || !user) return;
     if (localStorage.getItem(CHIAVE)) return;
-    const timer = window.setTimeout(() => setVisibile(true), 600);
+    const timer = window.setTimeout(() => setVisibile(true), 900);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [loading, user]);
 
   function chiudiPermanente() {
     localStorage.setItem(CHIAVE, '1');

@@ -13,6 +13,7 @@ import EditorSchedaMoto from '@/components/EditorSchedaMoto';
 import { risolviCategoriaMoto } from '@/lib/foto-categoria-moto';
 import { normalizzaScheda, type SchedaModifiche } from '@/lib/scheda-moto';
 import { richiedeApprovazioneAdmin } from '@/lib/garage-limite';
+import { useFeedback } from '@/components/FeedbackProvider';
 
 const GarageAmbiente = dynamic(() => import('@/components/GarageAmbiente'), {
   ssr: false,
@@ -27,6 +28,7 @@ type Vista = 'garage' | 'crea' | 'viewer' | 'generazione';
 
 export default function PaginaGarage() {
   const { user, profilo, loading } = useAuth();
+  const { conferma, toast } = useFeedback();
   const router = useRouter();
   const [moto, setMoto] = useState<GarageMoto[]>([]);
   const [vista, setVista] = useState<Vista>('garage');
@@ -139,10 +141,13 @@ export default function PaginaGarage() {
   async function eliminaMoto(motoId?: string) {
     const target = motoId ? moto.find((item) => item.id === motoId) : selezionata;
     if (!target || !user) return;
-    const conferma = window.confirm(
-      `Eliminare ${nomeMoto(target)} dal garage?\n\nFoto e avatar 3D verranno rimossi. L'operazione non si può annullare.`,
-    );
-    if (!conferma) return;
+    const ok = await conferma({
+      titolo: 'Elimina moto',
+      messaggio: `Eliminare ${nomeMoto(target)} dal garage? Foto e avatar 3D verranno rimossi. L'operazione non si può annullare.`,
+      conferma: 'Elimina',
+      pericolo: true,
+    });
+    if (!ok) return;
 
     const supabase = getSupabaseBrowser();
     if (!supabase) return;
@@ -198,6 +203,7 @@ export default function PaginaGarage() {
         if (attuale && attuale !== idRimosso) return attuale;
         return arricchite[0]?.id ?? null;
       });
+      toast('Moto rimossa dal garage');
     } catch (error) {
       setErrore(error instanceof Error ? error.message : 'Eliminazione non riuscita.');
     } finally {

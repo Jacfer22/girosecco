@@ -54,7 +54,7 @@ export default function InstallaPwa() {
         <div className="min-w-0 flex-1">
           <p className="font-mono text-[10px] font-bold uppercase tracking-wide text-brand">App sul telefono</p>
           <p className="mt-0.5 text-xs leading-snug text-cemento/80">
-            Aggiungi Moto Garage alla Home per GPS e navigatore come un&apos;app.
+            Aggiungi MotoGarage alla Home per GPS e navigatore come un&apos;app.
           </p>
         </div>
         <button
