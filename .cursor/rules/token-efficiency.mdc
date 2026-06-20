@@ -1,0 +1,34 @@
+---
+description: Minimizza token conversation — risposte brevi, scope stretto, pochi tool
+alwaysApply: true
+---
+
+# Token efficiency (motogarage)
+
+**Priorità:** qualità e correttezza prima del risparmio token. Taglia verbosità, non il lavoro utile.
+
+## Risparmia token su
+- Prosa lunga, recap, ripetizioni, citazioni di codice superflue.
+- Esplorazione a tappeto — grep/read mirati sul file o simbolo noto.
+- Subagent se bastano tool diretti; riletture di file già in contesto.
+- Build/typecheck **intermedi** — una verifica **a fine task** se tocchi TS/logica.
+
+## Non tagliare mai
+- Leggere codice **prima** di modificare (scope minimo ma sufficiente).
+- Fix **root cause**, non patch alla cieca.
+- Typecheck/build **finale** su feature, bugfix o refactor non banale.
+- Test/lint se il progetto li ha e il cambio è a rischio.
+- Una domanda secca se ambiguo — meglio chiedere che sbagliare.
+
+## Esecuzione
+- **Minimo diff** ma soluzione completa e production-ready.
+- Tool in batch; `read` con `limit` dove basta.
+- Risposte corte; codice solo dove serve.
+
+## Utente scrive poco
+- Inferisci da file aperti, branch, chat.
+- Un passo alla volta; "ok" basta per procedere.
+- Fatto → esito + comando git se serve; stop.
+
+## Nuovi topic
+- Nuova chat se cambia argomento (1 riga).
