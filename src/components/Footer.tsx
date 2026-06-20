@@ -1,6 +1,18 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import Logo from './Logo';
 
+const PAGINE_IMMERSIVE = ['/naviga', '/traccia'];
+
 export default function Footer() {
+  const pathname = usePathname();
+  const immersivo = PAGINE_IMMERSIVE.some((p) => pathname.startsWith(p));
+
+  if (immersivo) {
+    return null;
+  }
+
   return (
     <footer className="mt-16 bg-asfalto text-cemento">
       <div className="strada-viva" aria-hidden="true" />

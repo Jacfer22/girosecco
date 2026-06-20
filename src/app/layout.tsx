@@ -4,6 +4,8 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
+import InstallaPwa from '@/components/InstallaPwa';
+import MainShell from '@/components/MainShell';
 import { AuthProvider } from '@/components/AuthProvider';
 import { TemaProvider } from '@/components/TemaProvider';
 
@@ -95,8 +97,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <TemaProvider>
           <AuthProvider>
             <Header />
-            <main className="flex-1">{children}</main>
+            <MainShell>{children}</MainShell>
             <Footer />
+            <InstallaPwa />
             <BottomNav />
           </AuthProvider>
         </TemaProvider>

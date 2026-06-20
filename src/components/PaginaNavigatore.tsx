@@ -123,14 +123,14 @@ export default function PaginaNavigatore() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
+    <div className="pagina-immersiva flex min-h-[calc(100dvh-4rem)] flex-col md:min-h-0">
       {!navOn && (
-        <div className="border-b border-asfalto/10 bg-white px-4 py-3">
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-brand">Navigatore</p>
-          <p className="mt-1 text-sm text-asfalto/65">
-            Scegli dove andare: il <strong>giro GPS parte in automatico</strong> e alla fine hai la card.
+        <div className="pannello-leggibile border-b border-asfalto/10 px-4 py-4">
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-brand">Navigatore</p>
+          <p className="testo-secondario mt-2 text-[15px] leading-snug">
+            Scegli dove andare — il <strong className="font-semibold text-asfalto">giro GPS parte da solo</strong> e alla fine hai la card.
           </p>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-4 flex gap-2">
             <input
               type="search"
               value={query}
@@ -144,19 +144,19 @@ export default function PaginaNavigatore() {
               type="button"
               onClick={cerca}
               disabled={caricamento || query.trim().length < 2}
-              className="shrink-0 rounded-app bg-brand px-4 py-2 font-mono text-[10px] font-bold uppercase text-white disabled:opacity-40"
+              className="shrink-0 rounded-app bg-brand px-5 py-3 font-mono text-xs font-bold uppercase text-white disabled:opacity-40"
             >
               Vai
             </button>
           </div>
           {risultati.length > 0 && (
-            <ul className="mt-2 max-h-36 overflow-y-auto rounded-app border border-asfalto/12">
+            <ul className="mt-3 max-h-40 overflow-y-auto rounded-app border border-asfalto/12 bg-white">
               {risultati.map((r) => (
                 <li key={`${r.lat}-${r.lng}`}>
                   <button
                     type="button"
                     onClick={() => impostaDestinazione(r)}
-                    className="w-full px-3 py-2.5 text-left text-sm hover:bg-asfalto/[0.04]"
+                    className="w-full px-3 py-3 text-left text-sm text-asfalto hover:bg-brand/5"
                   >
                     {r.nome}
                   </button>
@@ -165,8 +165,11 @@ export default function PaginaNavigatore() {
             </ul>
           )}
           {(erroreNav || track.errore) && (
-            <p className="mt-2 text-sm text-red-700">{erroreNav ?? track.errore}</p>
+            <p className="mt-2 text-sm font-medium text-red-700">{erroreNav ?? track.errore}</p>
           )}
+          <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-asfalto/45">
+            Guarda poco lo schermo — in sella la strada viene prima.
+          </p>
         </div>
       )}
 
@@ -209,7 +212,7 @@ export default function PaginaNavigatore() {
         </div>
       )}
 
-      <div className="relative min-h-[52dvh] flex-1 border-y border-asfalto/10">
+      <div className="mappa-immersiva relative min-h-[52dvh] flex-1 border-y border-asfalto/10">
         <MappaNavigatore
           posizione={posizione}
           percorsoNav={rotta?.percorso}
@@ -222,10 +225,8 @@ export default function PaginaNavigatore() {
         <button
           type="button"
           onClick={ricentra}
-          className={`absolute bottom-4 right-4 z-[600] flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-lg transition-colors ${
-            segui
-              ? 'border-asfalto/15 bg-white/95 text-asfalto'
-              : 'border-brand bg-brand text-white'
+          className={`btn-ricentra absolute bottom-4 right-4 z-[600] flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-lg transition-colors ${
+            segui ? '' : 'btn-ricentra-attivo'
           }`}
           aria-label="Ricentra sulla mia posizione"
           title="Ricentra"
@@ -246,10 +247,10 @@ export default function PaginaNavigatore() {
         <p className="px-4 py-2 font-mono text-[10px] uppercase text-asfalto/45">Calcolo percorso…</p>
       )}
 
-      <div className="border-t border-asfalto/8 bg-white/80 px-4 py-3">
+      <div className="pannello-leggibile border-t border-asfalto/8 px-4 py-3">
         <Link
           href="/traccia"
-          className="font-mono text-[10px] font-bold uppercase tracking-wide text-asfalto/50 underline hover:text-brand"
+          className="font-mono text-[11px] font-bold uppercase tracking-wide text-asfalto/55 underline hover:text-brand"
         >
           Traccia un giro senza destinazione →
         </Link>

@@ -218,7 +218,7 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
   }
 
   return (
-    <div className="space-y-4 rounded-app-lg border border-asfalto/12 bg-white/80 p-5 dark:bg-carbone/60">
+    <div className="pannello-leggibile space-y-4 rounded-app-lg border border-asfalto/12 p-5">
       <div>
         <p className="font-mono text-xs uppercase tracking-wide text-asfalto/50">
           Crea la card da condividere

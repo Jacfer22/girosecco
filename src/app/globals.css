@@ -29,6 +29,12 @@ body {
 .dark .bg-white {
   background-color: #1c2024 !important;
 }
+.dark .bg-white\/80 {
+  background-color: rgba(28, 32, 36, 0.92) !important;
+}
+.dark .bg-white\/95 {
+  background-color: rgba(28, 32, 36, 0.97) !important;
+}
 .dark .bg-cemento {
   background-color: #15181a !important;
 }
@@ -43,6 +49,7 @@ body {
 .dark .text-asfalto\/80 { color: rgba(240,241,242,0.80) !important; }
 .dark .text-asfalto\/75 { color: rgba(240,241,242,0.75) !important; }
 .dark .text-asfalto\/70 { color: rgba(240,241,242,0.70) !important; }
+.dark .text-asfalto\/65 { color: rgba(240,241,242,0.65) !important; }
 .dark .text-asfalto\/60 { color: rgba(240,241,242,0.55) !important; }
 .dark .text-asfalto\/55 { color: rgba(240,241,242,0.5) !important; }
 .dark .text-asfalto\/50 { color: rgba(240,241,242,0.45) !important; }
@@ -59,6 +66,15 @@ body {
   background: #1c2024;
   border-color: rgba(240,241,242,0.1);
 }
+/* Card/form su mobile: pannello leggibile opzionale */
+@media (max-width: 767px) {
+  .dark .pannello-leggibile.card-app,
+  .pannello-leggibile {
+    background: #f0f1f2 !important;
+    color: #15181a !important;
+    border-color: rgba(21, 24, 26, 0.1) !important;
+  }
+}
 /* il vetro chiaro in dark diventa scuro */
 .dark .vetro {
   background: rgba(14, 16, 18, 0.8);
@@ -67,6 +83,53 @@ body {
 .dark .skeleton {
   background: linear-gradient(90deg, rgba(240,241,242,0.06) 25%, rgba(240,241,242,0.1) 37%, rgba(240,241,242,0.06) 63%);
   background-size: 400% 100%;
+}
+
+/* Pannelli sempre leggibili (anche in dark mode) — form, navigatore, card editor */
+.pannello-leggibile {
+  background: #f0f1f2 !important;
+  color: #15181a !important;
+}
+.pannello-leggibile .text-asfalto,
+.pannello-leggibile strong {
+  color: #15181a !important;
+}
+.pannello-leggibile .testo-secondario {
+  color: rgba(21, 24, 26, 0.72);
+}
+.pannello-leggibile .input-app {
+  background: #fff;
+  color: #15181a;
+  border-color: rgba(21, 24, 26, 0.15);
+}
+.pannello-leggibile .input-app::placeholder {
+  color: rgba(21, 24, 26, 0.4);
+}
+
+.input-app {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.15);
+  background: #fff;
+  padding: 0.75rem 0.9rem;
+  font-size: 1rem;
+  color: #15181a;
+}
+.input-app::placeholder {
+  color: rgba(21, 24, 26, 0.42);
+}
+
+/* FAB mappa: icona sempre visibile */
+.btn-ricentra {
+  background: #fff !important;
+  color: #15181a !important;
+  border-color: rgba(21, 24, 26, 0.18) !important;
+}
+.btn-ricentra-attivo {
+  background: #d11919 !important;
+  color: #fff !important;
+  border-color: #d11919 !important;
 }
 
 /* ── Strada scorrevole — sezione trasversale realistica ── */
@@ -407,7 +470,34 @@ body {
 /* Spazio per la bottom-nav su mobile, così il contenuto non resta coperto */
 @media (max-width: 767px) {
   .con-bottomnav {
-    padding-bottom: 76px;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+
+  /* Navigatore e Traccia: full-screen, niente footer */
+  .main-immersivo {
+    min-height: calc(100dvh - 3.25rem);
+    padding-bottom: 0;
+  }
+  .pagina-immersiva {
+    display: flex;
+    min-height: calc(100dvh - 3.25rem);
+    flex-direction: column;
+  }
+  .pagina-immersiva .mappa-immersiva {
+    flex: 1;
+    min-height: calc(100dvh - 14rem);
+  }
+
+  /* Touch target minimo 44px */
+  .tap {
+    min-height: 44px;
+  }
+  .tap-nav-centrale {
+    min-height: auto;
+  }
+  button.tap,
+  a.tap:not(.tap-nav-centrale) {
+    min-height: 44px;
   }
 }
 

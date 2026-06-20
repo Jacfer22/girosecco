@@ -44,7 +44,7 @@ export default function PaginaTraccia() {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-14">
+    <section className="pagina-immersiva mx-auto max-w-2xl px-4 py-6 md:py-14">
       <p className="font-mono text-sm uppercase tracking-widest text-cartello">MotoGarage</p>
       <h1 className="mt-1 font-display text-5xl font-bold uppercase leading-none tracking-tight">
         Traccia un giro
@@ -125,7 +125,7 @@ export default function PaginaTraccia() {
             <button
               type="button"
               onClick={() => track.iniziaPercorso()}
-              className="bg-segnale px-6 py-3 font-mono font-medium uppercase text-asfalto hover:bg-white"
+              className="tap min-h-[48px] bg-segnale px-6 py-3 font-mono font-medium uppercase text-asfalto hover:bg-white"
             >
               Inizia percorso
             </button>
@@ -135,21 +135,21 @@ export default function PaginaTraccia() {
               <button
                 type="button"
                 onClick={track.metiInPausa}
-                className="border-2 border-asfalto px-6 py-3 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento"
+                className="tap min-h-[48px] border-2 border-asfalto px-6 py-3 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento"
               >
                 Pausa
               </button>
               <button
                 type="button"
                 onClick={() => void track.terminaGiro()}
-                className="bg-asfalto px-6 py-3 font-mono font-medium uppercase text-cemento hover:bg-cartello"
+                className="tap min-h-[48px] bg-asfalto px-6 py-3 font-mono font-medium uppercase text-cemento hover:bg-cartello"
               >
                 Termina giro
               </button>
               <button
                 type="button"
                 onClick={track.annullaPercorso}
-                className="border-2 border-red-600/40 px-6 py-3 font-mono text-xs font-medium uppercase text-red-700 hover:bg-red-50"
+                className="tap min-h-[48px] border-2 border-red-600/40 px-6 py-3 font-mono text-xs font-medium uppercase text-red-700 hover:bg-red-50"
               >
                 Annulla
               </button>
@@ -160,21 +160,21 @@ export default function PaginaTraccia() {
               <button
                 type="button"
                 onClick={track.riprendiPercorso}
-                className="bg-segnale px-6 py-3 font-mono font-medium uppercase text-asfalto hover:bg-white"
+                className="tap min-h-[48px] bg-segnale px-6 py-3 font-mono font-medium uppercase text-asfalto hover:bg-white"
               >
                 Riprendi
               </button>
               <button
                 type="button"
                 onClick={() => void track.terminaGiro()}
-                className="bg-asfalto px-6 py-3 font-mono font-medium uppercase text-cemento hover:bg-cartello"
+                className="tap min-h-[48px] bg-asfalto px-6 py-3 font-mono font-medium uppercase text-cemento hover:bg-cartello"
               >
                 Termina giro
               </button>
               <button
                 type="button"
                 onClick={track.annullaPercorso}
-                className="border-2 border-red-600/40 px-6 py-3 font-mono text-xs font-medium uppercase text-red-700 hover:bg-red-50"
+                className="tap min-h-[48px] border-2 border-red-600/40 px-6 py-3 font-mono text-xs font-medium uppercase text-red-700 hover:bg-red-50"
               >
                 Annulla
               </button>
