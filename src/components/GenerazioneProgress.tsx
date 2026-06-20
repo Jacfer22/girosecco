@@ -10,7 +10,7 @@ const FASI = [
   { fino: 82, label: 'Applicazione texture' },
   { fino: 95, label: 'Ottimizzazione' },
   { fino: 99, label: 'Salvataggio' },
-  { fino: 100, label: 'Gemello digitale pronto' },
+  { fino: 100, label: 'Avatar 3D pronto' },
 ];
 
 function faseAttuale(percentuale: number) {
@@ -76,7 +76,7 @@ export default function GenerazioneProgress({
           <div className="mx-auto grid h-24 w-24 place-items-center rounded-[28px] border border-red-400/30 bg-red-600 text-5xl shadow-[0_0_44px_rgba(220,38,38,0.42)]">🏁</div>
           <p className="mt-7 font-mono text-xs uppercase tracking-[0.28em] text-red-400">MotoGarage</p>
           <h1 className="mt-3 font-display text-5xl font-black uppercase leading-none tracking-tight">La tua moto è pronta</h1>
-          <p className="mt-4 text-cemento/65">Il gemello digitale di <strong className="text-white">{nome}</strong> è stato inserito nel tuo garage.</p>
+          <p className="mt-4 text-cemento/65">L&apos;avatar 3D di <strong className="text-white">{nome}</strong> è stato inserito nel tuo garage.</p>
           <button type="button" onClick={onApriGarage} className="tap mt-8 rounded-app bg-red-600 px-8 py-4 font-mono text-sm font-bold uppercase tracking-wide text-white hover:bg-white hover:text-asfalto">
             Apri nel mio Garage
           </button>
@@ -90,7 +90,7 @@ export default function GenerazioneProgress({
       <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
         <p className="font-mono text-sm uppercase tracking-[0.34em] text-red-600 dark:text-red-400">Laboratorio digitale</p>
         <h1 className="mt-7 max-w-3xl font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-6xl">
-          Stiamo creando il gemello digitale della tua moto
+          Stiamo creando l&apos;avatar 3D della tua moto
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-6 text-asfalto/55 sm:text-base dark:text-cemento/55">
           Può richiedere qualche minuto. Puoi chiudere l&apos;app e tornare più tardi.

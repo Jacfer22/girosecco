@@ -16,7 +16,7 @@ const TILES: Tile[] = [
   {
     href: '/garage',
     titolo: 'Il mio Garage',
-    sotto: 'Entra nell’officina virtuale e crea il gemello 3D della tua moto',
+    sotto: 'Entra nell’officina virtuale e crea l’avatar 3D della tua moto',
     icona: '🏍️',
     solo: 'loggato',
     evidenza: true,

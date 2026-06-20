@@ -33,7 +33,7 @@ export default function PaginaPrivacy() {
 
         <h2>Uso delle foto della moto</h2>
         <p>
-          Le foto inviate per il gemello digitale sono private, accessibili al proprietario e agli amministratori incaricati della lavorazione. Vengono usate esclusivamente per creare e controllare il modello 3D.
+          Le foto inviate per l&apos;avatar 3D della moto sono private, accessibili al proprietario e agli amministratori incaricati della lavorazione. Vengono usate esclusivamente per creare e controllare il modello 3D.
         </p>
 
         <h2>Fornitori</h2>

@@ -140,7 +140,7 @@ export default function PaginaGarage() {
     const target = motoId ? moto.find((item) => item.id === motoId) : selezionata;
     if (!target || !user) return;
     const conferma = window.confirm(
-      `Eliminare ${nomeMoto(target)} dal garage?\n\nFoto e gemello 3D verranno rimossi. L'operazione non si può annullare.`,
+      `Eliminare ${nomeMoto(target)} dal garage?\n\nFoto e avatar 3D verranno rimossi. L'operazione non si può annullare.`,
     );
     if (!conferma) return;
 
@@ -283,7 +283,7 @@ export default function PaginaGarage() {
               onClick={() => setVista(vista === 'crea' ? 'garage' : 'crea')}
               className="shrink-0 rounded-app bg-brand px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-wide text-white shadow-brand"
             >
-              {vista === 'crea' ? '← Garage' : '＋ Gemello'}
+              {vista === 'crea' ? '← Garage' : '＋ Avatar della tua moto'}
             </button>
           </div>
 
@@ -339,7 +339,7 @@ export default function PaginaGarage() {
                   )}
                   {inApprovazione && (
                     <p className="font-mono text-[10px] uppercase leading-relaxed text-amber-300/80">
-                      Una richiesta è in attesa di approvazione admin (limite 1/ora).
+                      Una richiesta è in attesa di approvazione admin (dalla seconda moto in poi).
                     </p>
                   )}
                 </div>
@@ -359,7 +359,7 @@ export default function PaginaGarage() {
 
                     {richiedeApprovazioneAdmin(selezionata.provider) && (
                       <p className="mt-4 rounded-app border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-200/90">
-                        In attesa della mia approvazione. Riceverai il gemello 3D appena avviata la generazione.
+                        In attesa della mia approvazione. Riceverai l&apos;avatar 3D appena avviata la generazione.
                       </p>
                     )}
 

@@ -37,14 +37,13 @@ function IconaFoto({ attiva }: { attiva: boolean }) {
   );
 }
 
-function IconaClassifica({ attiva }: { attiva: boolean }) {
+function IconaGiri({ attiva }: { attiva: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={attiva ? 2.4 : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M8 21h8" />
-      <path d="M12 17V7" />
-      <path d="M7 7h10L12 3z" />
-      <path d="M5 11h2M17 11h2" />
+      <path d="M4 6h16M4 12h10M4 18h6" />
+      <circle cx="19" cy="12" r="2" fill={attiva ? 'currentColor' : 'none'} />
+      <circle cx="15" cy="18" r="2" fill={attiva ? 'currentColor' : 'none'} />
     </svg>
   );
 }
@@ -67,7 +66,7 @@ export default function BottomNav() {
   const vociLaterali = [
     { href: '/naviga', label: 'Naviga', Icona: IconaBussola, match: (p: string) => p.startsWith('/naviga') },
     { href: '/community', label: 'Community', Icona: IconaFoto, match: (p: string) => (p.startsWith('/community') && !p.startsWith('/community/classifica')) || p.startsWith('/foto') },
-    { href: '/community/classifica', label: 'Classifica', Icona: IconaClassifica, match: (p: string) => p.startsWith('/community/classifica') },
+    { href: '/giri', label: 'Giri', Icona: IconaGiri, match: (p: string) => p.startsWith('/giri') },
     {
       href: loggato ? '/hub' : '/accedi',
       label: loggato ? 'Tu' : 'Accedi',

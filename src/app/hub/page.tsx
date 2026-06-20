@@ -27,15 +27,15 @@ interface AzioneHub {
 }
 
 const AZIONI: AzioneHub[] = [
-  { href: '/garage', icona: 'garage', titolo: 'Il mio Garage', sotto: 'Gemelli digitali e richieste Pro', accento: true },
+  { href: '/garage', icona: 'garage', titolo: 'Il mio Garage', sotto: 'Avatar 3D e richieste Pro', accento: true },
   { href: '/itinerari', icona: 'strada', titolo: 'Itinerari', sotto: 'Gli itinerari, regione per regione' },
   { href: '/traccia', icona: 'gps', titolo: 'Traccia un giro', sotto: 'Registra percorso e statistiche' },
   { href: '/community', icona: 'foto', titolo: 'Community', sotto: 'Foto, commenti e giri dei biker' },
   { href: '/giri', icona: 'gps', titolo: 'I miei giri', sotto: 'Percorsi salvati e card social' },
   { href: '/community/classifica', icona: 'classifica', titolo: 'Classifica km', sotto: 'I biker con più chilometri' },
   { href: '/account', icona: 'profilo', titolo: 'Il tuo profilo', sotto: 'Foto, username e moto' },
-  { href: '/pro', icona: 'pro', titolo: 'MotoGarage Pro', sotto: 'Gemello digitale, GPX e contenuti premium', soloFree: true },
-  { href: '/admin', icona: 'admin', titolo: 'Pannello admin', sotto: 'Gemelli, utenti e moderazione', soloAdmin: true },
+  { href: '/pro', icona: 'pro', titolo: 'MotoGarage Pro', sotto: 'Avatar 3D, GPX e contenuti premium', soloFree: true },
+  { href: '/admin', icona: 'admin', titolo: 'Pannello admin', sotto: 'Avatar 3D, utenti e moderazione', soloAdmin: true },
 ];
 
 function IconaHub({ nome }: { nome: string }) {

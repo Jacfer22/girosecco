@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     default: 'MotoGarage — La casa digitale della tua moto',
     template: '%s | MotoGarage',
   },
-  description: 'Crea il gemello digitale 3D della tua moto, costruisci il tuo garage, traccia i giri e condividi itinerari con la community.',
-  keywords: ['moto', 'garage digitale', 'gemello digitale 3D', 'itinerari moto', 'GPS moto', 'community motociclisti'],
+  description: 'Crea l\'avatar 3D della tua moto, costruisci il tuo garage, traccia i giri e condividi itinerari con la community.',
+  keywords: ['moto', 'garage digitale', 'avatar moto 3D', 'itinerari moto', 'GPS moto', 'community motociclisti'],
   authors: [{ name: 'MotoGarage' }],
   creator: 'MotoGarage',
   publisher: 'MotoGarage',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   openGraph: {
     title: 'MotoGarage — La casa digitale della tua moto',
-    description: 'Il garage digitale per creare il gemello 3D della tua moto, tracciare giri e condividere esperienze.',
+    description: 'Il garage digitale per creare l\'avatar 3D della tua moto, tracciare giri e condividere esperienze.',
     siteName: 'MotoGarage',
     url: '/',
     locale: 'it_IT',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'MotoGarage — La casa digitale della tua moto',
-    description: 'Garage digitale, gemello 3D, itinerari e community per motociclisti.',
+    description: 'Garage digitale, avatar moto 3D, itinerari e community per motociclisti.',
     images: ['/og-motogarage.png'],
   },
   icons: {

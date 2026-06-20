@@ -141,7 +141,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
       {caricamento && (
         <div className="pointer-events-none absolute inset-0 grid place-items-center bg-black/20">
           <p className="rounded-full border border-white/10 bg-black/70 px-5 py-3 font-mono text-xs uppercase tracking-wide text-white/70 backdrop-blur">
-            Caricamento gemello digitale…
+            Caricamento avatar 3D…
           </p>
         </div>
       )}

@@ -19,7 +19,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-10">
         <Logo variante="footer" />
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-guardrail/90">
-          Crea il gemello digitale della tua moto, personalizza il tuo garage virtuale
+          Crea l&apos;avatar 3D della tua moto, personalizza il tuo garage virtuale
           e connettiti con la community di motociclisti italiani.
         </p>
         <p className="mt-6 text-xs text-guardrail/70">MotoGarage · Italia</p>

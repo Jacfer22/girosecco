@@ -54,7 +54,7 @@ export function formatoModello(moto: Pick<GarageMoto, 'model_format' | 'model_ur
 }
 
 export function statoMotoLabel(stato: StatoMoto, provider?: string | null): string {
-  if (stato === 'pronto') return 'Gemello digitale pronto';
+  if (stato === 'pronto') return 'Avatar 3D pronto';
   if (stato === 'in_attesa' && provider === 'in-attesa-approvazione') return 'In attesa di approvazione';
   if (stato === 'in_attesa') return 'In coda';
   if (stato === 'elaborazione') return 'Generazione 3D in corso';

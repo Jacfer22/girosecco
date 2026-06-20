@@ -3,6 +3,7 @@ import { getItinerari, getItinerariConAvvisi } from '@/lib/supabase';
 import { accessoItinerario } from '@/lib/accesso';
 import LandingHero from '@/components/LandingHero';
 import Reveal from '@/components/Reveal';
+import SezioneComeFunziona from '@/components/SezioneComeFunziona';
 import ItinerarioCard from '@/components/ItinerarioCard';
 
 export const revalidate = 3600;
@@ -85,7 +86,7 @@ export default async function HomePage() {
             <FeatureCard
               href="/garage"
               titolo="Il mio Garage"
-              desc="Gemello digitale 3D della tua moto nel garage virtuale."
+              desc="Avatar 3D della tua moto nel garage virtuale."
               delay={120}
             />
             <FeatureCard
@@ -142,6 +143,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <SezioneComeFunziona />
 
       <section className="tuning-cta-finale">
         <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:py-16">

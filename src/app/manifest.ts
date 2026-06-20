@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'MotoGarage — La casa digitale della tua moto',
     short_name: 'MotoGarage',
-    description: 'Garage digitale, gemello 3D, itinerari, GPS e community per motociclisti.',
+    description: 'Garage digitale, avatar moto 3D, itinerari, GPS e community per motociclisti.',
     start_url: '/traccia',
     display: 'standalone',
     background_color: '#08090b',

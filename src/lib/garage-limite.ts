@@ -1,21 +1,18 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 
-export const LIMITE_RICHIESTE_MS = 60 * 60 * 1000;
 export const PROVIDER_APPROVAZIONE = 'in-attesa-approvazione';
 export const PROVIDER_HF = 'huggingface-triposplat';
 
-/** True se l'utente può avviare una generazione automatica (max 1/ora). */
+/** True se l'utente può avviare una generazione automatica (solo la prima moto). */
 export async function puoGenerareAutomaticamente(
   admin: SupabaseClient,
   utenteId: string,
   motoIdEsclusa?: string,
 ): Promise<boolean> {
-  const soglia = new Date(Date.now() - LIMITE_RICHIESTE_MS).toISOString();
   let query = admin
     .from('moto')
     .select('id', { count: 'exact', head: true })
-    .eq('utente_id', utenteId)
-    .gte('created_at', soglia);
+    .eq('utente_id', utenteId);
 
   if (motoIdEsclusa) {
     query = query.neq('id', motoIdEsclusa);

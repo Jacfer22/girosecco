@@ -161,8 +161,8 @@ export default function CreaGemello({ onInviato }: Props) {
         </h1>
         <p className="mt-4 text-sm leading-6 text-cemento/65">
           {inApprovazione
-            ? `Hai già usato la generazione automatica nell'ultima ora. La tua ${marca} ${modello} è in coda: verrà elaborata dopo la mia approvazione.`
-            : `Stiamo creando il gemello digitale della tua ${marca} ${modello}.`}
+            ? `La tua ${marca} ${modello} è in coda: verrà elaborata dopo la mia approvazione (dalla seconda moto in poi).`
+            : `Stiamo creando l'avatar 3D della tua ${marca} ${modello}.`}
         </p>
       </section>
     );
@@ -171,10 +171,10 @@ export default function CreaGemello({ onInviato }: Props) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
       <section className="rounded-[30px] border border-asfalto/10 bg-white p-5 shadow-app-lg dark:bg-carbone sm:p-8">
-        <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand">Gemello digitale</p>
-        <h1 className="mt-3 font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-6xl">Gemello digitale</h1>
+        <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand">Avatar 3D</p>
+        <h1 className="mt-3 font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-6xl">Avatar della tua moto 3D</h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-asfalto/60 dark:text-cemento/60">
-          Carica una foto laterale pulita: generiamo il modello 3D nel tuo garage. Una generazione automatica all&apos;ora; le successive richiedono approvazione.
+          Carica una foto laterale pulita: generiamo l&apos;avatar 3D nel tuo garage. La prima moto parte subito; dalla seconda serve la mia approvazione.
         </p>
 
         <div className="mt-7 grid grid-cols-2 gap-2">
@@ -222,7 +222,7 @@ export default function CreaGemello({ onInviato }: Props) {
             <div className="flex gap-3">
               <button type="button" onClick={() => setStep('dati')} className="flex-1 rounded-app border border-asfalto/15 py-4 font-mono text-xs font-bold uppercase dark:border-white/15">← Indietro</button>
               <button type="button" disabled={!fotoPrincipale || caricando} onClick={inviaRichiesta} className="flex-[2] rounded-app bg-brand py-4 font-mono text-xs font-bold uppercase text-white disabled:opacity-40">
-                {caricando ? 'Avvio generazione…' : 'Genera gemello digitale'}
+                {caricando ? 'Avvio generazione…' : 'Genera avatar 3D'}
               </button>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
 const VANTAGGI = [
-  'Gemello digitale 3D della tua moto da 1–2 foto',
+  'Avatar 3D della tua moto da 1–2 foto',
   'Garage pubblico visitabile e modello PLY scaricabile',
   'Tracce GPX di tutti gli itinerari',
   'Varianti panoramiche e pacchetti weekend',
@@ -71,7 +71,7 @@ export default function PaginaPro() {
         <div className="overflow-hidden rounded-app-lg bg-[#08090d] text-cemento shadow-app">
           <img src="/og-motogarage.png" alt="" className="aspect-video w-full object-cover object-[50%_68%]" />
           <div className="p-5">
-            <p className="font-mono text-xs uppercase tracking-wide text-red-400">Gemello digitale incluso</p>
+            <p className="font-mono text-xs uppercase tracking-wide text-red-400">Avatar 3D incluso</p>
             <p className="mt-2 text-sm text-cemento/60">Il team MotoGarage genera e controlla il modello prima di pubblicarlo nel tuo garage.</p>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function PaginaPro() {
         <div className="mt-8 rounded-app border-2 border-emerald-500 bg-emerald-500/10 p-6 text-center">
           <p className="font-display text-2xl font-bold uppercase tracking-tight">Il tuo account Pro è attivo ✓</p>
           <Link href="/garage" className="mt-3 inline-block rounded-app bg-red-600 px-5 py-2.5 font-mono text-sm uppercase text-white">
-            Crea il gemello digitale
+            Crea l&apos;avatar 3D
           </Link>
         </div>
       ) : (

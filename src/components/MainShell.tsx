@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import TutorialPrimoAccesso from './TutorialPrimoAccesso';
 
 const PAGINE_IMMERSIVE = ['/naviga', '/traccia'];
 
@@ -9,6 +10,9 @@ export default function MainShell({ children }: { children: React.ReactNode }) {
   const immersivo = PAGINE_IMMERSIVE.some((p) => pathname.startsWith(p));
 
   return (
-    <main className={immersivo ? 'main-immersivo flex-1' : 'flex-1'}>{children}</main>
+    <>
+      <main className={immersivo ? 'main-immersivo flex-1' : 'flex-1'}>{children}</main>
+      <TutorialPrimoAccesso />
+    </>
   );
 }

@@ -50,7 +50,7 @@ export default function GarageAmbiente({
         ) : fotoAnteprima ? (
           <div className="garage-anteprima-foto">
             <img src={fotoAnteprima} alt="Anteprima moto" />
-            <p className="garage-anteprima-label">In attesa del gemello 3D</p>
+            <p className="garage-anteprima-label">In attesa dell&apos;avatar 3D</p>
           </div>
         ) : (
           <div className="garage-palco-vuoto">

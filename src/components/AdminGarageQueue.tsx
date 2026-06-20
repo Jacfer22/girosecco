@@ -100,12 +100,12 @@ export default function AdminGarageQueue() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-red-600">Garage Pro</p>
-          <h2 className="mt-1 font-display text-3xl font-bold uppercase tracking-tight">Gemelli da generare</h2>
+          <h2 className="mt-1 font-display text-3xl font-bold uppercase tracking-tight">Avatar 3D da generare</h2>
         </div>
         {richieste && <span className="rounded-full bg-red-600 px-3 py-1 font-display text-2xl font-bold text-white">{richieste.length}</span>}
       </div>
       <p className="mt-2 text-sm text-asfalto/60 dark:text-cemento/60">
-        Approva le richieste oltre il limite orario, avvia la generazione AI o carica manualmente il PLY.
+        Approva le richieste dalla seconda moto, avvia la generazione AI o carica manualmente il PLY.
       </p>
       {errore && <p className="mt-4 rounded-app bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-300">{errore}</p>}
 

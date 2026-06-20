@@ -22,8 +22,8 @@ export default function LandingHero({ itinerariCount }: Props) {
             <span className="block text-cemento/90">della tua moto</span>
           </h1>
           <p className="mt-5 max-w-lg text-sm leading-relaxed text-cemento/75 sm:text-base">
-            Garage virtuale, gemello 3D fotorealistico, itinerari verificati in Italia,
-            tracciamento GPS con card social e navigatore integrato. Per chi vive in sella.
+            Garage virtuale, avatar 3D fotorealistico, itinerari verificati in Italia,
+            tracciamento GPS con card social e navigatore integrato. Registra un giro — anche senza account puoi esplorare, ma per tracciare serve un profilo gratuito.
           </p>
         </Reveal>
 
@@ -39,7 +39,7 @@ export default function LandingHero({ itinerariCount }: Props) {
             <Metrica valore="20" label="Regioni" />
             <Metrica valore="GPS" label="Tracciamento" />
             <Metrica valore="NAV" label="Navigatore" />
-            <Metrica valore="3D" label="Gemello digitale" />
+            <Metrica valore="3D" label="Avatar moto" />
           </div>
         </Reveal>
 

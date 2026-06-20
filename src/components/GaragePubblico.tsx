@@ -47,7 +47,7 @@ export default function GaragePubblico({ username, moto }: { username: string; m
                 <p className="font-mono text-xs uppercase tracking-[0.2em] text-red-400">In esposizione</p>
                 <h2 className="mt-2 font-display text-3xl font-black uppercase leading-none">{nomeMoto(selezionata)}</h2>
                 <p className="mt-2 font-mono text-xs uppercase text-cemento/45">{selezionata.anno ?? 'Anno non indicato'} · {selezionata.model_format?.toUpperCase()}</p>
-                <p className="mt-4 text-xs text-cemento/45">Gemello creato il {dataMoto(selezionata.created_at)}</p>
+                <p className="mt-4 text-xs text-cemento/45">Avatar creato il {dataMoto(selezionata.created_at)}</p>
                 {moto.length > 1 && (
                   <div className="mt-6 space-y-2">
                     {moto.map((item) => (

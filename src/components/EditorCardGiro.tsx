@@ -57,6 +57,7 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [generandoCard, setGenerandoCard] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
+  const [copiato, setCopiato] = useState(false);
   const rigeneraAbilitato = useRef(false);
   const fotoSalvataRef = useRef(fotoSalvata);
   const preferFotoRef = useRef(preferFoto);
@@ -164,13 +165,29 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
     a.click();
   }
 
-  async function condividiCard() {
-    if (!cardUrl) return;
+  function testoDidascalia() {
     const titolo = luogoCard.trim() || giro.nome;
-    const testo =
+    return (
       `${titolo !== 'Giro libero' ? `${titolo} · ` : ''}` +
       `${formattaKm(giro.km)} km in moto 🏍️\n` +
-      `Il mio giro su MotoGarage`;
+      `Il mio giro su MotoGarage`
+    );
+  }
+
+  async function copiaDidascalia() {
+    const testo = testoDidascalia();
+    try {
+      await navigator.clipboard.writeText(testo);
+      setCopiato(true);
+      window.setTimeout(() => setCopiato(false), 2000);
+    } catch {
+      setErrore('Non sono riuscito a copiare la didascalia.');
+    }
+  }
+
+  async function condividiCard() {
+    if (!cardUrl) return;
+    const testo = testoDidascalia();
     try {
       const res = await fetch(cardUrl);
       const blob = await res.blob();
@@ -323,7 +340,27 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
       </div>
 
       {cardUrl && (
-        <div>
+        <div className="space-y-4">
+          <p className="font-mono text-[11px] uppercase tracking-wide text-asfalto/40">
+            Anteprima Instagram (4:5)
+          </p>
+          <div className="mx-auto w-full max-w-[280px] rounded-[20px] border border-asfalto/15 bg-asfalto p-2 shadow-app-lg dark:border-white/10">
+            <div className="flex items-center gap-2 px-2 py-1">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                MG
+              </div>
+              <span className="font-mono text-[10px] font-bold uppercase text-cemento">motogarage</span>
+            </div>
+            <div className="aspect-[4/5] overflow-hidden rounded-[14px] bg-black">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={cardUrl} alt="Anteprima card su Instagram" className="h-full w-full object-cover" />
+            </div>
+            <div className="mt-1 flex gap-3 px-2 py-1 text-xs text-cemento/40" aria-hidden="true">
+              <span>♥</span>
+              <span>💬</span>
+              <span>↗</span>
+            </div>
+          </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={cardUrl} alt="Card del giro" className="w-full max-w-xs rounded-app border-2 border-asfalto/20 shadow-app" />
         </div>
@@ -425,10 +462,19 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
           <button type="button" onClick={condividiCard} className="tap rounded-app bg-segnale px-5 py-2.5 font-mono font-medium uppercase text-asfalto hover:bg-white">
             Condividi
           </button>
+          <button type="button" onClick={() => void copiaDidascalia()} className="tap rounded-app border-2 border-asfalto px-5 py-2.5 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento">
+            Copia didascalia
+          </button>
           <button type="button" onClick={scaricaCard} className="tap rounded-app border-2 border-asfalto px-5 py-2.5 font-mono font-medium uppercase hover:bg-asfalto hover:text-cemento">
             Salva card
           </button>
         </div>
+      )}
+
+      {copiato && (
+        <p className="rounded-app border border-bosco/30 bg-bosco/10 px-4 py-2 font-mono text-xs uppercase text-bosco">
+          Didascalia copiata negli appunti
+        </p>
       )}
     </div>
   );

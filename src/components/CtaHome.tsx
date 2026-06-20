@@ -35,12 +35,12 @@ export default function CtaHome() {
   }
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <Link
-        href="/itinerari"
+        href="/accedi#registrati"
         className="tap rounded-app bg-brand px-7 py-3.5 text-center font-mono text-sm font-bold uppercase tracking-wide text-white shadow-brand transition-colors hover:bg-brand-chiaro"
       >
-        Esplora itinerari
+        Traccia un giro
       </Link>
       <Link
         href="/accedi"
@@ -48,6 +48,9 @@ export default function CtaHome() {
       >
         Accedi / Registrati
       </Link>
+      <p className="font-mono text-[10px] uppercase tracking-wide text-cemento/50 sm:max-w-[11rem] sm:text-left">
+        Registrati gratis per tracciare giri GPS e creare card social
+      </p>
     </div>
   );
 }
