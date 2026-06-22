@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/traccia',
     display: 'standalone',
     background_color: '#08090b',
-    theme_color: '#d11919',
+    theme_color: '#ED2100',
     orientation: 'any',
     lang: 'it',
     categories: ['lifestyle', 'navigation', 'social'],

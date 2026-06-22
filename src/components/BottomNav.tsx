@@ -9,7 +9,7 @@ function IconaBussola({ attiva }: { attiva: boolean }) {
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth={attiva ? 2.4 : 2} />
       <path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <polygon points="12,5 14.2,13.5 12,11.2 9.8,13.5" fill={attiva ? '#d11919' : 'currentColor'} />
+      <polygon points="12,5 14.2,13.5 12,11.2 9.8,13.5" fill={attiva ? '#ED2100' : 'currentColor'} />
       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
     </svg>
   );

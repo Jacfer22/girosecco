@@ -54,7 +54,7 @@ function Pill({
       onClick={onClick}
       className={`tap rounded-full border px-3.5 py-2 font-mono text-[10px] font-bold uppercase tracking-wide transition-all ${
         attivo
-          ? 'border-brand bg-brand text-white shadow-[0_0_16px_rgba(209,25,25,0.35)]'
+          ? 'border-brand bg-brand text-white shadow-[0_0_16px_rgba(237,33,0,0.35)]'
           : 'border-white/15 bg-white/[0.04] text-cemento/60 hover:border-white/25'
       }`}
     >

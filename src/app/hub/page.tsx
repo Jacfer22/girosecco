@@ -148,7 +148,7 @@ export default function PaginaHub() {
       <section className="px-4 py-2">
         <Link
           href="/traccia"
-          className="tap flex flex-col items-center justify-center rounded-app-lg border border-brand/40 bg-brand/15 py-10 text-center shadow-[0_0_40px_rgba(209,25,25,0.15)] transition-colors hover:bg-brand/25"
+          className="tap flex flex-col items-center justify-center rounded-app-lg border border-brand/40 bg-brand/15 py-10 text-center shadow-[0_0_40px_rgba(237,33,0,0.15)] transition-colors hover:bg-brand/25"
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-brand">Pronto?</span>
           <span className="mt-2 font-display text-4xl font-black uppercase leading-none tracking-tight text-white">
