@@ -34,9 +34,9 @@ export default function Header() {
   }
 
   return (
-    <header className="app-chrome-header sticky top-0 z-40 border-b border-white/10 bg-asfalto/97 text-cemento shadow-app-sm backdrop-blur-xl">
+    <header className="app-chrome-header relative z-40 border-b border-white/10 bg-asfalto/97 text-cemento shadow-app-sm backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
-        <LogoHomeLink variant="header" onClick={chiudiMenu} />
+        <LogoHomeLink onClick={chiudiMenu} />
 
         <nav className="hidden items-center gap-5 sm:flex">
           <Voce href="/itinerari" label="Itinerari" attivo={attivo('/itinerari')} />

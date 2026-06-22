@@ -6,8 +6,11 @@ import { useAuth } from '@/components/AuthProvider';
 import { chromeMobileNascosto } from '@/lib/chrome-app';
 import LogoHomeLink from '@/components/LogoHomeLink';
 
-/** Logo fisso in alto a sinistra quando l'header è nascosto (mobile app / nav fullscreen). */
-export default function LogoHomeShell() {
+/**
+ * Logo in cima al contenuto quando l'header è nascosto (mobile app).
+ * Scorre con la pagina — niente position fixed.
+ */
+export default function PaginaLogoBar() {
   const pathname = usePathname();
   const { user, loading, nonConfigurato } = useAuth();
   const loggato = !loading && !!user && !nonConfigurato;
@@ -19,10 +22,12 @@ export default function LogoHomeShell() {
         setMostra(false);
         return;
       }
+      if (document.body.classList.contains('nav-fullscreen-active')) {
+        setMostra(false);
+        return;
+      }
       const mobile = window.matchMedia('(max-width: 767px)').matches;
-      const navFullscreen = document.body.classList.contains('nav-fullscreen-active');
-      const chromeOff = mobile && chromeMobileNascosto(pathname, loggato);
-      setMostra(chromeOff || navFullscreen);
+      setMostra(mobile && chromeMobileNascosto(pathname, loggato));
     };
 
     aggiorna();
@@ -37,5 +42,9 @@ export default function LogoHomeShell() {
 
   if (!mostra) return null;
 
-  return <LogoHomeLink variant="floating" />;
+  return (
+    <div className="pagina-logo-bar w-full pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
+      <LogoHomeLink />
+    </div>
+  );
 }

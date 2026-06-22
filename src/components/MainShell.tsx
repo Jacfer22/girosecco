@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import TutorialPrimoAccesso from './TutorialPrimoAccesso';
+import PaginaLogoBar from './PaginaLogoBar';
 import { useAuth } from './AuthProvider';
 import { chromeMobileNascosto, footerNascosto } from '@/lib/chrome-app';
 
@@ -30,6 +31,9 @@ export default function MainShell({ children }: { children: React.ReactNode }) {
       <main
         className={`app-main page-enter ${immersivo ? 'main-immersivo flex-1' : 'flex-1'} ${loggato && !pathname.startsWith('/') ? 'app-shell-loggato' : ''}`}
       >
+        <div className="mx-auto w-full max-w-6xl px-4">
+          <PaginaLogoBar />
+        </div>
         {children}
       </main>
       <TutorialPrimoAccesso />

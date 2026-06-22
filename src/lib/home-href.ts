@@ -1,4 +1,7 @@
-/** Home dopo login = cockpit personale; altrimenti landing pubblica. */
-export function homeHref(loggato: boolean): string {
-  return loggato ? '/hub' : '/';
+/** URL canonico del sito (es. https://girosecco.vercel.app). */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://girosecco.vercel.app';
+
+/** Home: sempre landing root. */
+export function homeHref(_loggato?: boolean): string {
+  return '/';
 }

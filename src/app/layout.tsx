@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Archivo, Barlow_Condensed, Caveat, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
-import LogoHomeShell from '@/components/LogoHomeShell';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import InstallaPwa from '@/components/InstallaPwa';
@@ -16,7 +15,7 @@ const body = Archivo({ subsets: ['latin'], weight: ['400', '500', '600'], variab
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
 const hand = Caveat({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-hand' });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://motogarage.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://girosecco.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -100,7 +99,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <AuthProvider>
             <FeedbackProvider>
               <Header />
-              <LogoHomeShell />
               <MainShell>{children}</MainShell>
               <Footer />
               <InstallaPwa />
