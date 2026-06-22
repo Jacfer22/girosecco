@@ -405,7 +405,7 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
           onTouchStart={iniziaTouch}
           onTouchMove={muoviTouch}
           onTouchEnd={(e) => terminaGesto(e.changedTouches[0]?.clientX, e.changedTouches[0]?.clientY)}
-          onTouchCancel={terminaGesto}
+          onTouchCancel={() => terminaGesto()}
           onPointerDown={onPointerDown}
           onPointerMove={(e) => gestiRef.current.tipo === 'pan' && muoviPan(e.clientX, e.clientY)}
           onPointerUp={(e) => terminaGesto(e.clientX, e.clientY)}
