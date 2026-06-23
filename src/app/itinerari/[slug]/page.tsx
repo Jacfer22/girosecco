@@ -1,3 +1,4 @@
+import { BRAND_EMAIL } from '@/lib/brand-display';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getItinerario, getItinerari } from '@/lib/supabase';
@@ -69,7 +70,7 @@ export default async function PaginaItinerario({
           <p className="mt-1 text-sm text-asfalto/70">
             Una delle strade-icona della zona, descritta da fonti pubbliche. La
             traccia GPS di dettaglio non è ancora rifinita: se lo conosci e vuoi
-            aggiungere tappe o GPX, scrivici a info@motogarage.it.
+            aggiungere tappe o GPX, scrivici a {BRAND_EMAIL}.
           </p>
         </div>
       )}

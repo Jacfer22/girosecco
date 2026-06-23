@@ -1,3 +1,4 @@
+import { BRAND_EMAIL } from '@/lib/brand-display';
 import Link from 'next/link';
 import { getItinerari, getItinerariConAvvisi } from '@/lib/supabase';
 import { REGIONI } from '@/lib/regioni';
@@ -133,11 +134,11 @@ export default async function PaginaItinerari() {
             </h3>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-asfalto/60">
               Se hai un percorso che vale la pena condividere, scrivici a{' '}
-              <a href="mailto:info@motogarage.it" className="text-brand hover:underline">info@motogarage.it</a>.
+              <a href={`mailto:${BRAND_EMAIL}`} className="text-brand hover:underline">{BRAND_EMAIL}</a>.
               Lo trasformiamo in itinerario con mappa, tappe e GPX.
             </p>
             <a
-              href="mailto:info@motogarage.it?subject=Proposta%20itinerario%20MotoGarage"
+              href={`mailto:${BRAND_EMAIL}?subject=Proposta%20itinerario%20MotoGarage`}
               className="tap mt-5 inline-flex items-center rounded-app bg-asfalto px-5 py-3 font-mono text-xs font-bold uppercase tracking-wide text-cemento transition-colors hover:bg-red-600"
             >
               Proponi un giro

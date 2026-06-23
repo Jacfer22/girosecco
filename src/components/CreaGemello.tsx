@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { useAuth } from './AuthProvider';
 import Logo from './Logo';
+import { BRAND_EMAIL } from '@/lib/brand-display';
 
 interface Props {
   onInviato: (motoId: string, tipo: 'generazione' | 'approvazione') => void;
@@ -94,7 +95,7 @@ export default function CreaGemello({ onInviato }: Props) {
         const msg = erroreMoto?.message ?? 'Non riesco a creare la richiesta.';
         throw new Error(
           msg.includes('categoria') || msg.includes('scheda_modifiche')
-            ? 'Aggiorna il database: esegui supabase/migration_moto_scheda.sql nel SQL Editor di Supabase, poi riprova.'
+            ? `Salvataggio non riuscito. Riprova tra poco — se persiste scrivi a ${BRAND_EMAIL}.`
             : msg,
         );
       }

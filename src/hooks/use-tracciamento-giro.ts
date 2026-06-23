@@ -12,6 +12,7 @@ import {
   type GiroUtente,
 } from '@/lib/giri-store';
 import { useFeedback } from '@/components/FeedbackProvider';
+import { segnaTrackingAttivo } from '@/lib/tracking-session';
 
 const SOGLIA_MOVIMENTO_M = 8;
 const ACCURATEZZA_MAX_M = 35;
@@ -57,6 +58,7 @@ export function useTracciamentoGiro(userId: string | undefined) {
 
   useEffect(() => {
     statoRef.current = stato;
+    segnaTrackingAttivo(stato === 'in_corso' || stato === 'in_pausa');
   }, [stato]);
 
   async function attivaWakeLock() {

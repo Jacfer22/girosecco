@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import CreaGemello from '@/components/CreaGemello';
+import { BRAND_EMAIL } from '@/lib/brand-display';
 import GenerazioneProgress from '@/components/GenerazioneProgress';
 import { dataMoto, GarageMoto, nomeMoto, statoMotoLabel, urlModello } from '@/lib/garage';
 import EditorSchedaMoto from '@/components/EditorSchedaMoto';
@@ -128,7 +129,7 @@ export default function PaginaGarage() {
     const { error } = await supabase.from('moto').update(valori).eq('id', selezionata.id);
     if (error) {
       if (error.message.includes('categoria') || error.message.includes('scheda_modifiche')) {
-        setErrore('Esegui migration_moto_scheda.sql su Supabase (SQL Editor), poi riprova.');
+        setErrore(`Salvataggio non riuscito. Riprova tra poco o contattaci su ${BRAND_EMAIL}.`);
       }
       setSalvando(false);
       return false;

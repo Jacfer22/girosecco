@@ -481,6 +481,166 @@ body {
   color: rgba(240, 241, 242, 0.65);
 }
 
+/* Bento feature grid — landing */
+.bento-features {
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 1fr;
+}
+.bento-features > .reveal {
+  display: contents;
+}
+.bento-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 9.5rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+.dark .bento-feature {
+  background: rgba(35, 35, 35, 0.65);
+  border-color: rgba(240, 241, 242, 0.08);
+}
+.bento-feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(21, 24, 26, 0.1), 0 0 0 1px rgba(237, 33, 0, 0.08);
+}
+.bento-feature-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+.bento-feature-hero {
+  min-height: 11rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(237, 33, 0, 0.08), transparent 55%),
+    rgba(255, 255, 255, 0.78);
+}
+.dark .bento-feature-hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(237, 33, 0, 0.14), transparent 55%),
+    rgba(35, 35, 35, 0.72);
+}
+@media (min-width: 640px) {
+  .bento-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .bento-feature-hero {
+    grid-column: span 2;
+    min-height: 13rem;
+    padding: 1.75rem 1.85rem;
+  }
+  .bento-feature-hero h3 {
+    font-size: 1.75rem;
+    max-width: 16ch;
+  }
+  .bento-feature-wide {
+    grid-column: span 2;
+  }
+}
+@media (min-width: 1024px) {
+  .bento-features {
+    grid-template-columns: 1.35fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1rem;
+  }
+  .bento-feature-hero {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-height: 18rem;
+  }
+  .bento-feature-sm:nth-child(2),
+  .bento-feature-side-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .bento-feature-sm:nth-child(3),
+  .bento-feature-side-bottom {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .bento-feature-wide {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+    min-height: 7.5rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .bento-feature-wide h3 {
+    flex-shrink: 0;
+    min-width: 10rem;
+  }
+  .bento-feature-wide p {
+    flex: 1;
+    margin-top: 0;
+  }
+  .bento-feature-wide > span:last-child {
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+}
+
+/* Hub polish */
+.hub-hero {
+  position: relative;
+  padding-top: 0.25rem;
+  background:
+    radial-gradient(ellipse 90% 80% at 50% -20%, rgba(237, 33, 0, 0.18), transparent 55%);
+}
+.hub-progress-track {
+  display: flex;
+  gap: 0.35rem;
+}
+.hub-progress-segment {
+  display: block;
+  width: 2.5rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s ease;
+}
+.hub-progress-segment.is-done {
+  background: var(--brand);
+  box-shadow: 0 0 12px rgba(237, 33, 0, 0.45);
+}
+.hub-tile {
+  transform: translateY(0);
+  transition: transform 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+.hub-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.hub-tile-primary {
+  background:
+    linear-gradient(135deg, rgba(237, 33, 0, 0.12) 0%, rgba(237, 33, 0, 0.04) 100%);
+}
+
+/* Card demo — animazione tracciato + float */
+.card-demo-float {
+  animation: card-float 5.5s ease-in-out infinite;
+}
+@keyframes card-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.card-demo-route {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: route-draw 2.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+}
+@keyframes route-draw {
+  to { stroke-dashoffset: 0; }
+}
+
 /* Card app: superficie bianca, bordo sottile, elevazione che reagisce */
 .card-app {
   background: #fff;
@@ -570,6 +730,11 @@ body {
   .reveal { opacity: 1; transform: none; transition: none; }
   .card-app:hover { transform: none; }
   .skeleton { animation: none; }
+  .bento-feature:hover { transform: none; }
+  .hub-tile:hover { transform: none; }
+  .tuning-garage-bg { transition: none; }
+  .card-demo-float { animation: none; }
+  .card-demo-route { animation: none; stroke-dashoffset: 0; }
 }
 
 /* ============ GARAGE AMBIENTE INTERATTIVO ============ */
@@ -876,7 +1041,7 @@ body {
   inset: -3%;
   background:
     linear-gradient(135deg, #2a1a0e 0%, #1a120a 40%, #0e0c0a 100%);
-  transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(1.05);
+  transform: translate3d(var(--px, 0), calc(var(--py, 0) + var(--scroll-y, 0)), 0) scale(1.05);
   transition: transform 0.4s ease-out;
 }
 
@@ -992,6 +1157,26 @@ body {
   max-width: 72rem;
   margin: 0 auto;
   padding: 5rem 1rem 4rem;
+}
+
+.tuning-garage-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+.tuning-garage-landing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 70% at 50% 45%, transparent 35%, rgba(8, 7, 5, 0.55) 100%);
 }
 
 .tuning-cta-finale {
@@ -1535,10 +1720,10 @@ body.nav-fullscreen-active.con-bottomnav {
   background: var(--notte);
 }
 .page-enter {
-  animation: page-enter 0.28s ease;
+  animation: page-enter 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @keyframes page-enter {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {

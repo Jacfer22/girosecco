@@ -1,0 +1,3 @@
+file 'C:/Users/jacop/Desktop/motogarage/social/tour/out/instagram/_m-04-garage.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour/out/instagram/_m-07-community.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour/out/instagram/_m-09-ciao.mp4'

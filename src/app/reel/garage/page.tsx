@@ -15,7 +15,8 @@ function client() {
 
 /** Pagina fullscreen solo per cattura reel marketing — niente chrome. */
 export default async function PaginaReelGarage({ searchParams }: Props) {
-  const { user = 'jacfer22' } = await searchParams;
+  const params = await searchParams;
+  const user = params.user ?? process.env.REEL_GARAGE_USER ?? 'demo';
   const supabase = client();
   if (!supabase) notFound();
 

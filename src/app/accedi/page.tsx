@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import { SITE_URL } from '@/lib/home-href';
 import CardDemoAnteprima from '@/components/CardDemoAnteprima';
 import Logo from '@/components/Logo';
 
@@ -93,7 +94,7 @@ export default function PaginaAccedi() {
         password,
         options: {
           data: { username },
-          emailRedirectTo: `${window.location.origin}/accedi`,
+          emailRedirectTo: `${SITE_URL}/accedi`,
         },
       });
       setCaricamento(false);
@@ -182,7 +183,7 @@ export default function PaginaAccedi() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toLowerCase())}
                 className="input-app lowercase"
-                placeholder="es. jacopo_rm"
+                placeholder="es. moto_roma"
                 pattern="[a-z0-9_]{3,20}"
                 autoCapitalize="none"
               />
@@ -230,6 +231,10 @@ export default function PaginaAccedi() {
             </p>
           )}
         </form>
+
+        <div className="mt-8 scale-[0.92] lg:hidden">
+          <CardDemoAnteprima />
+        </div>
 
         <p className="mt-6 font-mono text-xs text-asfalto/40">
           <Link href="/" className="underline hover:text-brand">← Torna alla home</Link>

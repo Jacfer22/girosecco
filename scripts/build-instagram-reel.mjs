@@ -83,7 +83,7 @@ const MOBILE_DEVICE = {
 const { loadEnvConfig } = pkg;
 loadEnvConfig(ROOT);
 
-const GARAGE_USER = process.env.REEL_GARAGE_USER ?? 'jacfer22';
+const GARAGE_USER = process.env.REEL_GARAGE_USER ?? 'demo';
 let BASE = process.env.REEL_BASE_URL ?? '';
 
 /** Piazzale Clodio / Via Trionfale */
@@ -127,7 +127,7 @@ const SCENES = [
   },
   {
     id: '03-garage-3d',
-    label: 'Garage 3D jacfer22 — hero fullscreen',
+    label: 'Garage 3D demo — hero fullscreen',
     path: `/reel/garage?user=${GARAGE_USER}`,
     waitFor: 'canvas, [aria-label="Viewer 3D interattivo"]',
     setup: async (page) => {
@@ -382,7 +382,7 @@ async function resolveGarageUser() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return GARAGE_USER;
   const sb = createClient(url, key);
-  for (const candidate of [GARAGE_USER, 'jacfer22']) {
+  for (const candidate of [GARAGE_USER, 'demo']) {
     const { data } = await sb.from('profiles').select('username').ilike('username', candidate).maybeSingle();
     if (data?.username) return data.username;
   }

@@ -16,7 +16,7 @@ export default function ChecklistHub({ utenteId, profiloOk }: Props) {
   const completati = [progresso.profilo, progresso.giro, progresso.moto].filter(Boolean).length;
 
   const passi = [
-    { ok: progresso.profilo, titolo: 'Completa il profilo', href: '/account' },
+    { ok: progresso.profilo, titolo: 'Scegli il tuo username', href: '/account' },
     { ok: progresso.giro, titolo: 'Traccia il primo giro', href: '/traccia' },
     { ok: progresso.moto, titolo: 'Crea l\'avatar 3D moto', href: '/garage' },
   ];
@@ -31,11 +31,12 @@ export default function ChecklistHub({ utenteId, profiloOk }: Props) {
               {completati}/3 completati
             </p>
           </div>
-          <div className="flex gap-1">
-            {passi.map((passo) => (
+          <div className="hub-progress-track" aria-hidden="true">
+            {passi.map((passo, i) => (
               <span
                 key={passo.titolo}
-                className={`h-2 w-10 rounded-full ${passo.ok ? 'bg-brand' : 'bg-white/15'}`}
+                className={`hub-progress-segment ${passo.ok ? 'is-done' : ''}`}
+                style={{ transitionDelay: `${i * 80}ms` }}
               />
             ))}
           </div>

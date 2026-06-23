@@ -15,15 +15,28 @@ export default function TuningGarageScene({ variant = 'landing', children, class
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
   const [immagineOk, setImmagineOk] = useState(false);
 
-  const onMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+  const updatePointer = useCallback((clientX: number, clientY: number) => {
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     setMouse({
-      x: (event.clientX - rect.left) / rect.width,
-      y: (event.clientY - rect.top) / rect.height,
+      x: (clientX - rect.left) / rect.width,
+      y: (clientY - rect.top) / rect.height,
     });
   }, []);
+
+  const onMove = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => updatePointer(event.clientX, event.clientY),
+    [updatePointer],
+  );
+
+  const onTouchMove = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
+      const touch = event.touches[0];
+      if (touch) updatePointer(touch.clientX, touch.clientY);
+    },
+    [updatePointer],
+  );
 
   useEffect(() => {
     const img = new Image();
@@ -31,6 +44,30 @@ export default function TuningGarageScene({ variant = 'landing', children, class
     img.onerror = () => setImmagineOk(false);
     img.src = '/garage-tuning.webp';
   }, []);
+
+  useEffect(() => {
+    if (variant !== 'landing') return;
+    const ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (ridotto) return;
+
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const el = ref.current;
+        if (!el) return;
+        const y = Math.min(window.scrollY, el.offsetHeight);
+        el.style.setProperty('--scroll-y', `${y * 0.22}px`);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [variant]);
 
   const px = (mouse.x - 0.5) * (variant === 'garage' ? 16 : 10);
   const py = (mouse.y - 0.5) * (variant === 'garage' ? 8 : 6);
@@ -40,6 +77,7 @@ export default function TuningGarageScene({ variant = 'landing', children, class
       ref={ref}
       className={`tuning-garage ${variant === 'garage' ? 'tuning-garage-garage' : 'tuning-garage-landing'} ${className}`}
       onMouseMove={onMove}
+      onTouchMove={onTouchMove}
       style={{
         ['--mx' as string]: String(mouse.x),
         ['--my' as string]: String(mouse.y),
@@ -58,6 +96,7 @@ export default function TuningGarageScene({ variant = 'landing', children, class
       <div className="tuning-garage-legno-sx" aria-hidden="true" />
       <div className="tuning-garage-legno-dx" aria-hidden="true" />
       <div className="tuning-garage-pedana" aria-hidden="true" />
+      <div className="tuning-garage-grain" aria-hidden="true" />
       {children}
     </div>
   );

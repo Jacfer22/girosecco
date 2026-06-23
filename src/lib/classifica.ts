@@ -17,7 +17,7 @@ export async function caricaClassificaKm(limite = 50): Promise<{ righe: RigaClas
   const { data, error } = await supabase.rpc('classifica_km', { limit_n: limite });
   if (error) {
     const hint = /classifica_km|function/i.test(error.message)
-      ? 'Esegui migration_classifica.sql su Supabase.'
+      ? 'Classifica temporaneamente non disponibile. Riprova più tardi.'
       : error.message;
     return { righe: [], errore: hint };
   }

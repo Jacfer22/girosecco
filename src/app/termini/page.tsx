@@ -1,3 +1,5 @@
+import { BRAND_EMAIL } from '@/lib/brand-display';
+
 export const metadata = {
   title: 'Termini di Servizio — MotoGarage',
   description: 'Le condizioni d\'uso della piattaforma MotoGarage.',
@@ -88,8 +90,8 @@ export default function PaginaTermini() {
         <h2>Contatti</h2>
         <p>
           Per qualsiasi domanda:{' '}
-          <a href="mailto:info@motogarage.it" className="text-cartello underline">
-            info@motogarage.it
+          <a href={`mailto:${BRAND_EMAIL}`} className="text-cartello underline">
+            {BRAND_EMAIL}
           </a>
           .
         </p>

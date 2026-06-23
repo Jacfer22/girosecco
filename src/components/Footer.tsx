@@ -2,8 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 import Logo from './Logo';
-
 import { footerNascosto } from '@/lib/chrome-app';
+import { BRAND_DOMAIN, BRAND_EMAIL } from '@/lib/brand-display';
 
 const PAGINE_IMMERSIVE = ['/naviga', '/traccia'];
 
@@ -55,13 +55,13 @@ export default function Footer() {
             <ul className="mt-3 space-y-2 font-mono text-xs uppercase tracking-wide text-guardrail/75">
               <li><a href="/privacy" className="hover:text-brand">Privacy</a></li>
               <li><a href="/termini" className="hover:text-brand">Termini</a></li>
-              <li><a href="mailto:info@motogarage.it" className="hover:text-brand">Contatti</a></li>
+              <li><a href={`mailto:${BRAND_EMAIL}`} className="hover:text-brand">Contatti</a></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-wide text-guardrail/50">
-          © {new Date().getFullYear()} MotoGarage · Italia
+          © {new Date().getFullYear()} MotoGarage · {BRAND_DOMAIN}
         </div>
       </div>
     </footer>

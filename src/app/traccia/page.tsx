@@ -10,6 +10,7 @@ import AppPageShell from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { Button } from '@/components/Button';
 import { useTracciamentoGiro } from '@/hooks/use-tracciamento-giro';
+import AvvisoGpsTraccia from '@/components/AvvisoGpsTraccia';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
@@ -123,6 +124,7 @@ export default function PaginaTraccia() {
 
       {track.stato === 'pronto' && (
         <div className="mt-8 flex flex-col gap-4">
+          <AvvisoGpsTraccia />
           <Button fullWidth onClick={() => track.iniziaPercorso()}>
             Inizia percorso
           </Button>

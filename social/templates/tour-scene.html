@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; }
+    body {
+      background: #0A0807;
+      font-family: 'Archivo', system-ui, sans-serif;
+      color: #F4F4F5;
+      display: flex;
+      flex-direction: column;
+    }
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 45% at 50% 92%, {{GLOW_COLOR}} 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(237,33,0,0.06) 0%, transparent 70%),
+        linear-gradient(180deg, #121010 0%, #0A0807 45%, #080605 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .top {
+      position: relative;
+      z-index: 3;
+      padding: 44px 52px 0;
+      flex-shrink: 0;
+    }
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .tour-step {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(240,241,242,0.45);
+    }
+    .feature-tag {
+      padding: 10px 20px;
+      background: {{ACCENT_COLOR}};
+      color: #fff;
+      border-radius: 999px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .headline {
+      margin-top: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+    .guide-line {
+      margin-top: 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: {{ACCENT_COLOR}};
+    }
+    /* Stack compatto: didascalia → telefono → moto (~28px ≈ 1 cm su Story) */
+    .mid-stack {
+      position: relative;
+      z-index: 3;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 52px 0;
+      gap: 18px;
+    }
+    .speech {
+      position: relative;
+      width: 100%;
+      background: rgba(244,244,245,0.97);
+      color: #141210;
+      border-radius: 20px;
+      padding: 20px 24px;
+      font-size: 26px;
+      line-height: 1.42;
+      font-weight: 500;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.32);
+      flex-shrink: 0;
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 28px;
+      height: 28px;
+      background: rgba(244,244,245,0.97);
+      border-radius: 3px;
+    }
+    .speech strong { font-weight: 700; color: {{ACCENT_DARK}}; }
+    .phone-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 4;
+    }
+    .phone {
+      width: 210px;
+      transform: translateY({{PHONE_FLOAT}}px);
+    }
+    .phone-frame {
+      background: linear-gradient(145deg, #2a2826, #1a1816);
+      border-radius: 28px;
+      padding: 10px;
+      border: 2px solid rgba(255,255,255,0.12);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .phone-notch {
+      width: 72px;
+      height: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      margin: 0 auto 7px;
+    }
+    .phone-screen {
+      border-radius: 20px;
+      background: #0F0B0A;
+      min-height: 268px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 460px;
+      z-index: 2;
+      margin-top: -4px;
+    }
+    .road {
+      position: absolute;
+      bottom: 0;
+      left: -52px;
+      right: -52px;
+      height: 200px;
+      background: linear-gradient(180deg, transparent 0%, #181614 35%, #0c0a09 100%);
+    }
+    .road-surface {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 110px;
+      background: #141210;
+      border-top: 3px solid rgba(255,255,255,0.06);
+    }
+    .road-line {
+      position: absolute;
+      top: 50%;
+      left: -50%;
+      width: 200%;
+      height: 4px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.35) 0 40px, transparent 40px 80px);
+      transform: translateY(-50%);
+      animation: road-scroll {{ROAD_SPEED}} linear infinite;
+    }
+    @keyframes road-scroll {
+      to { transform: translateY(-50%) translateX(-80px); }
+    }
+    .skid-layer {
+      position: absolute;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 640px;
+      height: 60px;
+      opacity: {{SKID_OPACITY}};
+      pointer-events: none;
+      z-index: 1;
+    }
+    .skid-layer::before,
+    .skid-layer::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 180px;
+      height: 10px;
+      background: linear-gradient(90deg, transparent, rgba(60,55,50,0.7), transparent);
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+    .skid-layer::before { left: 60px; transform: rotate(-8deg); }
+    .skid-layer::after { right: 60px; transform: rotate(8deg); }
+    .dust {
+      position: absolute;
+      bottom: 96px;
+      left: {{DUST_X}};
+      width: 100px;
+      height: 50px;
+      opacity: {{DUST_OPACITY}};
+      background: radial-gradient(ellipse, rgba(180,170,160,0.45) 0%, transparent 70%);
+      filter: blur(8px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .mascot-wrap {
+      position: relative;
+      z-index: 2;
+      width: 720px;
+      max-height: 400px;
+      transform: {{MASCOT_TRANSFORM}};
+      filter: drop-shadow(0 16px 32px rgba(0,0,0,0.5)) {{MOTION_BLUR}};
+      will-change: transform;
+    }
+    .mascot-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+      display: block;
+    }
+    .footer {
+      position: relative;
+      z-index: 3;
+      padding: 20px 52px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.25));
+      flex-shrink: 0;
+    }
+    .footer-brand {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .footer-brand span { color: #ED2100; }
+    .footer-url {
+      margin-top: 4px;
+      font-size: 16px;
+      color: rgba(240,241,242,0.38);
+      letter-spacing: 0.04em;
+    }
+    .dots { display: flex; gap: 10px; align-items: center; }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+    }
+    .dot.on {
+      width: 28px;
+      border-radius: 6px;
+      background: {{ACCENT_COLOR}};
+    }
+    .app-ui { padding: 18px 14px; font-family: 'Barlow Condensed', sans-serif; }
+    .app-ui h4 {
+      color: #ED2100;
+      font-size: 18px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.06em;
+    }
+    .app-ui p {
+      font-size: 12px;
+      color: rgba(240,241,242,0.62);
+      line-height: 1.4;
+      font-family: Archivo, sans-serif;
+    }
+    .app-ui .btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 14px;
+      background: #ED2100;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .app-map {
+      margin-top: 10px;
+      height: 84px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e1c1a, #252220);
+      border: 1px solid rgba(237,33,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="top">
+    <div class="meta-row">
+      <p class="tour-step">Tour · {{STEP_LABEL}}</p>
+      <span class="feature-tag">{{FEATURE}}</span>
+    </div>
+    <h1 class="headline">{{HEADLINE}}</h1>
+    <p class="guide-line">{{GUIDE_LINE}}</p>
+  </div>
+  <div class="mid-stack">
+    <div class="speech">{{CAPTION}}</div>
+    <div class="phone-row">
+      <div class="phone">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">{{APP_UI}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="road">
+        <div class="road-surface"><div class="road-line"></div></div>
+      </div>
+      <div class="skid-layer"></div>
+      <div class="dust"></div>
+      <div class="mascot-wrap"><img src="{{MASCOT_IMG}}" alt="" /></div>
+    </div>
+  </div>
+  <div class="footer">
+    <div>
+      <p class="footer-brand">Moto<span>Garage</span></p>
+      <p class="footer-url">motogarage.info</p>
+    </div>
+    <div class="dots">{{DOTS}}</div>
+  </div>
+</body>
+</html>

@@ -1,3 +1,5 @@
+import { BRAND_DOMAIN, BRAND_EMAIL } from '@/lib/brand-display';
+
 export const metadata = {
   title: 'Privacy Policy — MotoGarage',
   description: 'Come MotoGarage tratta i dati personali degli utenti.',
@@ -17,8 +19,8 @@ export default function PaginaPrivacy() {
 
         <h2>Titolare</h2>
         <p>
-          Il titolare del trattamento è [TITOLARE — dati da completare]. Per richieste puoi scrivere a{' '}
-          <a href="mailto:info@motogarage.it" className="text-cartello underline">info@motogarage.it</a>.
+          Il titolare del trattamento è <strong>MotoGarage</strong> ({BRAND_DOMAIN}). Per richieste puoi scrivere a{' '}
+          <a href={`mailto:${BRAND_EMAIL}`} className="text-cartello underline">{BRAND_EMAIL}</a>.
         </p>
 
         <h2>Dati raccolti</h2>

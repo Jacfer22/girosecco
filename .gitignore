@@ -2,3 +2,15 @@ node_modules
 .next
 .env.local
 .vercel
+
+# ── Social / marketing (PRIVATO — solo locale, mai in repo) ──
+social/out/
+social/starter-kit/**/*.png
+social/starter-kit/**/*.mp4
+social/starter-kit/**/*.json
+social/starter-kit/**/_concat.txt
+social/starter-kit/**/_work/
+social/starter-kit/**/*.jpg
+social/mascot/out/
+social/mascot/out/**/*
+social/mascot/*-cutout.png

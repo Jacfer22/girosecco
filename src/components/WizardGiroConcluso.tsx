@@ -89,7 +89,10 @@ export default function WizardGiroConcluso(props: Props) {
 
       {step === 'card' && (
         <section>
-          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-brand">Step 2 · Card social</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-brand">Step 2 · Card + didascalia</p>
+          <p className="mt-1 text-sm text-cemento/55">
+            Personalizza la card e copia la didascalia pronta per Instagram.
+          </p>
           <div className="mt-2">
             <label className="editor-card-label" htmlFor="nome-wizard">Nome giro</label>
             <input
@@ -122,7 +125,7 @@ export default function WizardGiroConcluso(props: Props) {
             Pronto da condividere
           </h2>
           <p className="mt-3 text-sm text-cemento/55">
-            La card è pronta. Condividila su Instagram o salvala in I miei giri.
+            Card e didascalia pronti. Condividi su Instagram o salva in I miei giri.
           </p>
           {pwaDisponibile && !pwaInstallata && (
             <div className="mt-6 rounded-app border border-brand/30 bg-brand/10 p-4">

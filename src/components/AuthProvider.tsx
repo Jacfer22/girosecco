@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import { isTrackingAttivo } from '@/lib/tracking-session';
 
 export interface Profilo {
   username: string | null;
@@ -78,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       const nascostaDa = localStorage.getItem(TAB_HIDDEN_KEY);
-      if (nascostaDa && Date.now() - Number(nascostaDa) > timeoutMs) {
+      if (nascostaDa && Date.now() - Number(nascostaDa) > timeoutMs && !isTrackingAttivo()) {
         supabase.auth.signOut();
       }
       localStorage.removeItem(TAB_HIDDEN_KEY);

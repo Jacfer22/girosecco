@@ -21,7 +21,7 @@ export default function CardDemoAnteprima({
   data = '13 giugno 2026',
 }: Props) {
   return (
-    <div className={`mx-auto max-w-[320px] ${className}`}>
+    <div className={`card-demo-float mx-auto max-w-[320px] ${className}`}>
       <div className="rounded-[24px] border border-asfalto/15 bg-asfalto p-3 shadow-app-lg dark:border-white/10">
         <div className="flex items-center gap-2 px-2 py-1">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
@@ -79,6 +79,8 @@ export default function CardDemoAnteprima({
               strokeWidth="10"
               strokeLinecap="round"
               strokeLinejoin="round"
+              pathLength={1}
+              className="card-demo-route"
               filter="url(#route-shadow)"
             />
             <path

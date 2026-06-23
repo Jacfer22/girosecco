@@ -36,7 +36,7 @@ const PASSI = [
 
 export default function TutorialPrimoAccesso() {
   const { user, profilo, loading } = useAuth();
-  const profiloOk = Boolean(profilo?.username && profilo?.avatar_url);
+  const profiloOk = Boolean(profilo?.username?.trim());
   const checklistVisibile = useChecklistVisibile(user?.id, profiloOk);
   const [visibile, setVisibile] = useState(false);
   const [passo, setPasso] = useState(0);

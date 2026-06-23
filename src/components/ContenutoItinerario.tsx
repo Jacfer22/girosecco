@@ -98,7 +98,7 @@ function BloccoGpx({ gpxUrl }: { gpxUrl: string | null }) {
         </>
       ) : (
         <p className="mt-2 font-mono text-sm text-guardrail">
-          GPX in arrivo per questo itinerario.
+          GPX disponibile solo su alcuni itinerari verificati (es. Lazio). Stiamo aggiungendo le altre regioni.
         </p>
       )}
     </section>

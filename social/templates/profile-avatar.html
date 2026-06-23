@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1080px; overflow: hidden; }
+    body {
+      background: #0F0B0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .glow {
+      position: absolute;
+      width: 680px;
+      height: 680px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(237,33,0,0.2) 0%, transparent 68%);
+    }
+    .logo-wrap {
+      position: relative;
+      z-index: 2;
+      filter:
+        drop-shadow(0 20px 40px rgba(0,0,0,0.6))
+        drop-shadow(0 0 60px rgba(237,33,0,0.25));
+    }
+    .logo-wrap img { width: 520px; height: auto; display: block; }
+    .ring {
+      position: absolute;
+      inset: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="ring"></div>
+  <div class="logo-wrap">
+    <img src="{{LOGO_DATA_URL}}" alt="MotoGarage" />
+  </div>
+</body>
+</html>

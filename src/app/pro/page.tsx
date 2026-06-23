@@ -17,7 +17,7 @@ const CONFRONTO = [
   { voce: 'Tracciamento GPS e card social', free: true, pro: true },
   { voce: 'Itinerari e community', free: true, pro: true },
   { voce: 'Prima moto avatar 3D', free: true, pro: true },
-  { voce: 'GPX itinerari premium', free: false, pro: true },
+  { voce: 'GPX itinerari (dove disponibili)', free: true, pro: true },
   { voce: 'Garage pubblico + download PLY', free: false, pro: true },
   { voce: 'Itinerari weekend e anteprime', free: false, pro: true },
 ];
@@ -67,6 +67,10 @@ export default function PaginaPro() {
       <h1 className="mt-2 font-display text-5xl font-bold uppercase leading-none tracking-tight sm:text-7xl">
         La tua moto ha finalmente una casa digitale.
       </h1>
+      <p className="mt-6 max-w-2xl rounded-app border border-asfalto/15 bg-asfalto/[0.03] p-4 text-sm leading-relaxed text-asfalto/75 dark:border-white/10 dark:text-cemento/75">
+        MotoGarage Pro è in preparazione. Oggi tracciamento, card social, garage e community restano{' '}
+        <strong>gratuiti</strong>. Iscriviti alla lista se vuoi essere avvisato quando apriamo il piano avanzato.
+      </p>
 
       <div className="mt-8 overflow-hidden rounded-app-lg border border-asfalto/10 dark:border-white/10">
         <table className="w-full text-sm">

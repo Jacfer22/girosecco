@@ -13,10 +13,12 @@ import {
   type GiroUtente,
 } from '@/lib/giri-store';
 import EditorCardGiro from '@/components/EditorCardGiro';
+import { BRAND_DOMAIN } from '@/lib/brand-display';
 import { useFeedback } from '@/components/FeedbackProvider';
 import AppPageShell from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { Button, ButtonLink } from '@/components/Button';
+import { scaricaGpx } from '@/lib/gpx-export';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
@@ -208,6 +210,19 @@ export default function PaginaMieiGiri() {
                 onNomeChange={cambiaNome}
                 onPubblicoChange={selezionato.cloudId ? cambiaPubblico : undefined}
               />
+              {selezionato.punti.length > 1 && (
+                <Button variant="secondary" fullWidth onClick={() => scaricaGpx(selezionato.punti, selezionato.nome)}>
+                  Scarica GPX
+                </Button>
+              )}
+              {selezionato.pubblico && selezionato.cloudId && (
+                <p className="text-center font-mono text-[10px] uppercase text-cemento/50">
+                  Condiviso in community:{' '}
+                  <Link href={`/giro/${selezionato.cloudId}`} className="text-brand underline">
+                    {BRAND_DOMAIN}/giro/{selezionato.cloudId.slice(0, 8)}…
+                  </Link>
+                </p>
+              )}
               <Button
                 variant="danger"
                 fullWidth

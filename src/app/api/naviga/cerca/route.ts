@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { BRAND_EMAIL } from '@/lib/brand-display';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
     const risposta = await fetch(url, {
       headers: {
         Accept: 'application/json',
-        'User-Agent': 'MotoGarage/1.0 (navigazione moto; info@motogarage.it)',
+        'User-Agent': `MotoGarage/1.0 (navigazione moto; ${BRAND_EMAIL})`,
       },
       next: { revalidate: 0 },
     });

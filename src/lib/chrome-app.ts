@@ -17,6 +17,7 @@ export function footerNascosto(pathname: string): boolean {
 export function chromeMobileNascosto(pathname: string, loggato: boolean): boolean {
   if (pathname.startsWith('/reel')) return true;
   if (!loggato) {
+    if (pathname === '/') return true;
     return APP_SEMPRE_SENZA_FOOTER.some((p) => pathname.startsWith(p));
   }
   return APP_MOBILE_SENZA_CHROME.some((p) => pathname.startsWith(p));

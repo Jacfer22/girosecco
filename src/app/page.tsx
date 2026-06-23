@@ -15,7 +15,11 @@ export default async function HomePage() {
     <div>
       <LandingHero itinerariCount={reali.length} />
 
+      <div className="strada-viva strada-viva-animata" aria-hidden="true" />
+
       <SezioneCardEsempio />
+
+      <div className="strada-viva strada-viva-animata" aria-hidden="true" />
 
       <section className="border-b border-asfalto/8 bg-asfalto/[0.02]">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
@@ -28,37 +32,45 @@ export default async function HomePage() {
             </h2>
           </Reveal>
 
-          <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+          <div className="bento-features mt-8 sm:mt-10">
             <FeatureCard
               href="/traccia"
               titolo="Traccia un giro"
               desc="GPS live, statistiche e card condivisibile per Instagram e TikTok."
               inEvidenza
+              bento="hero"
               delay={0}
             />
             <FeatureCard
               href="/itinerari"
               titolo="Itinerari"
-              desc="Mappe, tappe, avvisi strada e GPX per ogni regione d'Italia."
+              desc="Mappe, tappe, avvisi strada. GPX su itinerari verificati."
+              bento="side-top"
               delay={60}
             />
             <FeatureCard
               href="/garage"
               titolo="Il mio Garage"
               desc="Avatar 3D della tua moto nel garage virtuale."
+              bento="side-bottom"
               delay={120}
             />
             <FeatureCard
               href="/community"
               titolo="Community"
               desc="Foto, giri pubblici e commenti dalla community di biker."
+              bento="wide"
               delay={180}
             />
           </div>
         </div>
       </section>
 
+      <div className="strada-viva strada-viva-animata" aria-hidden="true" />
+
       <SezioneComeFunziona />
+
+      <div className="strada-viva strada-viva-animata" aria-hidden="true" />
 
       <section className="tuning-cta-finale">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:py-16">
@@ -95,20 +107,38 @@ function FeatureCard({
   titolo,
   desc,
   inEvidenza,
+  bento = 'sm',
   delay = 0,
 }: {
   href: string;
   titolo: string;
   desc: string;
   inEvidenza?: boolean;
+  bento?: 'hero' | 'side-top' | 'side-bottom' | 'wide';
   delay?: number;
 }) {
+  const bentoClass =
+    bento === 'hero'
+      ? 'bento-feature-hero'
+      : bento === 'wide'
+        ? 'bento-feature-wide'
+        : bento === 'side-top'
+          ? 'bento-feature-sm bento-feature-side-top'
+          : bento === 'side-bottom'
+            ? 'bento-feature-sm bento-feature-side-bottom'
+            : 'bento-feature-sm';
+
   return (
     <Reveal delay={delay}>
       <Link
         href={href}
-        className={`card-feature group ${inEvidenza ? 'card-feature-evidenza' : ''}`}
+        className={`card-feature bento-feature group ${bentoClass} ${inEvidenza ? 'card-feature-evidenza' : ''}`}
       >
+        {inEvidenza && (
+          <span className="bento-feature-badge font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-brand">
+            Core
+          </span>
+        )}
         <h3 className="font-display text-lg font-bold uppercase leading-tight tracking-tight transition-colors group-hover:text-brand sm:text-xl">
           {titolo}
         </h3>

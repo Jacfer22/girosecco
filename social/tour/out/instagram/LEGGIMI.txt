@@ -1,0 +1,10 @@
+TOUR VIRTUALE — file per Instagram
+================================
+
+Story/post: 01-benvenuto.jpg … 09-ciao.jpg
+Profilo: 00-profilo.jpg
+Reel tour: tour-completo.mp4 (~36 sec)
+Reel mascotte: reel-rosso.mp4, reel-blu.mp4, reel-nero.mp4
+
+Didascalie: DIDASCALIE.md
+Privato — non committare.

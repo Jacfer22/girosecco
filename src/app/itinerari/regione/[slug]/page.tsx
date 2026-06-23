@@ -1,3 +1,4 @@
+import { BRAND_EMAIL } from '@/lib/brand-display';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getItinerariPerRegione, getItinerariConAvvisi } from '@/lib/supabase';
@@ -84,7 +85,7 @@ export default async function PaginaRegione({
             itinerario con mappa e GPX, e lo pubblichiamo qui.
           </p>
           <a
-            href="mailto:info@motogarage.it?subject=Proposta%20itinerario%20MotoGarage"
+            href={`mailto:${BRAND_EMAIL}?subject=Proposta%20itinerario%20MotoGarage`}
             className="btn-primary tap mt-4 inline-block"
           >
             Proponi un giro

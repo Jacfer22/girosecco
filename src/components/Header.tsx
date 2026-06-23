@@ -39,6 +39,8 @@ export default function Header() {
         <LogoHomeLink onClick={chiudiMenu} />
 
         <nav className="hidden items-center gap-5 sm:flex">
+          <Voce href="/traccia" label="Traccia" attivo={attivo('/traccia')} />
+          <Voce href="/naviga" label="Naviga" attivo={attivo('/naviga')} />
           <Voce href="/itinerari" label="Itinerari" attivo={attivo('/itinerari')} />
           <Voce href="/community" label="Community" attivo={attivo('/community')} />
           {isLogged && <Voce href="/garage" label="Garage" attivo={attivo('/garage')} evidenza />}
@@ -77,6 +79,8 @@ export default function Header() {
 
       {menuAperto && (
         <nav className="border-t border-white/10 bg-asfalto px-4 pb-4">
+          <MenuMobile href="/traccia" label="Traccia GPS" onClick={chiudiMenu} />
+          <MenuMobile href="/naviga" label="Navigatore" onClick={chiudiMenu} />
           <MenuMobile href="/itinerari" label="Itinerari" onClick={chiudiMenu} />
           <MenuMobile href="/community" label="Community" onClick={chiudiMenu} />
           {isLogged && <MenuMobile href="/garage" label="Il mio Garage" onClick={chiudiMenu} />}

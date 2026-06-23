@@ -1,0 +1,20 @@
+DOVE TROVARE I FILE (percorso completo Windows)
+================================================
+
+Cartella base:
+C:\Users\jacop\Desktop\motogarage\social\starter-kit\
+
+FOTO TOUR (9 JPG — pronte):
+C:\Users\jacop\Desktop\motogarage\social\starter-kit\04-tour\
+  01-benvenuto.jpg … 09-ciao.jpg
+
+VIDEO (05-video):
+  teaser-logo-4s.mp4          → subito
+  tour-completo.mp4           → dopo generazione (~1 ora)
+  reel-rosso.mp4 / blu / nero → dopo generazione
+
+NOTA: JPG e MP4 sono gitignored — in Cursor potrebbero non comparire
+nell'explorer. Apri la cartella con Esplora file di Windows (percorso sopra).
+
+Generazione in corso? Controlla che npm run social:starter-kit sia finito.
+Didascalie: CAPTIONS.md (visibile in Cursor)

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Archivo:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; }
+    body {
+      background: radial-gradient(ellipse 100% 70% at 50% 35%, #28282B 0%, #0F0B0A 55%);
+      font-family: 'Archivo', system-ui, sans-serif;
+      color: #F0F1F2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 80px;
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 48px;
+      opacity: 0.9;
+      filter: drop-shadow(0 4px 12px rgba(237,33,0,0.4));
+    }
+    .titolo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 120px;
+      font-weight: 800;
+      line-height: 0.92;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .titolo span { color: #ED2100; }
+    .sottotitolo {
+      margin-top: 36px;
+      font-size: 34px;
+      line-height: 1.35;
+      color: rgba(240,241,242,0.55);
+      max-width: 720px;
+    }
+    .line {
+      margin-top: 56px;
+      width: 100px;
+      height: 5px;
+      background: linear-gradient(90deg, #ED2100, transparent);
+      border-radius: 3px;
+    }
+    .safe {
+      position: absolute;
+      bottom: 200px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,241,242,0.25);
+    }
+  </style>
+</head>
+<body>
+  <img class="icon" src="{{LOGO_DATA_URL}}" alt="" />
+  <h1 class="titolo">{{HIGHLIGHT_TITLE}}</h1>
+  <p class="sottotitolo">{{HIGHLIGHT_SUB}}</p>
+  <div class="line"></div>
+  <p class="safe">MotoGarage</p>
+</body>
+</html>

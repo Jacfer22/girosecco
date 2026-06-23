@@ -17,14 +17,22 @@ export default function LandingHero({ itinerariCount }: Props) {
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-amber-200/80">
             Per motociclisti italiani
           </p>
-          <h1 className="mt-4 max-w-3xl font-display text-[2.35rem] font-black uppercase leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-[4.2rem]">
-            Traccia il giro.
+        </Reveal>
+        <h1 className="mt-4 max-w-3xl font-display text-[2.35rem] font-black uppercase leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-[4.2rem]">
+          <Reveal delay={40}>
+            <span className="block">Traccia il giro.</span>
+          </Reveal>
+          <Reveal delay={100}>
             <span className="block text-brand">Crea la card.</span>
+          </Reveal>
+          <Reveal delay={160}>
             <span className="block text-cemento/90">Condividi.</span>
-          </h1>
+          </Reveal>
+        </h1>
+        <Reveal delay={200}>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-cemento/75 sm:mt-5 sm:text-base">
             <span className="hidden sm:inline">
-              GPS reale, statistiche e card pronta per Instagram — più garage 3D, itinerari e community.
+              GPS reale, statistiche e card pronta per Instagram — più garage 3D, itinerari curati e community.
               Registrati gratis per salvare tutto nel cloud.
             </span>
             <span className="sm:hidden">
@@ -33,22 +41,22 @@ export default function LandingHero({ itinerariCount }: Props) {
           </p>
         </Reveal>
 
-        <Reveal delay={100}>
+        <Reveal delay={320}>
           <div className="mt-6 sm:mt-8">
             <CtaHome />
           </div>
         </Reveal>
 
-        <Reveal delay={160}>
-          <div className="mt-10 hidden flex-wrap gap-6 border-t border-white/10 pt-8 md:flex">
+        <Reveal delay={380}>
+          <div className="mt-8 flex flex-wrap gap-5 border-t border-white/10 pt-6 sm:mt-10 sm:gap-6 sm:pt-8">
             <Metrica valore={String(itinerariCount)} label="Itinerari" />
             <Metrica valore="20" label="Regioni" />
             <Metrica valore="GPS" label="Tracciamento" />
           </div>
         </Reveal>
 
-        <Reveal delay={200}>
-          <div className="mt-8 hidden flex-wrap gap-3 md:flex">
+        <Reveal delay={440}>
+          <div className="mt-6 flex flex-wrap gap-2 sm:mt-8 sm:gap-3">
             <Pill href="/naviga" label="Navigatore" />
             <Pill href="/itinerari" label="Itinerari" />
           </div>

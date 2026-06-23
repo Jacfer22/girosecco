@@ -15,6 +15,7 @@ import {
   salvaInGalleria,
   scaricaBlob,
 } from '@/lib/condividi-immagine';
+import { generaDidascaliaGiro } from '@/lib/caption-giro';
 
 function formattaDataBreve(iso: string): string {
   return new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -245,6 +246,21 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
 
   const dataBreve = formattaDataBreve(giro.data);
   const luogo = (luogoCard.trim() || giro.nome).toUpperCase();
+  const didascaliaSocial = useMemo(
+    () =>
+      generaDidascaliaGiro(
+        {
+          nome: luogoCard.trim() || giro.nome,
+          km: giro.km,
+          durataSec: giro.durataSec,
+          curve: stat.curve,
+          dislivelloM: stat.dislivelloPositivoM || giro.dislivelloM,
+          velMediaKmh: stat.velMediaKmh,
+        },
+        luogoCard.trim() || undefined,
+      ),
+    [giro, luogoCard, stat],
+  );
   const selezioneAttiva: SelezioneCard = preferFoto ? selezione : 'percorso';
 
   useEffect(() => {
@@ -775,6 +791,27 @@ export default function EditorCardGiro({ giro, onNomeChange, onPubblicoChange }:
       {errore && (
         <p className="rounded-app border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{errore}</p>
       )}
+
+      <div className="rounded-app border border-white/10 bg-white/[0.03] p-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="editor-card-label !mb-0">Didascalia Instagram</p>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(didascaliaSocial);
+                toast('Didascalia copiata');
+              } catch {
+                toast('Copia manualmente il testo sotto');
+              }
+            }}
+            className="tap font-mono text-[10px] font-bold uppercase text-brand"
+          >
+            Copia
+          </button>
+        </div>
+        <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-cemento/80">{didascaliaSocial}</p>
+      </div>
 
       <div className="flex flex-col gap-2 border-t border-white/8 pt-4 sm:flex-row">
         <button type="button" onClick={() => void condividiCard()} disabled={generandoCard} className="tap btn-primary flex-1">

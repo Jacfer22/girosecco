@@ -159,14 +159,20 @@ export default function Feed() {
 
           {v.tipo === 'giro' && (
             <div className="mt-2">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <span className="font-display text-3xl font-bold leading-none">{v.km} <span className="text-base">km</span></span>
                 {v.curve > 0 && (
                   <span className="font-mono text-sm text-asfalto/60">{v.curve} curve</span>
                 )}
                 <span className="font-display text-lg uppercase tracking-tight text-asfalto/70">{v.nome}</span>
               </div>
-              <div className="mt-2 flex justify-end">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                <Link
+                  href={`/giro/${v.id}`}
+                  className="tap font-mono text-[10px] font-bold uppercase text-brand hover:underline"
+                >
+                  Vedi tracciato →
+                </Link>
                 <BottoneLike tipo="giro" contenutoId={v.id} />
               </div>
             </div>

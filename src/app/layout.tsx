@@ -5,17 +5,19 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import InstallaPwa from '@/components/InstallaPwa';
+import RegistraServiceWorker from '@/components/RegistraServiceWorker';
 import MainShell from '@/components/MainShell';
 import FeedbackProvider from '@/components/FeedbackProvider';
 import { AuthProvider } from '@/components/AuthProvider';
 import { TemaProvider } from '@/components/TemaProvider';
+import { SITE_URL } from '@/lib/home-href';
 
 const display = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-display' });
 const body = Archivo({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-body' });
 const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
 const hand = Caveat({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-hand' });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://girosecco.vercel.app';
+const siteUrl = SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -102,6 +104,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <MainShell>{children}</MainShell>
               <Footer />
               <InstallaPwa />
+              <RegistraServiceWorker />
               <BottomNav />
             </FeedbackProvider>
           </AuthProvider>

@@ -6,6 +6,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { etichettaCategoria } from '@/lib/categorie-moto';
 import BadgeUtente from '@/components/BadgeUtente';
 import ChecklistHub from '@/components/ChecklistHub';
+import Reveal from '@/components/Reveal';
 import AppPageShell from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
@@ -41,6 +42,13 @@ function IconaHub({ nome }: { nome: string }) {
     default:
       return null;
   }
+}
+
+function salutoGiorno() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Buongiorno';
+  if (h < 18) return 'Buon pomeriggio';
+  return 'Buonasera';
 }
 
 export default function PaginaHub() {
@@ -85,45 +93,52 @@ export default function PaginaHub() {
 
   return (
     <AppPageShell width="full" className="!pb-6">
-      <section className="pb-4">
-        <div className="flex items-center gap-4">
-          <div className="relative shrink-0">
-            {profilo?.avatar_url ? (
-              <img src={profilo.avatar_url} alt="" className="h-14 w-14 rounded-full border-2 border-brand object-cover" />
-            ) : (
-              <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-brand bg-black/40">
-                <Logo variante="icon" />
-              </div>
-            )}
+      <Reveal>
+        <section className="hub-hero pb-4">
+          <div className="flex items-center gap-4">
+            <div className="relative shrink-0">
+              {profilo?.avatar_url ? (
+                <img src={profilo.avatar_url} alt="" className="h-14 w-14 rounded-full border-2 border-brand object-cover shadow-[0_0_24px_rgba(237,33,0,0.25)]" />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-brand bg-black/40 shadow-[0_0_24px_rgba(237,33,0,0.2)]">
+                  <Logo variante="icon" />
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">{salutoGiorno()}</p>
+              <h1 className="truncate font-display text-2xl font-black uppercase leading-none tracking-tight text-white">
+                {profilo?.username ?? 'Motociclista'}
+              </h1>
+              {(categoria || profilo?.moto) && (
+                <p className="mt-0.5 truncate font-mono text-[11px] text-cemento/50">
+                  {[categoria, profilo?.moto].filter(Boolean).join(' · ')}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">Cockpit</p>
-            <h1 className="truncate font-display text-2xl font-black uppercase leading-none tracking-tight text-white">
-              {profilo?.username ?? 'Motociclista'}
-            </h1>
-            {(categoria || profilo?.moto) && (
-              <p className="mt-0.5 truncate font-mono text-[11px] text-cemento/50">
-                {[categoria, profilo?.moto].filter(Boolean).join(' · ')}
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
+        </section>
+      </Reveal>
 
-      <ChecklistHub
-        utenteId={user.id}
-        profiloOk={Boolean(profilo?.username && profilo?.avatar_url)}
-      />
+      <Reveal delay={60}>
+        <ChecklistHub
+          utenteId={user.id}
+          profiloOk={Boolean(profilo?.username?.trim())}
+        />
+      </Reveal>
 
-      <section className="py-4">
-        <div className="rounded-app-lg bg-asfalto p-1"><BadgeUtente /></div>
-      </section>
+      <Reveal delay={100}>
+        <section className="py-4">
+          <div className="rounded-app-lg bg-asfalto p-1"><BadgeUtente /></div>
+        </section>
+      </Reveal>
 
-      <section className="py-2">
-        <Link
-          href="/garage"
-          className="tap flex items-center gap-4 rounded-app-lg border border-brand/35 bg-brand/10 p-5 transition-colors hover:bg-brand/15"
-        >
+      <Reveal delay={140}>
+        <section className="py-2">
+          <Link
+            href="/garage"
+            className="hub-tile-primary tap flex items-center gap-4 rounded-app-lg border border-brand/35 bg-brand/10 p-5 transition-all hover:bg-brand/15 hover:shadow-[0_8px_32px_rgba(237,33,0,0.12)]"
+          >
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-app bg-brand/25 text-brand">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -140,7 +155,7 @@ export default function PaginaHub() {
 
         <Link
           href="/traccia"
-          className="tap mt-3 flex flex-col items-center justify-center rounded-app-lg border border-brand/25 bg-white/[0.03] py-8 text-center transition-colors hover:border-brand/40 hover:bg-brand/[0.06]"
+          className="hub-cta-traccia tap mt-3 flex flex-col items-center justify-center rounded-app-lg border border-brand/30 bg-gradient-to-b from-brand/10 to-transparent py-8 text-center transition-all hover:border-brand/50 hover:shadow-[0_8px_32px_rgba(237,33,0,0.15)]"
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-brand">Pronto?</span>
           <span className="mt-2 font-display text-3xl font-black uppercase leading-none tracking-tight text-white">
@@ -148,15 +163,17 @@ export default function PaginaHub() {
           </span>
           <span className="mt-2 font-mono text-[10px] uppercase text-cemento/50">GPS · card · community</span>
         </Link>
-      </section>
+        </section>
+      </Reveal>
 
-      <section className="py-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/40">Accesso rapido</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <Link
-            href="/itinerari"
-            className="tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-colors hover:border-brand/30"
-          >
+      <Reveal delay={180}>
+        <section className="py-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cemento/40">Accesso rapido</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Link
+              href="/itinerari"
+              className="hub-tile tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-brand/30 hover:bg-white/[0.06]"
+            >
             <span className="flex h-8 w-8 items-center justify-center rounded-app bg-white/10 text-cemento">
               <IconaHub nome="strada" />
             </span>
@@ -165,7 +182,7 @@ export default function PaginaHub() {
           </Link>
           <Link
             href="/community"
-            className="tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-colors hover:border-brand/30"
+            className="hub-tile tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-brand/30 hover:bg-white/[0.06]"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-app bg-white/10 text-cemento">
               <IconaHub nome="foto" />
@@ -175,7 +192,7 @@ export default function PaginaHub() {
           </Link>
           <Link
             href="/giri"
-            className="tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-colors hover:border-brand/30"
+            className="hub-tile tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-brand/30 hover:bg-white/[0.06]"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-app bg-brand/20 text-brand">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -187,7 +204,7 @@ export default function PaginaHub() {
           </Link>
           <Link
             href="/account"
-            className="tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-colors hover:border-brand/30"
+            className="hub-tile tap rounded-app border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-brand/30 hover:bg-white/[0.06]"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-app bg-white/10 text-cemento">
               <IconaHub nome="profilo" />
@@ -196,10 +213,12 @@ export default function PaginaHub() {
             <p className="mt-0.5 text-[11px] text-cemento/45">Username e moto</p>
           </Link>
         </div>
-      </section>
+        </section>
+      </Reveal>
 
       {avviso && (
-        <section className="mt-2 rounded-app border border-cartello/40 bg-cartello/10 p-4">
+        <Reveal delay={220}>
+          <section className="mt-2 rounded-app border border-cartello/40 bg-cartello/10 p-4">
           <p className="font-mono text-[10px] uppercase tracking-wide text-cartello">Strada</p>
           <p className="mt-1 text-sm font-medium text-white">{avviso.titolo}</p>
           {avviso.itinerari && (
@@ -207,7 +226,8 @@ export default function PaginaHub() {
               Vedi itinerario
             </Link>
           )}
-        </section>
+          </section>
+        </Reveal>
       )}
     </AppPageShell>
   );

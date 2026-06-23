@@ -10,6 +10,7 @@ import { CATEGORIE_MOTO } from '@/lib/categorie-moto';
 import AppPageShell from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { Button, ButtonLink } from '@/components/Button';
+import { BRAND_EMAIL } from '@/lib/brand-display';
 
 const USERNAME_REGEX = /^[a-z0-9_]{3,20}$/;
 
@@ -94,7 +95,7 @@ export default function PaginaAccount() {
       setCaricamentoFoto(false);
       setErrore(
         erroreUpload.message.includes('not found')
-          ? 'Bucket "avatars" non trovato: esegui supabase/migration_profilo.sql.'
+          ? `Caricamento foto profilo non riuscito. Riprova o contattaci su ${BRAND_EMAIL}.`
           : erroreUpload.message
       );
       return;
@@ -233,7 +234,7 @@ export default function PaginaAccount() {
             value={username}
             onChange={(e) => setUsername(e.target.value.toLowerCase())}
             className="mt-1 w-full border-2 border-asfalto bg-white px-3 py-2 font-mono lowercase focus:outline-none"
-            placeholder="es. jacopo_rm"
+            placeholder="es. moto_roma"
             pattern="[a-z0-9_]{3,20}"
             autoCapitalize="none"
           />

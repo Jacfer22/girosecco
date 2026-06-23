@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Archivo:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; }
+    body { position: relative; background: #0F0B0A; color: #F0F1F2; }
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('{{BG_DATA_URL}}');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.55) saturate(1.1);
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,11,10,0.2) 0%, rgba(15,11,10,0.75) 55%, rgba(15,11,10,0.95) 100%);
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 96px 72px 120px;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .logo-row img { width: 52px; height: 52px; object-fit: contain; }
+    .brand {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .brand span { color: #ED2100; }
+    .titolo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 88px;
+      font-weight: 800;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      text-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    .sub {
+      margin-top: 24px;
+      font-size: 32px;
+      line-height: 1.35;
+      color: rgba(240,241,242,0.75);
+      max-width: 880px;
+    }
+    .pill {
+      margin-top: 40px;
+      align-self: flex-start;
+      padding: 14px 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(237,33,0,0.45);
+      background: rgba(237,33,0,0.12);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="logo-row">
+      <img src="{{LOGO_DATA_URL}}" alt="" />
+      <span class="brand">Moto<span>Garage</span></span>
+    </div>
+    <h1 class="titolo">{{TITOLO}}</h1>
+    <p class="sub">{{SOTTOTITOLO}}</p>
+    <span class="pill">{{PILL}}</span>
+  </div>
+</body>
+</html>

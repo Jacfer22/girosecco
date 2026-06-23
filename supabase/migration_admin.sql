@@ -11,6 +11,6 @@ create policy "admin aggiorna avvisi" on public.avvisi for update using (
   exists (select 1 from public.profiles p2 where p2.id = auth.uid() and p2.is_admin = true)
 );
 
--- Rende admin il tuo account (cambia l'email se necessario)
-update public.profiles set is_admin = true
-where id = (select id from auth.users where email = 'jacopo.ferretti1997@icloud.com');
+-- Rende admin un account: sostituisci con la tua email Supabase Auth
+-- update public.profiles set is_admin = true
+-- where id = (select id from auth.users where email = 'tua-email@dominio.com');

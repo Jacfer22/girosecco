@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Archivo:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; }
+    body {
+      background: #0F0B0A;
+      font-family: 'Archivo', system-ui, sans-serif;
+      color: #F0F1F2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    /* Vignette + luce ambiente */
+    .bg-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 42%, rgba(40,40,43,0.55) 0%, transparent 62%),
+        radial-gradient(ellipse 120% 100% at 50% 50%, transparent 35%, rgba(0,0,0,0.72) 100%);
+      pointer-events: none;
+    }
+    .bg-glow-red {
+      position: absolute;
+      width: 720px;
+      height: 720px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(237,33,0,0.22) 0%, rgba(237,33,0,0.06) 42%, transparent 68%);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .bg-glow-soft {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -52%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 64px;
+    }
+    .logo-stage {
+      position: relative;
+      width: 520px;
+      height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Ombre stratificate sotto il logo */
+    .logo-shadow-floor {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 340px;
+      height: 48px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.75) 0%, transparent 72%);
+      filter: blur(12px);
+    }
+    .logo-shadow-red {
+      position: absolute;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 36px;
+      background: radial-gradient(ellipse, rgba(237,33,0,0.35) 0%, transparent 70%);
+      filter: blur(18px);
+    }
+    .logo-wrap {
+      position: relative;
+      z-index: 3;
+      filter:
+        drop-shadow(0 28px 48px rgba(0,0,0,0.65))
+        drop-shadow(0 8px 24px rgba(0,0,0,0.45))
+        drop-shadow(0 0 80px rgba(237,33,0,0.28))
+        drop-shadow(0 0 32px rgba(237,33,0,0.18));
+    }
+    .logo-wrap img {
+      width: 400px;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .brand {
+      margin-top: 36px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+    .brand span { color: #ED2100; }
+    .tagline {
+      margin-top: 28px;
+      font-size: 32px;
+      line-height: 1.4;
+      color: rgba(240,241,242,0.62);
+      max-width: 640px;
+      font-weight: 400;
+    }
+    .bottom {
+      position: absolute;
+      bottom: 96px;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .pill {
+      padding: 14px 32px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(40,40,43,0.45);
+      backdrop-filter: blur(8px);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(240,241,242,0.88);
+    }
+    .url {
+      font-size: 22px;
+      color: rgba(240,241,242,0.38);
+      letter-spacing: 0.06em;
+    }
+    .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-vignette" aria-hidden="true"></div>
+  <div class="bg-glow-red" aria-hidden="true"></div>
+  <div class="bg-glow-soft" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="hero">
+    <div class="logo-stage">
+      <div class="logo-shadow-floor" aria-hidden="true"></div>
+      <div class="logo-shadow-red" aria-hidden="true"></div>
+      <div class="logo-wrap">
+        <img src="{{LOGO_DATA_URL}}" alt="MotoGarage" />
+      </div>
+    </div>
+    <h1 class="brand">Moto<span>Garage</span></h1>
+    <p class="tagline">{{TAGLINE}}</p>
+  </div>
+
+  <div class="bottom">
+    <span class="pill">{{PILL}}</span>
+    <span class="url">motogarage.info</span>
+  </div>
+</body>
+</html>
