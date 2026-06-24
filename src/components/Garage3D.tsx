@@ -7,6 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { GarageMoto } from '@/lib/garage';
 import { posizioneCameraReelGarage, REEL_GARAGE_LOOK_AT } from '@/lib/reel-garage-camera';
 import { catturaESalvaVetrina } from '@/lib/garage-vetrina-client';
+import { attendiFrameRender } from '@/lib/vetrina-immagine';
 
 interface Props {
   moto: GarageMoto[];
@@ -122,7 +123,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
   const [salvaVetrina, setSalvaVetrina] = useState(false);
 
   const pronte = moto.filter((item) => item.stato === 'pronto' && item.glb_url);
-  const sfondoBianco = modalitaViewer;
+  const sfondoBianco = modalitaViewer || modalitaHero;
   const mostraVetrina = (modalitaViewer || modalitaHero) && !modalitaReel && caricati > 0;
 
   useEffect(() => {
@@ -194,7 +195,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
       ambienteRef.current.push(grid);
     }
 
-    if (!modalitaViewer) {
+    if (!sfondoBianco) {
       ambienteRef.current.push(
         box(scene, [15, 7, 0.3], [0, 3.35, -6], 0x101216),
         box(scene, [0.3, 7, 14], [-7.4, 3.35, 0], 0x0c0e12),
@@ -299,7 +300,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
       ambienteRef.current = [];
       gruppiRef.current.clear();
     };
-  }, [modalitaViewer, onSeleziona, moto]);
+  }, [modalitaViewer, modalitaHero, onSeleziona, moto]);
 
   useEffect(() => {
     const controls = controlliRef.current;
@@ -372,6 +373,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
     if (!renderer || !scene || !camera || !id || salvaVetrina) return;
 
     setSalvaVetrina(true);
+    await attendiFrameRender();
     const prevBg = scene.background;
     const prevClear = new THREE.Color();
     renderer.getClearColor(prevClear);
@@ -410,7 +412,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
     : 'rounded-full border border-white/15 bg-black/55 px-3 py-2 font-mono text-[10px] font-bold uppercase text-white/70 backdrop-blur';
 
   return (
-    <div className={`relative h-full min-h-[460px] w-full overflow-hidden sm:min-h-[580px] ${sfondoBianco ? 'bg-white' : 'bg-black'}`}>
+    <div className={`relative h-full w-full overflow-hidden ${sfondoBianco ? 'min-h-0 bg-white' : 'min-h-[460px] bg-black sm:min-h-[580px]'}`}>
       <div ref={contenitoreRef} className="absolute inset-0" aria-label="Garage virtuale 3D interattivo" />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3 sm:p-4">

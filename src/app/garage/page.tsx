@@ -218,14 +218,16 @@ export default function PaginaGarage() {
 
   if (vista === 'viewer' && selezionata && urlModello(selezionata)) {
     return (
-      <main className="fixed inset-0 z-[80] bg-white">
-        <GarageModelViewer
-          moto={[selezionata]}
-          selezionataId={selezionata.id}
-          onSeleziona={() => {}}
-          modalitaViewer
-          onVetrinaSalvata={() => toast('Vetrina salvata in hub e galleria')}
-        />
+      <main className="fixed inset-0 z-[80] flex items-center justify-center bg-[#0F0B0A] p-4">
+        <div className="garage-vetrina-frame h-auto w-full max-w-sm max-h-[min(70dvh,22rem)]">
+          <GarageModelViewer
+            moto={[selezionata]}
+            selezionataId={selezionata.id}
+            onSeleziona={() => {}}
+            modalitaViewer
+            onVetrinaSalvata={() => toast('Vetrina salvata in hub e galleria')}
+          />
+        </div>
         <button type="button" onClick={() => setVista('garage')} className="absolute left-4 top-4 z-20 rounded-full border border-black/10 bg-white/90 px-4 py-3 font-mono text-xs font-bold uppercase text-asfalto shadow-sm backdrop-blur">
           ← Chiudi viewer
         </button>

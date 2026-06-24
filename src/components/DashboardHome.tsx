@@ -15,7 +15,8 @@ import Reveal from './Reveal';
 interface AnteprimaMoto {
   id: string;
   nome: string;
-  fotoUrl: string | null;
+  vetrinaUrl: string | null;
+  fotoSxUrl: string | null;
   haModello3d: boolean;
   haVetrina: boolean;
 }
@@ -99,20 +100,29 @@ export default function DashboardHome() {
           setMoto(null);
           return;
         }
-        let fotoUrl: string | null = null;
-        const pathAnteprima = data.vetrina_url ?? data.foto_sx_url;
-        if (pathAnteprima) {
+        let vetrinaUrl: string | null = null;
+        let fotoSxUrl: string | null = null;
+        if (data.vetrina_url) {
           const { data: signed } = await supabase.storage
             .from('foto-moto')
-            .createSignedUrl(pathAnteprima, 3600);
-          fotoUrl = signed?.signedUrl ?? null;
+            .createSignedUrl(data.vetrina_url, 3600);
+          vetrinaUrl = signed?.signedUrl
+            ? `${signed.signedUrl}&v=${encodeURIComponent(data.updated_at ?? '')}`
+            : null;
+        }
+        if (data.foto_sx_url) {
+          const { data: signed } = await supabase.storage
+            .from('foto-moto')
+            .createSignedUrl(data.foto_sx_url, 3600);
+          fotoSxUrl = signed?.signedUrl ?? null;
         }
         const haModello3d = data.stato === 'pronto' && Boolean(urlModello(data));
         const haVetrina = Boolean(data.vetrina_url);
         setMoto({
           id: data.id,
           nome: nomeMoto(data),
-          fotoUrl,
+          vetrinaUrl,
+          fotoSxUrl,
           haModello3d,
           haVetrina,
         });
@@ -122,6 +132,7 @@ export default function DashboardHome() {
   if (!user) return null;
 
   const categoria = etichettaCategoria(profilo?.categoria_moto ?? null);
+  const anteprimaGarage = moto?.vetrinaUrl ?? moto?.fotoSxUrl ?? null;
 
   return (
     <div className="dash-home pb-8">
@@ -158,8 +169,13 @@ export default function DashboardHome() {
         <Link href="/garage" className="dash-card dash-card-hero dash-card-garage group">
           <p className="dash-card-label">Il mio garage</p>
           <div className="dash-garage-visual">
-            {moto?.fotoUrl ? (
-              <img src={moto.fotoUrl} alt="" className="h-full w-full bg-white object-contain" />
+            {anteprimaGarage ? (
+              <img
+                src={anteprimaGarage}
+                alt=""
+                className="h-full w-full bg-white object-contain"
+                loading="eager"
+              />
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-2 text-cemento/40">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

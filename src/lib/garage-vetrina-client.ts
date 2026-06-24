@@ -1,29 +1,33 @@
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
-import { preparaImmagineStory, scaricaBlob, salvaInGalleria } from '@/lib/condividi-immagine';
+import { scaricaBlob, salvaInGalleria } from '@/lib/condividi-immagine';
+import {
+  attendiFrameRender,
+  canvasSuBianco,
+  preparaImmagineVetrina,
+} from '@/lib/vetrina-immagine';
 
-/** Composita il frame WebGL su sfondo bianco (evita canvas nero / alpha). */
-export function canvasVetrinaSuBianco(canvas: HTMLCanvasElement): string {
-  const out = document.createElement('canvas');
-  out.width = canvas.width;
-  out.height = canvas.height;
-  const ctx = out.getContext('2d');
-  if (!ctx) throw new Error('Canvas non disponibile');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, out.width, out.height);
-  ctx.drawImage(canvas, 0, 0);
-  return out.toDataURL('image/png');
-}
+export { canvasSuBianco as canvasVetrinaSuBianco } from '@/lib/vetrina-immagine';
 
 export async function catturaESalvaVetrina(
   canvas: HTMLCanvasElement,
   motoId: string,
 ): Promise<{ ok: boolean; messaggio?: string }> {
-  const dataUrl = canvasVetrinaSuBianco(canvas);
-  const immagine = await preparaImmagineStory(dataUrl, {
-    nomeBase: 'motogarage-vetrina',
-    jpeg: true,
-    sfondo: '#ffffff',
-  });
+  if (canvas.width < 16 || canvas.height < 16) {
+    return { ok: false, messaggio: 'Viewer non pronto. Attendi il caricamento della moto.' };
+  }
+
+  await attendiFrameRender();
+  const dataUrl = canvasSuBianco(canvas);
+
+  let immagine;
+  try {
+    immagine = await preparaImmagineVetrina(dataUrl, { nomeBase: 'motogarage-vetrina' });
+  } catch (e) {
+    return {
+      ok: false,
+      messaggio: e instanceof Error ? e.message : 'Cattura non riuscita.',
+    };
+  }
 
   const esitoGalleria = await salvaInGalleria(immagine.file);
   if (esitoGalleria === 'non_supportato') {

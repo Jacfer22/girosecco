@@ -5,6 +5,7 @@ import type { GarageMoto } from '@/lib/garage';
 import { urlModello } from '@/lib/garage';
 import { posizioneCameraReelGarage, REEL_GARAGE_LOOK_AT } from '@/lib/reel-garage-camera';
 import { catturaESalvaVetrina } from '@/lib/garage-vetrina-client';
+import { attendiFrameRender } from '@/lib/vetrina-immagine';
 
 interface Props {
   moto: GarageMoto[];
@@ -163,7 +164,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
     return () => window.removeEventListener('reel-garage-frame', onFrame);
   }, [modalitaReel, caricamento]);
 
-  const sfondoBianco = modalitaViewer;
+  const sfondoBianco = modalitaViewer || modalitaHero;
   const mostraVetrina = (modalitaViewer || modalitaHero) && !modalitaReel && !caricamento;
   const idVetrina = motoIdVetrina ?? selezionataId ?? scene[0]?.id;
 
@@ -180,6 +181,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
     if (!canvas || !id || salvaVetrina) return;
     setSalvaVetrina(true);
     try {
+      await attendiFrameRender();
       const esito = await catturaESalvaVetrina(canvas, id);
       if (esito.ok) onVetrinaSalvata?.();
       else if (esito.messaggio) window.alert(esito.messaggio);
@@ -190,11 +192,9 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
 
   return (
     <div className={`relative h-full w-full overflow-hidden ${
-      modalitaHero && !sfondoBianco
-        ? 'min-h-0 bg-transparent'
-        : sfondoBianco
-          ? 'min-h-[460px] bg-white sm:min-h-[580px]'
-          : 'min-h-[460px] bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_30%),#0F0B0A] sm:min-h-[580px]'
+      sfondoBianco
+        ? 'min-h-0 bg-white'
+        : 'min-h-[460px] bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_30%),#0F0B0A] sm:min-h-[580px]'
     }`}>
       <div ref={hostRef} className={`absolute inset-0 ${sfondoBianco ? 'bg-white' : ''}`} aria-label="Viewer 3D interattivo" />
       {!modalitaReel && (

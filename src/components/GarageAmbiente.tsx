@@ -43,14 +43,16 @@ export default function GarageAmbiente({
     <TuningGarageScene variant="garage" className="garage-tuning-wrap">
       <div className="garage-palco-hero">
         {haModello ? (
-          <GarageModelViewer
-            moto={motoInPalco}
-            selezionataId={selezionataId ?? motoInPalco[0]?.id ?? null}
-            onSeleziona={onSeleziona}
-            modalitaHero
-            motoIdVetrina={motoInPalco[0]?.id ?? null}
-            onVetrinaSalvata={onVetrinaSalvata}
-          />
+          <div className="garage-vetrina-frame">
+            <GarageModelViewer
+              moto={motoInPalco}
+              selezionataId={selezionataId ?? motoInPalco[0]?.id ?? null}
+              onSeleziona={onSeleziona}
+              modalitaHero
+              motoIdVetrina={motoInPalco[0]?.id ?? null}
+              onVetrinaSalvata={onVetrinaSalvata}
+            />
+          </div>
         ) : fotoAnteprima ? (
           <div className="garage-anteprima-foto">
             <img src={fotoAnteprima} alt="Anteprima moto" />
