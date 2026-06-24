@@ -95,12 +95,6 @@ export default function PaginaTermini() {
           </a>
           .
         </p>
-
-        <p className="mt-8 rounded-app border border-asfalto/15 bg-cemento p-4 text-sm text-asfalto/60">
-          Nota: questo testo è una base redatta in buona fede, non un parere
-          legale. Prima di attivare i pagamenti è consigliabile farlo rivedere da
-          un professionista.
-        </p>
       </div>
     </div>
   );

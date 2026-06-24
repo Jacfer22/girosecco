@@ -68,7 +68,7 @@ export default function BadgeUtente() {
         </div>
       ) : (
         <p className="mt-4 font-mono text-xs uppercase tracking-wide text-segnale">
-          Hai sbloccato tutti i badge. Leggenda. 👑
+          Divinità della strada. Hai conquistato ogni badge. ⚡
         </p>
       )}
     </div>

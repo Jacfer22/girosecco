@@ -5,7 +5,7 @@ import Logo from './Logo';
 import { footerNascosto } from '@/lib/chrome-app';
 import { BRAND_DOMAIN, BRAND_EMAIL } from '@/lib/brand-display';
 
-const PAGINE_IMMERSIVE = ['/naviga', '/traccia'];
+const PAGINE_IMMERSIVE = ['/naviga', '/traccia', '/hub'];
 
 const LINK_NAV = [
   { href: '/traccia', label: 'Traccia' },

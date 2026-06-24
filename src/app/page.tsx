@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { getItinerari } from '@/lib/supabase';
 import LandingHero from '@/components/LandingHero';
-import Reveal from '@/components/Reveal';
+import HomeRedirectLoggato from '@/components/HomeRedirectLoggato';
 import SezioneCardEsempio from '@/components/SezioneCardEsempio';
 import SezioneComeFunziona from '@/components/SezioneComeFunziona';
+import SezionePiattaformaGarage from '@/components/SezionePiattaformaGarage';
+import Reveal from '@/components/Reveal';
 
 export const revalidate = 3600;
 
@@ -13,6 +15,7 @@ export default async function HomePage() {
 
   return (
     <div>
+      <HomeRedirectLoggato />
       <LandingHero itinerariCount={reali.length} />
 
       <div className="strada-viva strada-viva-animata" aria-hidden="true" />
@@ -21,50 +24,7 @@ export default async function HomePage() {
 
       <div className="strada-viva strada-viva-animata" aria-hidden="true" />
 
-      <section className="border-b border-asfalto/8 bg-asfalto/[0.02]">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-          <Reveal>
-            <p className="font-mono text-xs uppercase tracking-[0.22em] text-asfalto/40">
-              Cosa puoi fare
-            </p>
-            <h2 className="mt-1 font-display text-2xl font-bold uppercase tracking-tight sm:text-4xl">
-              Tutto in un&apos;unica piattaforma
-            </h2>
-          </Reveal>
-
-          <div className="bento-features mt-8 sm:mt-10">
-            <FeatureCard
-              href="/traccia"
-              titolo="Traccia un giro"
-              desc="GPS live, statistiche e card condivisibile per Instagram e TikTok."
-              inEvidenza
-              bento="hero"
-              delay={0}
-            />
-            <FeatureCard
-              href="/itinerari"
-              titolo="Itinerari"
-              desc="Mappe, tappe, avvisi strada. GPX su itinerari verificati."
-              bento="side-top"
-              delay={60}
-            />
-            <FeatureCard
-              href="/garage"
-              titolo="Il mio Garage"
-              desc="Avatar 3D della tua moto nel garage virtuale."
-              bento="side-bottom"
-              delay={120}
-            />
-            <FeatureCard
-              href="/community"
-              titolo="Community"
-              desc="Foto, giri pubblici e commenti dalla community di biker."
-              bento="wide"
-              delay={180}
-            />
-          </div>
-        </div>
-      </section>
+      <SezionePiattaformaGarage />
 
       <div className="strada-viva strada-viva-animata" aria-hidden="true" />
 
@@ -99,56 +59,5 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
-  );
-}
-
-function FeatureCard({
-  href,
-  titolo,
-  desc,
-  inEvidenza,
-  bento = 'side-top',
-  delay = 0,
-}: {
-  href: string;
-  titolo: string;
-  desc: string;
-  inEvidenza?: boolean;
-  bento?: 'hero' | 'side-top' | 'side-bottom' | 'wide';
-  delay?: number;
-}) {
-  const bentoClass =
-    bento === 'hero'
-      ? 'bento-feature-hero'
-      : bento === 'wide'
-        ? 'bento-feature-wide'
-        : bento === 'side-top'
-          ? 'bento-feature-sm bento-feature-side-top'
-          : bento === 'side-bottom'
-            ? 'bento-feature-sm bento-feature-side-bottom'
-            : 'bento-feature-sm';
-
-  return (
-    <Reveal delay={delay}>
-      <Link
-        href={href}
-        className={`card-feature bento-feature group ${bentoClass} ${inEvidenza ? 'card-feature-evidenza' : ''}`}
-      >
-        {inEvidenza && (
-          <span className="bento-feature-badge font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-brand">
-            Core
-          </span>
-        )}
-        <h3 className="font-display text-lg font-bold uppercase leading-tight tracking-tight transition-colors group-hover:text-brand sm:text-xl">
-          {titolo}
-        </h3>
-        <p className="mt-2 flex-1 text-sm leading-relaxed">
-          {desc}
-        </p>
-        <span className="mt-4 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-asfalto/45 transition-colors group-hover:text-brand">
-          Scopri →
-        </span>
-      </Link>
-    </Reveal>
   );
 }

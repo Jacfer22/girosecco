@@ -43,14 +43,15 @@ export default function Header() {
           <Voce href="/naviga" label="Naviga" attivo={attivo('/naviga')} />
           <Voce href="/itinerari" label="Itinerari" attivo={attivo('/itinerari')} />
           <Voce href="/community" label="Community" attivo={attivo('/community')} />
-          {isLogged && <Voce href="/garage" label="Garage" attivo={attivo('/garage')} evidenza />}
+          {isLogged && <Voce href="/hub" label="Home" attivo={attivo('/hub')} evidenza />}
+          {isLogged && <Voce href="/garage" label="Garage" attivo={attivo('/garage')} />}
           {isLogged && <Voce href="/giri" label="I miei giri" attivo={attivo('/giri')} />}
           {isAdmin && <Voce href="/admin" label="Admin" attivo={attivo('/admin')} />}
           {!loading && !nonConfigurato && (
             <Voce
-              href={user ? '/hub' : '/accedi'}
-              label={user ? 'Hub' : 'Accedi'}
-              attivo={attivo(user ? '/hub' : '/accedi')}
+              href={user ? '/account' : '/accedi'}
+              label={user ? 'Profilo' : 'Accedi'}
+              attivo={attivo(user ? '/account' : '/accedi')}
             />
           )}
           {isLogged && (

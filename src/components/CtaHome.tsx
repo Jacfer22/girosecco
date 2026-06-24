@@ -19,16 +19,16 @@ export default function CtaHome() {
     return (
       <div className="flex flex-col gap-3 sm:flex-row">
         <Link
-          href="/traccia"
+          href="/hub"
           className="tap rounded-app bg-brand px-7 py-3.5 text-center font-mono text-sm font-bold uppercase tracking-wide text-white shadow-brand transition-colors hover:bg-brand-chiaro"
         >
-          Traccia un giro
+          Apri la tua home
         </Link>
         <Link
-          href="/garage"
+          href="/traccia"
           className="tap rounded-app border border-white/20 px-7 py-3.5 text-center font-mono text-sm font-bold uppercase tracking-wide text-cemento/85 transition-colors hover:border-white/40 hover:bg-white/5"
         >
-          Il mio garage
+          Traccia un giro
         </Link>
       </div>
     );

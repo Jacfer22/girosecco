@@ -55,10 +55,6 @@ export default function PaginaPrivacy() {
           <li>limitazione o opposizione al trattamento;</li>
           <li>reclamo al Garante per la protezione dei dati personali.</li>
         </ul>
-
-        <p className="mt-8 rounded-app border border-asfalto/15 bg-cemento p-4 text-sm text-asfalto/60">
-          Questo testo è una base informativa e non sostituisce la revisione di un professionista legale.
-        </p>
       </div>
     </div>
   );

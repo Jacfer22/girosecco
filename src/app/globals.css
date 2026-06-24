@@ -1741,3 +1741,204 @@ body.nav-fullscreen-active.con-bottomnav {
     animation: none;
   }
 }
+
+/* ============ LANDING: garage centrale con lucchetto ============ */
+
+.landing-garage-hub {
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 1fr;
+}
+.landing-garage-sat,
+.landing-garage-core {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 24, 26, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1.25rem 1.35rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.dark .landing-garage-sat,
+.dark .landing-garage-core {
+  background: rgba(35, 35, 35, 0.65);
+  border-color: rgba(240, 241, 242, 0.08);
+}
+.landing-garage-sat:hover,
+.landing-garage-core:hover {
+  transform: translateY(-3px);
+  border-color: rgba(237, 33, 0, 0.25);
+  box-shadow: 0 12px 28px rgba(21, 24, 26, 0.08);
+}
+.landing-garage-core {
+  align-items: center;
+  text-align: center;
+  border-color: rgba(237, 33, 0, 0.22);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(237, 33, 0, 0.1), transparent 55%),
+    rgba(255, 255, 255, 0.78);
+}
+.dark .landing-garage-core {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(237, 33, 0, 0.14), transparent 55%),
+    rgba(35, 35, 35, 0.72);
+}
+@media (min-width: 768px) {
+  .landing-garage-hub {
+    grid-template-columns: 1fr 1.2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1rem;
+  }
+  .landing-garage-sat-top { grid-column: 1 / -1; }
+  .landing-garage-core {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 16rem;
+    justify-content: center;
+  }
+  .landing-garage-sat-left { grid-column: 1; grid-row: 2; }
+  .landing-garage-sat-right { grid-column: 3; grid-row: 2; }
+}
+
+/* ============ DASHBOARD COCKPIT (loggati) ============ */
+
+.dash-home {
+  color: #f0f1f2;
+}
+.dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.dash-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--brand);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 700;
+  flex-shrink: 0;
+  background: var(--asfalto);
+}
+.dash-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(237, 33, 0, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.dash-card:active { transform: scale(0.99); }
+.dash-card:hover {
+  border-color: rgba(237, 33, 0, 0.45);
+  box-shadow: 0 8px 28px rgba(237, 33, 0, 0.12);
+}
+.dash-card-label {
+  padding: 12px 14px 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(240, 241, 242, 0.45);
+}
+.dash-card-hero {
+  min-height: 14rem;
+}
+.dash-card-garage {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(237, 33, 0, 0.12), transparent 60%),
+    rgba(20, 18, 17, 0.85);
+}
+.dash-garage-visual {
+  margin: 8px 14px;
+  flex: 1;
+  min-height: 8rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #2a1a0e, #0e0c0a);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dash-card-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dash-card-foot.compact {
+  align-items: center;
+  min-height: 3.5rem;
+}
+.dash-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.dash-card-half {
+  min-height: 11rem;
+}
+.dash-card-giri {
+  background: linear-gradient(180deg, rgba(25, 28, 32, 0.95), rgba(15, 11, 10, 0.98));
+}
+.dash-giro-map {
+  margin: 6px 10px;
+  height: 5.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1c20;
+}
+.dash-card-traccia {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(237, 33, 0, 0.15), transparent 60%),
+    rgba(20, 18, 17, 0.9);
+}
+.dash-card-link {
+  min-height: auto;
+  padding: 14px;
+  justify-content: center;
+}
+.dash-card-pill {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  min-height: auto;
+}
+.dash-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f0f1f2;
+  flex-shrink: 0;
+}
+.dash-icon-wrap.sm {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+.dash-footer-legale {
+  scroll-margin-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+
+/* Bottom nav reveal on hub scroll */
+.bottom-nav-hidden {
+  transform: translateY(110%);
+  pointer-events: none;
+}
+.bottom-nav-visible {
+  transform: translateY(0);
+}

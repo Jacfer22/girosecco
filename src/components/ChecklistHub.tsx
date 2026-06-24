@@ -22,7 +22,7 @@ export default function ChecklistHub({ utenteId, profiloOk }: Props) {
   ];
 
   return (
-    <section className="px-4 pb-2">
+    <section className="pb-2">
       <div className="rounded-app-lg border border-brand/25 bg-brand/[0.06] p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

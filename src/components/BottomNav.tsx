@@ -2,7 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
+
+/** Pagine dove la bottom nav appare solo scrollando in fondo. */
+const REVEAL_ON_SCROLL = ['/hub'];
 
 function IconaBussola({ attiva }: { attiva: boolean }) {
   return (
@@ -17,19 +21,18 @@ function IconaBussola({ attiva }: { attiva: boolean }) {
 
 function IconaGarage({ attiva }: { attiva: boolean }) {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={attiva ? 2.4 : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={attiva ? 2.5 : 2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <path d="M8 21V10c0-1 .5-2 2-2h4c1.5 0 2 1 2 2v11" />
-      <circle cx="12" cy="15" r="1.5" fill={attiva ? 'currentColor' : 'none'} />
     </svg>
   );
 }
 
 function IconaTraccia({ attiva }: { attiva: boolean }) {
   return (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={attiva ? 2.5 : 2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={attiva ? 2.4 : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="6" cy="18" r="2" fill={attiva ? 'currentColor' : 'none'} />
       <circle cx="18" cy="6" r="2" fill={attiva ? 'currentColor' : 'none'} />
       <path d="M8 16c3-4 5-6 10-8" />
@@ -37,13 +40,13 @@ function IconaTraccia({ attiva }: { attiva: boolean }) {
   );
 }
 
-function IconaGiri({ attiva }: { attiva: boolean }) {
+function IconaCommunity({ attiva }: { attiva: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={attiva ? 2.4 : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 6h16M4 12h10M4 18h6" />
-      <circle cx="19" cy="12" r="2" fill={attiva ? 'currentColor' : 'none'} />
-      <circle cx="15" cy="18" r="2" fill={attiva ? 'currentColor' : 'none'} />
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8.5" cy="10" r="1.5" />
+      <path d="m21 16-4.5-4.5L7 21" />
     </svg>
   );
 }
@@ -62,51 +65,81 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { user, nonConfigurato } = useAuth();
   const loggato = nonConfigurato || !!user;
+  const [navVisibile, setNavVisibile] = useState(true);
 
-  const vociLaterali = [
-    { href: '/naviga', label: 'Naviga', Icona: IconaBussola, match: (p: string) => p.startsWith('/naviga') },
-    { href: '/garage', label: 'Garage', Icona: IconaGarage, match: (p: string) => p.startsWith('/garage') },
-    { href: '/giri', label: 'Giri', Icona: IconaGiri, match: (p: string) => p.startsWith('/giri') },
-    {
-      href: loggato ? '/hub' : '/accedi',
-      label: loggato ? 'Tu' : 'Accedi',
-      Icona: IconaProfilo,
-      match: (p: string) => p.startsWith('/hub') || p.startsWith('/account') || p.startsWith('/accedi'),
-    },
-  ];
+  const revealMode = REVEAL_ON_SCROLL.some((p) => pathname.startsWith(p));
 
+  useEffect(() => {
+    if (!revealMode) {
+      setNavVisibile(true);
+      return;
+    }
+
+    setNavVisibile(false);
+
+    const sentinel = document.getElementById('app-scroll-end');
+    if (!sentinel) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => setNavVisibile(entry.isIntersecting),
+      { root: null, threshold: 0.05, rootMargin: '0px 0px -20px 0px' },
+    );
+    obs.observe(sentinel);
+    return () => obs.disconnect();
+  }, [revealMode, pathname]);
+
+  if (!loggato) {
+    return (
+      <nav
+        className="app-chrome-bottomnav vetro fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-asfalto/95 text-cemento md:hidden"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        aria-label="Navigazione principale"
+      >
+        <div className="mx-auto flex max-w-md items-end justify-between px-4 py-2">
+          <Link href="/itinerari" className="font-mono text-[10px] uppercase text-cemento/60">Itinerari</Link>
+          <Link href="/community" className="font-mono text-[10px] uppercase text-cemento/60">Community</Link>
+          <Link href="/accedi" className="rounded-app bg-brand px-4 py-2 font-mono text-[10px] font-bold uppercase text-white">Accedi</Link>
+        </div>
+      </nav>
+    );
+  }
+
+  const garageAttivo = pathname.startsWith('/garage');
   const tracciaAttiva = pathname.startsWith('/traccia');
 
   return (
     <nav
-      className="app-chrome-bottomnav vetro fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-asfalto/95 text-cemento md:hidden"
+      className={`app-chrome-bottomnav vetro fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-asfalto/95 text-cemento transition-transform duration-300 ease-out md:hidden ${
+        revealMode && !navVisibile ? 'bottom-nav-hidden' : 'bottom-nav-visible'
+      }`}
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       aria-label="Navigazione principale"
+      aria-hidden={revealMode && !navVisibile}
     >
       <div className="mx-auto flex max-w-md items-end justify-between px-1">
-        <VoceNav {...vociLaterali[0]} pathname={pathname} />
-        <VoceNav {...vociLaterali[1]} pathname={pathname} />
+        <VoceNav href="/naviga" label="Naviga" Icona={IconaBussola} attiva={pathname.startsWith('/naviga')} />
+        <VoceNav href="/community" label="Community" Icona={IconaCommunity} attiva={pathname.startsWith('/community')} />
 
         <Link
-          href="/traccia"
+          href="/garage"
           className={`tap tap-nav-centrale -mt-5 flex w-[4.5rem] flex-col items-center gap-1 ${
-            tracciaAttiva ? 'text-white' : 'text-cemento'
+            garageAttivo ? 'text-white' : 'text-cemento'
           }`}
         >
           <span
             className={`flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-colors ${
-              tracciaAttiva
+              garageAttivo
                 ? 'border-brand bg-brand text-white shadow-brand'
-                : 'border-white/25 bg-asfalto/80 text-cemento shadow-app-sm'
+                : 'border-brand/50 bg-brand text-white shadow-brand'
             }`}
           >
-            <IconaTraccia attiva={tracciaAttiva} />
+            <IconaGarage attiva={garageAttivo} />
           </span>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wide">Traccia</span>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-brand">Garage</span>
         </Link>
 
-        <VoceNav {...vociLaterali[2]} pathname={pathname} />
-        <VoceNav {...vociLaterali[3]} pathname={pathname} />
+        <VoceNav href="/traccia" label="Traccia" Icona={IconaTraccia} attiva={tracciaAttiva} />
+        <VoceNav href="/account" label="Profilo" Icona={IconaProfilo} attiva={pathname.startsWith('/account') || pathname.startsWith('/hub')} />
       </div>
     </nav>
   );
@@ -116,16 +149,13 @@ function VoceNav({
   href,
   label,
   Icona,
-  match,
-  pathname,
+  attiva,
 }: {
   href: string;
   label: string;
   Icona: React.ComponentType<{ attiva: boolean }>;
-  match: (p: string) => boolean;
-  pathname: string;
+  attiva: boolean;
 }) {
-  const attiva = match(pathname);
   return (
     <Link
       href={href}

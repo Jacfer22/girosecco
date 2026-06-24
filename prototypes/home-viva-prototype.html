@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>MotoGarage — Prototipo Home viva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --notte: #0f0b0a;
+      --asfalto: #28282b;
+      --carbone: #232323;
+      --cemento: #f0f1f2;
+      --brand: #ed2100;
+      --brand-glow: rgba(237, 33, 0, 0.35);
+      --muted: rgba(240, 241, 242, 0.55);
+      --border: rgba(240, 241, 242, 0.1);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Archivo', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --nav-h: 72px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: #1a1a1a;
+      color: var(--cemento);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Toolbar prototipo (non fa parte dell'app) */
+    .proto-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.85);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .proto-bar button {
+      border: 1px solid var(--border);
+      background: var(--carbone);
+      color: var(--cemento);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .proto-bar button.active {
+      border-color: var(--brand);
+      background: rgba(237,33,0,0.15);
+      color: #fff;
+    }
+    .proto-bar span { color: var(--muted); }
+
+    /* Phone frame */
+    .phone {
+      width: min(100%, 390px);
+      min-height: 100dvh;
+      margin-top: 44px;
+      background: var(--notte);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 80px rgba(0,0,0,0.5);
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px calc(var(--nav-h) + var(--safe-b) + 24px);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Header contesto */
+    .top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .top .kicker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--brand);
+    }
+    .top h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-top: 4px;
+    }
+    .top .sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--brand);
+      background: var(--asfalto);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Suggerimento unico (ex checklist hub inline) */
+    .hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(237,33,0,0.25);
+      background: rgba(237,33,0,0.08);
+      font-size: 13px;
+    }
+    .hint .progress {
+      display: flex;
+      gap: 4px;
+    }
+    .hint .dot {
+      width: 28px;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.12);
+    }
+    .hint .dot.done { background: var(--brand); box-shadow: 0 0 8px var(--brand-glow); }
+    .hint strong { color: #fff; }
+    .hint.guest { border-color: var(--border); background: rgba(255,255,255,0.04); }
+
+    /* CTA unico */
+    .cta-traccia {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      padding: 28px 20px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(237,33,0,0.35);
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(237,33,0,0.18), transparent 60%),
+        linear-gradient(180deg, rgba(40,40,43,0.9), rgba(15,11,10,0.95));
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .cta-traccia:active { transform: scale(0.98); }
+    .cta-traccia .icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      color: var(--brand);
+    }
+    .cta-traccia .label {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+    .cta-traccia .cap {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Sezioni contenuto */
+    .section {
+      margin-bottom: 22px;
+    }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .section-head h2 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-head a {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    /* Il tuo giro — contenuto reale */
+    .ride-card {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--carbone);
+    }
+    .ride-map {
+      height: 120px;
+      background:
+        linear-gradient(180deg, rgba(15,11,10,0.2), rgba(15,11,10,0.85)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120"><rect fill="%2328282b" width="400" height="120"/><path d="M40 90 C80 60 120 70 160 45 S240 30 320 25" fill="none" stroke="%23f2b705" stroke-width="4" stroke-linecap="round"/></svg>') center/cover;
+      position: relative;
+    }
+    .ride-body { padding: 14px; }
+    .ride-body h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .ride-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .ride-stats strong { color: #fff; font-size: 13px; display: block; }
+
+    .empty-state {
+      padding: 24px 16px;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Carousel itinerari */
+    .carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+    .route-card {
+      flex: 0 0 72%;
+      scroll-snap-align: start;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--asfalto);
+      text-decoration: none;
+      color: inherit;
+    }
+    .route-img {
+      height: 88px;
+      background: linear-gradient(135deg, #3d2a1a, #1a1510);
+      position: relative;
+    }
+    .route-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(15,11,10,0.8), transparent);
+    }
+    .route-body { padding: 10px 12px 12px; }
+    .route-body h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .route-body p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Feed community */
+    .feed-list { display: flex; flex-direction: column; gap: 8px; }
+    .feed-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      text-decoration: none;
+      color: inherit;
+    }
+    .feed-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      background: var(--asfalto);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .feed-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .feed-meta { min-width: 0; }
+    .feed-meta .user {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--brand);
+      text-transform: uppercase;
+    }
+    .feed-meta .text {
+      font-size: 13px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .feed-meta .sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Garage preview */
+    .garage-preview {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(237,33,0,0.2);
+      background:
+        radial-gradient(ellipse 60% 80% at 0% 50%, rgba(237,33,0,0.1), transparent),
+        var(--carbone);
+      text-decoration: none;
+      color: inherit;
+    }
+    .garage-visual {
+      width: 80px;
+      height: 64px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #2a1a0e 0%, #0e0c0a 100%);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+    }
+    .garage-info h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .garage-info p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Blocco locked ospite */
+    .locked {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .locked .ride-card,
+    .locked .garage-preview { filter: blur(3px); opacity: 0.55; pointer-events: none; }
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15,11,10,0.55);
+      text-align: center;
+      padding: 16px;
+    }
+    .locked-overlay p { font-size: 13px; margin-bottom: 10px; }
+    .locked-overlay a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #fff;
+      background: var(--brand);
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(100%, 390px);
+      height: calc(var(--nav-h) + var(--safe-b));
+      padding-bottom: var(--safe-b);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(40,40,43,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      z-index: 50;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 4px;
+      min-width: 52px;
+    }
+    .nav-item.active { color: #fff; }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-fab-wrap {
+      position: relative;
+      top: -14px;
+    }
+    .nav-fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--brand);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 20px var(--brand-glow);
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-fab svg { width: 26px; height: 26px; }
+    .nav-fab-label {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      color: var(--brand);
+      white-space: nowrap;
+    }
+
+    /* Stato nascosto */
+    [data-mode="guest"] .logged-only { display: none !important; }
+    [data-mode="logged"] .guest-only { display: none !important; }
+
+    .note {
+      max-width: 390px;
+      padding: 12px 16px 24px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.5;
+      text-align: center;
+    }
+  </style>
+</head>
+<body data-mode="logged">
+
+  <div class="proto-bar">
+    <span>Prototipo</span>
+    <button type="button" id="btn-logged" class="active">Loggato</button>
+    <button type="button" id="btn-guest">Ospite</button>
+  </div>
+
+  <div class="phone">
+    <main class="scroll">
+
+      <!-- HEADER: solo contesto, zero menu -->
+      <header class="top">
+        <div>
+          <p class="kicker" id="saluto">Buongiorno</p>
+          <h1 id="username">Marco</h1>
+          <p class="sub logged-only">Sport · Ducati Panigale</p>
+          <p class="sub guest-only">Esplora gratis · registrati per salvare</p>
+        </div>
+        <a href="#" class="avatar logged-only" title="Profilo">M</a>
+        <a href="#" class="avatar guest-only" title="Accedi">?</a>
+      </header>
+
+      <!-- UN suggerimento, non hub intero -->
+      <div class="hint logged-only" id="hint-logged">
+        <div class="progress">
+          <span class="dot done"></span>
+          <span class="dot done"></span>
+          <span class="dot"></span>
+        </div>
+        <span><strong>Prossimo passo:</strong> traccia il primo giro</span>
+      </div>
+      <div class="hint guest-only">
+        <span>Itinerari e community aperti · <strong>registrati</strong> per tracciare e garage 3D</span>
+      </div>
+
+      <!-- UN CTA — non uno tra tanti tile -->
+      <a href="#" class="cta-traccia">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/>
+          <path d="M8 16c3-4 5-6 10-8"/>
+        </svg>
+        <span class="label logged-only">Traccia</span>
+        <span class="label guest-only">Registrati<br/>e traccia</span>
+        <span class="cap">GPS · card · community</span>
+      </a>
+
+      <!-- IL TUO GIRO — contenuto, non link "Giri" -->
+      <section class="section">
+        <div class="section-head">
+          <h2>Il tuo giro</h2>
+          <a href="#" class="logged-only">Tutti i giri →</a>
+        </div>
+
+        <div class="logged-only">
+          <article class="ride-card">
+            <div class="ride-map"></div>
+            <div class="ride-body">
+              <h3>Passo dello Stelvio</h3>
+              <div class="ride-stats">
+                <div><strong>87 km</strong> distanza</div>
+                <div><strong>2h 14m</strong> durata</div>
+                <div><strong>Ieri</strong> quando</div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="guest-only locked">
+          <article class="ride-card">
+            <div class="ride-map"></div>
+            <div class="ride-body"><h3>—</h3></div>
+          </article>
+          <div class="locked-overlay">
+            <p>I tuoi giri GPS salvati qui</p>
+            <a href="#">Registrati gratis</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- STRADE — carousel reale, non tile "Itinerari" -->
+      <section class="section">
+        <div class="section-head">
+          <h2>Strade da fare</h2>
+          <a href="#">Vedi tutti →</a>
+        </div>
+        <div class="carousel">
+          <a class="route-card" href="#">
+            <div class="route-img"></div>
+            <div class="route-body">
+              <h3>Costiera Amalfitana</h3>
+              <p>Campania · 120 km · Medio</p>
+            </div>
+          </a>
+          <a class="route-card" href="#">
+            <div class="route-img" style="background:linear-gradient(135deg,#1a2838,#0e0c0a)"></div>
+            <div class="route-body">
+              <h3>Passo dello Stelvio</h3>
+              <p>Lombardia · 48 km · Difficile</p>
+            </div>
+          </a>
+          <a class="route-card" href="#">
+            <div class="route-img" style="background:linear-gradient(135deg,#2a3a2a,#0e0c0a)"></div>
+            <div class="route-body">
+              <h3>Maremma in moto</h3>
+              <p>Toscana · 95 km · Facile</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- COMMUNITY — feed vero, non bottone -->
+      <section class="section">
+        <div class="section-head">
+          <h2>Dalla community</h2>
+          <a href="#">Vedi tutti →</a>
+        </div>
+        <div class="feed-list">
+          <a class="feed-item" href="#">
+            <div class="feed-thumb">
+              <svg width="52" height="52" viewBox="0 0 52 52"><rect fill="#333" width="52" height="52"/><circle cx="26" cy="20" r="8" fill="#555"/><path d="M10 48c0-10 8-16 16-16s16 6 16 16" fill="#555"/></svg>
+            </div>
+            <div class="feed-meta">
+              <div class="user">@luca_ride</div>
+              <div class="text">Giro a Passo Gavia — 124 km</div>
+              <div class="sub">2 ore fa · 12 mi piace</div>
+            </div>
+          </a>
+          <a class="feed-item" href="#">
+            <div class="feed-thumb" style="background:linear-gradient(135deg,#4a2020,#1a1010)"></div>
+            <div class="feed-meta">
+              <div class="user">@sara_moto</div>
+              <div class="text">Foto al tramonto, Dolomiti</div>
+              <div class="sub">5 ore fa · commento</div>
+            </div>
+          </a>
+          <a class="feed-item" href="#">
+            <div class="feed-meta" style="padding-left:4px">
+              <div class="user">Classifica km</div>
+              <div class="text">Tu sei #12 questo mese</div>
+              <div class="sub logged-only">342 km totali</div>
+              <div class="sub guest-only">Registrati per entrare</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- GARAGE — anteprima, non tile uguale agli altri -->
+      <section class="section">
+        <div class="section-head">
+          <h2>La tua moto</h2>
+          <a href="#" class="logged-only">Garage →</a>
+        </div>
+
+        <a href="#" class="garage-preview logged-only">
+          <div class="garage-visual">🏍</div>
+          <div class="garage-info">
+            <h3>Panigale V4</h3>
+            <p>Avatar 3D pronto · tap per ruotare</p>
+          </div>
+        </a>
+
+        <div class="guest-only locked">
+          <a href="#" class="garage-preview">
+            <div class="garage-visual">🏍</div>
+            <div class="garage-info"><h3>Garage 3D</h3><p>—</p></div>
+          </a>
+          <div class="locked-overlay">
+            <p>La tua moto in 3D nel garage virtuale</p>
+            <a href="#">Registrati gratis</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- NAV: solo navigazione profonda, non ripete i blocchi sopra -->
+    <nav class="bottom-nav" aria-label="App">
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Home
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polygon points="12,5 14,13 12,11 10,13" fill="currentColor"/></svg>
+        Naviga
+      </a>
+      <div class="nav-fab-wrap">
+        <a href="#" class="nav-fab" aria-label="Traccia">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 16c3-4 5-6 10-8"/></svg>
+        </a>
+        <span class="nav-fab-label">Traccia</span>
+      </div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/></svg>
+        Community
+      </a>
+      <a href="#" class="nav-item logged-only">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>
+        Profilo
+      </a>
+      <a href="#" class="nav-item guest-only">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+        Accedi
+      </a>
+    </nav>
+  </div>
+
+  <p class="note">
+    Apri questo file nel browser · usa i pulsanti in alto per confrontare <strong>Loggato</strong> vs <strong>Ospite</strong>.<br/>
+    La home mostra <em>contenuto</em>; la nav in basso serve solo ad andare nelle sezioni complete.<br/>
+    File: <code>prototypes/home-viva-prototype.html</code>
+  </p>
+
+  <script>
+    const body = document.body;
+    const btnLogged = document.getElementById('btn-logged');
+    const btnGuest = document.getElementById('btn-guest');
+    const saluto = document.getElementById('saluto');
+
+    function setMode(mode) {
+      body.dataset.mode = mode;
+      btnLogged.classList.toggle('active', mode === 'logged');
+      btnGuest.classList.toggle('active', mode === 'guest');
+    }
+
+    btnLogged.addEventListener('click', () => setMode('logged'));
+    btnGuest.addEventListener('click', () => setMode('guest'));
+
+    const h = new Date().getHours();
+    saluto.textContent = h < 12 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  </script>
+</body>
+</html>
