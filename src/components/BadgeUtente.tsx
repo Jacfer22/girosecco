@@ -33,7 +33,7 @@ export default function BadgeUtente() {
   const prossimo = prossimoBadge(km);
   const perc = avanzamento(km);
   const indiceAttuale = BADGES.findIndex((b) => b.id === attuale.id);
-  const iconSize = 56 + attuale.rango * 6;
+  const iconSize = 52;
 
   return (
     <div className={`badge-livello-card badge-livello-rango-${attuale.rango}`}>
@@ -67,7 +67,7 @@ export default function BadgeUtente() {
             />
           </div>
           <div className="mt-2 flex items-center gap-2.5">
-            <IconaBadgeLivello badge={prossimo} size={28} className="opacity-55" />
+            <IconaBadgeLivello badge={prossimo} size={26} className="opacity-60 shrink-0" />
             <p className="font-mono text-[10px] leading-snug text-cemento/55">
               <span className="text-cemento/75">{perc}%</span>
               {' · '}
@@ -78,7 +78,7 @@ export default function BadgeUtente() {
         </div>
       ) : (
         <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-segnale">
-          Divinità del bitume — hai raggiunto il rango massimo
+          Divinità delle due ruote — hai raggiunto il rango massimo
         </p>
       )}
     </div>
