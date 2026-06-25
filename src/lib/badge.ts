@@ -12,10 +12,10 @@ export const BADGES: Badge[] = [
   { id: 'chiave-in-mano', nome: 'Chiave in mano', kmRichiesti: 0, rango: 0 },
   { id: 'strada-aperta', nome: 'Strada aperta', kmRichiesti: 500, rango: 1 },
   { id: 'centauro-asfalto', nome: 'Centauro dell\'asfalto', kmRichiesti: 2_500, rango: 2 },
-  { id: 'conquistatore-passi', nome: 'Conquistatore del bitume', kmRichiesti: 7_500, rango: 3 },
+  { id: 'conquistatore-passi', nome: 'Conquistatore dei passi', kmRichiesti: 7_500, rango: 3 },
   { id: 're-delle-curve', nome: 'Re delle curve', kmRichiesti: 15_000, rango: 4 },
   { id: 'leggenda-in-sella', nome: 'Leggenda in sella', kmRichiesti: 30_000, rango: 5 },
-  { id: 'divinita-bitume', nome: 'Divinità delle due ruote', kmRichiesti: 50_000, rango: 6 },
+  { id: 'divinita-bitume', nome: 'Divinità del bitume', kmRichiesti: 50_000, rango: 6 },
 ];
 
 export const KM_MASSIMO_BADGE = BADGES[BADGES.length - 1].kmRichiesti;

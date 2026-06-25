@@ -78,7 +78,7 @@ export default function BadgeUtente() {
         </div>
       ) : (
         <p className="mt-4 font-mono text-[10px] uppercase tracking-wide text-segnale">
-          Divinità delle due ruote — hai raggiunto il rango massimo
+          Divinità del bitume — hai raggiunto il rango massimo
         </p>
       )}
     </div>
