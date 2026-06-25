@@ -42,6 +42,8 @@ export default function PaginaLogoBar() {
 
   if (!mostra) return null;
 
+  if (pathname.startsWith('/hub')) return null;
+
   return (
     <div className="pagina-logo-bar w-full pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
       <LogoHomeLink />

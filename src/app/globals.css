@@ -1824,6 +1824,29 @@ body.nav-fullscreen-active.con-bottomnav {
 .dash-home {
   color: #f0f1f2;
 }
+.dash-hero-top {
+  position: relative;
+  overflow: visible;
+  margin-bottom: 0.25rem;
+  padding-top: max(0.35rem, env(safe-area-inset-top));
+}
+.dash-hero-brand-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 4.5rem;
+  overflow: visible;
+}
+.dash-hero-user {
+  margin-top: 0.15rem;
+  padding-right: 5.75rem;
+}
+.dash-hero-username {
+  margin-top: 0.35rem;
+  font-size: clamp(2rem, 9vw, 2.65rem);
+  line-height: 0.95;
+}
 .dash-header {
   display: flex;
   align-items: flex-start;
@@ -1831,24 +1854,25 @@ body.nav-fullscreen-active.con-bottomnav {
   gap: 12px;
   margin-bottom: 8px;
   overflow: visible;
-  padding-top: 0.65rem;
-  padding-right: 0.65rem;
+  padding-top: 1rem;
+  padding-right: 1rem;
 }
 .dash-avatar {
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  border: 2.5px solid var(--brand);
+  border: 3px solid var(--brand);
   display: grid;
   place-items: center;
   overflow: hidden;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   flex-shrink: 0;
   background: var(--asfalto);
-  transform: translate(-0.65rem, -0.65rem);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transform: translate(-0.35rem, -1.35rem);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  z-index: 2;
 }
 .dash-card {
   display: flex;

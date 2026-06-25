@@ -7,10 +7,11 @@ import Logo from '@/components/Logo';
 interface Props {
   onClick?: () => void;
   className?: string;
+  grande?: boolean;
 }
 
 /** Logo + nome in alto a sinistra — link pulito, scorre con la pagina. */
-export default function LogoHomeLink({ onClick, className = '' }: Props) {
+export default function LogoHomeLink({ onClick, className = '', grande = false }: Props) {
   const href = homeHref();
 
   return (
@@ -18,10 +19,14 @@ export default function LogoHomeLink({ onClick, className = '' }: Props) {
       href={href}
       onClick={onClick}
       aria-label="Torna alla home MotoGarage"
-      className={`tap inline-flex shrink-0 items-center gap-2.5 sm:gap-3 ${className}`.trim()}
+      className={`tap inline-flex shrink-0 items-center gap-2.5 sm:gap-3 ${grande ? 'py-0.5' : ''} ${className}`.trim()}
     >
-      <Logo variante="header" />
-      <span className="font-display text-base font-bold uppercase leading-none tracking-tight text-cemento sm:text-lg">
+      <Logo variante={grande ? 'headerGrande' : 'header'} />
+      <span
+        className={`font-display font-bold uppercase leading-none tracking-tight text-cemento ${
+          grande ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
+        }`}
+      >
         Moto<span className="text-brand">Garage</span>
       </span>
     </Link>

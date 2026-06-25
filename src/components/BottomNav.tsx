@@ -18,7 +18,7 @@ function IconaBussola({ attiva }: { attiva: boolean }) {
 
 function IconaGarage({ attiva }: { attiva: boolean }) {
   return (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={attiva ? 2.5 : 2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <path d="M8 21V10c0-1 .5-2 2-2h4c1.5 0 2 1 2 2v11" />
@@ -92,12 +92,12 @@ export default function BottomNav() {
 
         <Link
           href="/garage"
-          className={`tap tap-nav-centrale -mt-5 flex w-[4.5rem] flex-col items-center gap-1 ${
+          className={`tap tap-nav-centrale -mt-6 flex w-[5.25rem] flex-col items-center gap-1 ${
             garageAttivo ? 'text-white' : 'text-cemento'
           }`}
         >
           <span
-            className={`flex h-14 w-14 items-center justify-center rounded-full border-2 shadow-lg transition-colors ${
+            className={`flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full border-[2.5px] shadow-lg transition-colors ${
               garageAttivo
                 ? 'border-brand bg-brand text-white shadow-brand'
                 : 'border-brand/50 bg-brand text-white shadow-brand'

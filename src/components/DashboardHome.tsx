@@ -14,6 +14,7 @@ import Reveal from './Reveal';
 import IconaGpsLive from './icons/IconaGpsLive';
 import BloccoGarageBio from './BloccoGarageBio';
 import NotificheKmSettimana from './NotificheKmSettimana';
+import LogoHomeLink from './LogoHomeLink';
 
 interface AnteprimaMoto {
   id: string;
@@ -142,25 +143,28 @@ export default function DashboardHome() {
   return (
     <div className="dash-home pb-8">
       <Reveal>
-        <header className="dash-header">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">{salutoGiorno()}</p>
-            <h1 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-white">
+        <header className="dash-hero-top">
+          <div className="dash-hero-brand-row">
+            <LogoHomeLink grande />
+            <Link href="/account" className="dash-avatar" title="Profilo">
+              {profilo?.avatar_url ? (
+                <img src={profilo.avatar_url} alt="" className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <span>{(profilo?.username ?? 'M').slice(0, 1).toUpperCase()}</span>
+              )}
+            </Link>
+          </div>
+          <div className="dash-hero-user">
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-brand">{salutoGiorno()}</p>
+            <h1 className="dash-hero-username font-display font-black uppercase leading-none tracking-tight text-white">
               {profilo?.username ?? 'Motociclista'}
             </h1>
             {(categoria || profilo?.moto) && (
-              <p className="mt-1 font-mono text-[11px] text-cemento/50">
+              <p className="mt-1.5 font-mono text-xs text-cemento/55">
                 {[categoria, profilo?.moto].filter(Boolean).join(' · ')}
               </p>
             )}
           </div>
-          <Link href="/account" className="dash-avatar" title="Profilo">
-            {profilo?.avatar_url ? (
-              <img src={profilo.avatar_url} alt="" className="h-full w-full rounded-full object-cover" />
-            ) : (
-              <span>{(profilo?.username ?? 'M').slice(0, 1).toUpperCase()}</span>
-            )}
-          </Link>
         </header>
       </Reveal>
 
