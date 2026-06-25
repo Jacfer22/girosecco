@@ -6,17 +6,24 @@ export interface Badge {
   kmRichiesti: number;
   /** 0 = più semplice · 6 = massimo (cornice, strati, corona) */
   rango: number;
+  /** PNG mockup ufficiale in public/badges/ */
+  immagine: string;
 }
 
 export const BADGES: Badge[] = [
-  { id: 'chiave-in-mano', nome: 'Chiave in mano', kmRichiesti: 0, rango: 0 },
-  { id: 'strada-aperta', nome: 'Strada aperta', kmRichiesti: 500, rango: 1 },
-  { id: 'centauro-asfalto', nome: 'Centauro dell\'asfalto', kmRichiesti: 2_500, rango: 2 },
-  { id: 'conquistatore-passi', nome: 'Conquistatore dei passi', kmRichiesti: 7_500, rango: 3 },
-  { id: 're-delle-curve', nome: 'Re delle curve', kmRichiesti: 15_000, rango: 4 },
-  { id: 'leggenda-in-sella', nome: 'Leggenda in sella', kmRichiesti: 30_000, rango: 5 },
-  { id: 'divinita-bitume', nome: 'Divinità del bitume', kmRichiesti: 50_000, rango: 6 },
+  { id: 'chiave-in-mano', nome: 'Chiave in mano', kmRichiesti: 0, rango: 0, immagine: '/badges/chiave-in-mano.png' },
+  { id: 'strada-aperta', nome: 'Strada aperta', kmRichiesti: 500, rango: 1, immagine: '/badges/strada-aperta.png' },
+  { id: 'centauro-asfalto', nome: 'Centauro dell\'asfalto', kmRichiesti: 2_500, rango: 2, immagine: '/badges/centauro-asfalto.png' },
+  { id: 'conquistatore-passi', nome: 'Conquistatore dei passi', kmRichiesti: 7_500, rango: 3, immagine: '/badges/conquistatore-passi.png' },
+  { id: 're-delle-curve', nome: 'Re delle curve', kmRichiesti: 15_000, rango: 4, immagine: '/badges/re-delle-curve.png' },
+  { id: 'leggenda-in-sella', nome: 'Leggenda in sella', kmRichiesti: 30_000, rango: 5, immagine: '/badges/leggenda-in-sella.png' },
+  { id: 'divinita-bitume', nome: 'Divinità del bitume', kmRichiesti: 50_000, rango: 6, immagine: '/badges/divinita-bitume.png' },
 ];
+
+export function immagineBadge(id: string): string {
+  const badge = BADGES.find((b) => b.id === id);
+  return badge?.immagine ?? BADGES[0].immagine;
+}
 
 export const KM_MASSIMO_BADGE = BADGES[BADGES.length - 1].kmRichiesti;
 
