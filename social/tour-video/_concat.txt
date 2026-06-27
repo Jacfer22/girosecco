@@ -1,0 +1,7 @@
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/01-landing.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/02-itinerari.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/03-naviga.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/04-garage.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/05-traccia.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/06-community.mp4'
+file 'C:/Users/jacop/Desktop/motogarage/social/tour-video/_work/07-cta.mp4'

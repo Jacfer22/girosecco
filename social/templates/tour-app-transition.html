@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0F0B0A; }
+    .flash { position:absolute;inset:0;background:{{ACCENT_COLOR}};opacity:{{FLASH_OPACITY}}; }
+    .lines { position:absolute;inset:0; }
+    .line {
+      position:absolute; left:-30%; width:160%; height:4px;
+      background:linear-gradient(90deg,transparent,{{ACCENT_COLOR}},#fff,transparent);
+      transform:rotate(-12deg);
+    }
+    .mascot {
+      position:absolute; left:50%; top:50%;
+      width:520px; transform:{{MASCOT_TRANSFORM}};
+      filter:drop-shadow(0 20px 40px rgba(0,0,0,0.6)) {{MOTION_BLUR}};
+      opacity:{{MASCOT_OPACITY}};
+    }
+    .mascot img { width:100%; height:auto; display:block; }
+    .vroom {
+      position:absolute; left:50%; top:58%; transform:translateX(-50%);
+      font-family:Impact,'Arial Black',sans-serif; font-size:88px; font-weight:900;
+      color:#fff; letter-spacing:0.08em; text-transform:uppercase;
+      text-shadow:0 0 40px {{ACCENT_COLOR}}; opacity:{{TEXT_OPACITY}};
+    }
+  </style>
+</head>
+<body>
+  <div class="flash"></div>
+  <div class="lines">
+    <div class="line" style="top:22%; transform:translateX({{LX1}}px) rotate(-14deg);"></div>
+    <div class="line" style="top:48%; transform:translateX({{LX2}}px) rotate(-8deg); opacity:0.7;"></div>
+    <div class="line" style="top:74%; transform:translateX({{LX3}}px) rotate(-16deg); opacity:0.5;"></div>
+  </div>
+  <div class="mascot"><img src="{{MASCOT_IMG}}" alt="" /></div>
+  <p class="vroom">VVRRR</p>
+</body>
+</html>

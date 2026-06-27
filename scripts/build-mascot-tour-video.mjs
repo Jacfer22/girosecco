@@ -1,12 +1,5 @@
 /**
- * Video tour Instagram: telefono che naviga l'app + mascotte con fumetto.
- * Output: social/tour-video/motogarage-mascot-tour.mp4
- *
- * npm run social:tour-video
- *
- * Richiede app in esecuzione (prod o locale):
- *   npm run build && npx next start -p 3002
- *   REEL_BASE_URL=https://motogarage.info npm run social:tour-video
+ * Video tour Instagram: iPhone centrato + mascotte + dialoghi completi + transizioni sgasata.
  */
 import { chromium } from 'playwright';
 import { spawnSync } from 'node:child_process';
@@ -16,23 +9,23 @@ import { fileURLToPath } from 'node:url';
 import ffmpegPath from 'ffmpeg-static';
 import pkg from '@next/env';
 import { createClient } from '@supabase/supabase-js';
-import {
-  assertMascots,
-  loadMascotDataUrls,
-  toMp4,
-  concatMp4,
-} from '../social/lib/tour.mjs';
+import { assertMascots, loadMascotDataUrls, toMp4, concatMp4 } from '../social/lib/tour.mjs';
 import {
   APP_TOUR_SCENES,
+  TRANSITION_SEC,
   captureScreenFrames,
   recordCompositeSegment,
+  recordTransitionSegment,
 } from '../social/lib/tour-app-video.mjs';
+import { planTourAudio, extractThumbnail, muxVideoAudio } from '../social/lib/tour-audio.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const OUT_DIR = join(ROOT, 'social', 'tour-video');
 const WORK = join(OUT_DIR, '_work');
 const FINAL = join(OUT_DIR, 'motogarage-mascot-tour.mp4');
+const FINAL_VO = join(OUT_DIR, 'motogarage-reel-voice.mp4');
+const THUMB = join(OUT_DIR, 'reel-cover.jpg');
 
 const FPS = 24;
 const GARAGE_USER = process.env.REEL_GARAGE_USER ?? 'demo';
@@ -84,7 +77,7 @@ function fileOk(path, min = 50000) {
 }
 
 async function main() {
-  console.log('\n🎬 MotoGarage — video tour mascotte + app\n');
+  console.log('\n🎬 MotoGarage — reel centrato + dialoghi + transizioni\n');
 
   assertMascots();
   const base = await resolveBaseUrl();
@@ -96,6 +89,11 @@ async function main() {
   mkdirSync(OUT_DIR, { recursive: true });
   mkdirSync(WORK, { recursive: true });
 
+  console.log('▶ Step 1: pianificazione audio (durata scene = lunghezza dialogo)\n');
+  const voiceDir = join(WORK, 'voice');
+  const { plan, voiceover } = await planTourAudio(voiceDir);
+  const durationById = Object.fromEntries(plan.map((p) => [p.id, p.durationSec]));
+
   const mascotUrls = loadMascotDataUrls();
   const browser = await chromium.launch();
   const segments = [];
@@ -103,8 +101,8 @@ async function main() {
   try {
     for (let i = 0; i < APP_TOUR_SCENES.length; i++) {
       const scene = APP_TOUR_SCENES[i];
-      const sec = scene.sec;
-      console.log(`\n▶ ${scene.step} — ${scene.headline}`);
+      const sec = durationById[scene.id] ?? scene.sec;
+      console.log(`\n▶ ${scene.step} — ${sec.toFixed(1)}s`);
 
       const screenFrames = await captureScreenFrames(
         browser,
@@ -120,35 +118,41 @@ async function main() {
 
       const compDir = join(WORK, scene.id, 'composite');
       const prefix = 'c_';
-      await recordCompositeSegment(
-        scene,
-        i,
-        mascotUrls[scene.mascot],
-        screenFrames,
-        compDir,
-        prefix,
-        FPS,
-        sec,
-        APP_TOUR_SCENES.length,
-      );
+      await recordCompositeSegment(scene, mascotUrls[scene.mascot], screenFrames, compDir, prefix, FPS, sec);
 
       const seg = join(WORK, `${scene.id}.mp4`);
       const ok = toMp4(join(compDir, `${prefix}%04d.png`), seg, FPS, sec);
       if (!ok || !fileOk(seg)) throw new Error(`Segmento fallito: ${scene.id}`);
       segments.push(seg);
-      console.log(`  ✓ ${seg} (${Math.round(statSync(seg).size / 1024)} KB)`);
+      console.log(`  ✓ scena ${Math.round(statSync(seg).size / 1024)} KB`);
+
+      if (i < APP_TOUR_SCENES.length - 1) {
+        const nextMascot = APP_TOUR_SCENES[i + 1].mascot;
+        const tDir = join(WORK, `trans-${i}`, 'composite');
+        const tPrefix = 't_';
+        console.log(`  ⚡ transizione sgasata (${TRANSITION_SEC}s) — ${nextMascot}`);
+        await recordTransitionSegment(nextMascot, mascotUrls[nextMascot], tDir, tPrefix, FPS, TRANSITION_SEC);
+        const tSeg = join(WORK, `trans-${i}.mp4`);
+        const tok = toMp4(join(tDir, `${tPrefix}%04d.png`), tSeg, FPS, TRANSITION_SEC);
+        if (!tok || !fileOk(tSeg, 10000)) throw new Error(`Transizione fallita: ${i}`);
+        segments.push(tSeg);
+      }
     }
   } finally {
     await browser.close();
   }
 
-  console.log('\n▶ Concatenazione video finale…\n');
+  console.log('\n▶ Concatenazione video…\n');
   if (!concatMp4(segments, FINAL)) process.exit(1);
 
-  const sizeMb = (statSync(FINAL).size / (1024 * 1024)).toFixed(1);
-  console.log(`\n✅ Video pronto: ${FINAL} (${sizeMb} MB)\n`);
-  console.log('   Formato: 1080×1920 · Story/Reel Instagram');
-  console.log('   Telefono con app reale + mascotte con fumetto affiancato\n');
+  console.log('\n▶ Mux audio (dialoghi non tagliati)…\n');
+  if (!muxVideoAudio(FINAL, voiceover, FINAL_VO)) process.exit(1);
+  extractThumbnail(FINAL_VO, THUMB, 4);
+
+  const sizeMb = (statSync(FINAL_VO).size / (1024 * 1024)).toFixed(1);
+  console.log(`\n✅ Video pronto: ${FINAL_VO} (${sizeMb} MB)\n`);
+  console.log(`   Cover: ${THUMB}`);
+  console.log('   Layout: telefono + mascotte centrati · transizioni VVRRR tra scene\n');
 
   rmSync(WORK, { recursive: true, force: true });
 }

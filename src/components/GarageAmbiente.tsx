@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { GarageMoto } from '@/lib/garage';
 import TuningGarageScene from '@/components/TuningGarageScene';
 
@@ -29,28 +29,51 @@ export default function GarageAmbiente({
   onVetrinaSalvata,
   children,
 }: Props) {
-  const motoInPalco = useMemo(() => {
-    if (motoPronte.length === 0) return [];
-    const scelta = selezionataId
-      ? motoPronte.find((item) => item.id === selezionataId)
-      : motoPronte[0];
-    return scelta ? [scelta] : [motoPronte[0]];
-  }, [motoPronte, selezionataId]);
+  const [esploraAttivo, setEsploraAttivo] = useState(false);
+  const selezionataPrecedente = useRef(selezionataId);
 
-  const haModello = mostraViewer && motoInPalco.length > 0;
+  useEffect(() => {
+    if (selezionataPrecedente.current !== selezionataId) {
+      setEsploraAttivo(false);
+      selezionataPrecedente.current = selezionataId;
+    }
+  }, [selezionataId]);
+
+  const haModello = mostraViewer && motoPronte.length > 0;
+  const idAttivo = selezionataId ?? motoPronte[0]?.id ?? null;
+
+  function interagisciMoto(id: string) {
+    if (id === idAttivo && !esploraAttivo) {
+      setEsploraAttivo(true);
+      return;
+    }
+    setEsploraAttivo(false);
+    onSeleziona(id);
+  }
 
   return (
     <TuningGarageScene variant="garage" className="garage-tuning-wrap">
       <div className="garage-palco-hero">
         {haModello ? (
-          <GarageModelViewer
-            moto={motoInPalco}
-            selezionataId={selezionataId ?? motoInPalco[0]?.id ?? null}
-            onSeleziona={onSeleziona}
-            modalitaHero
-            motoIdVetrina={motoInPalco[0]?.id ?? null}
-            onVetrinaSalvata={onVetrinaSalvata}
-          />
+          <>
+            <GarageModelViewer
+              moto={motoPronte}
+              selezionataId={idAttivo}
+              onSeleziona={interagisciMoto}
+              modalitaHero
+              esploraAttivo={esploraAttivo}
+              onAttivaEsplora={() => setEsploraAttivo(true)}
+              motoIdVetrina={idAttivo}
+              onVetrinaSalvata={onVetrinaSalvata}
+            />
+            {!esploraAttivo && (
+              <div className="garage-parcheggio-hint pointer-events-none">
+                <span className="garage-parcheggio-hint-pill">
+                  {idAttivo ? 'Tocca la moto per girarla' : 'Seleziona una moto'}
+                </span>
+              </div>
+            )}
+          </>
         ) : fotoAnteprima ? (
           <div className="garage-anteprima-foto">
             <img src={fotoAnteprima} alt="Anteprima moto" />

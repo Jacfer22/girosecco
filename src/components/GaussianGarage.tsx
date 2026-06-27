@@ -15,6 +15,8 @@ interface Props {
   modalitaHero?: boolean;
   /** Cattura reel: camera più lontana, moto intera in frame */
   modalitaReel?: boolean;
+  esploraAttivo?: boolean;
+  onAttivaEsplora?: () => void;
   motoIdVetrina?: string | null;
   onVetrinaSalvata?: () => void;
 }
@@ -42,7 +44,17 @@ function disabilitaTastieraViewer(viewer: import('@mkkellogg/gaussian-splats-3d'
   }
 }
 
-export default function GaussianGarage({ moto, selezionataId, modalitaViewer = false, modalitaHero = false, modalitaReel = false, motoIdVetrina = null, onVetrinaSalvata }: Props) {
+export default function GaussianGarage({
+  moto,
+  selezionataId,
+  modalitaViewer = false,
+  modalitaHero = false,
+  modalitaReel = false,
+  esploraAttivo = true,
+  onAttivaEsplora,
+  motoIdVetrina = null,
+  onVetrinaSalvata,
+}: Props) {
   const { toast } = useFeedback();
   const hostRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<import('@mkkellogg/gaussian-splats-3d').Viewer | null>(null);
@@ -53,12 +65,16 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
 
   const scene = useMemo(() => {
     const pronte = moto.filter((item) => item.stato === 'pronto' && urlModello(item));
-    if ((modalitaViewer || modalitaHero) && selezionataId) {
+    if (modalitaViewer && selezionataId) {
+      const scelta = pronte.find((item) => item.id === selezionataId);
+      return scelta ? [scelta] : pronte.slice(0, 1);
+    }
+    if (modalitaHero && esploraAttivo && selezionataId) {
       const scelta = pronte.find((item) => item.id === selezionataId);
       return scelta ? [scelta] : pronte.slice(0, 1);
     }
     return pronte.slice(0, 5);
-  }, [moto, selezionataId, modalitaViewer, modalitaHero]);
+  }, [moto, selezionataId, modalitaViewer, modalitaHero, esploraAttivo]);
 
   const sceneKey = useMemo(
     () => scene.map((item) => `${item.id}:${item.updated_at}:${urlModello(item)}`).join('|'),
@@ -117,6 +133,10 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
         if (annullato) return;
         viewer.start();
         disabilitaTastieraViewer(viewer);
+        const controls = (viewer as import('@mkkellogg/gaussian-splats-3d').Viewer & {
+          perspectiveControls?: import('three/examples/jsm/controls/OrbitControls.js').OrbitControls;
+        }).perspectiveControls;
+        if (controls) controls.enabled = esploraAttivo && !modalitaReel;
         viewerRef.current = viewer;
         setCaricamento(false);
       } catch (error) {
@@ -134,7 +154,16 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
       viewer?.dispose();
       host.replaceChildren();
     };
-  }, [sceneKey, modalitaHero, modalitaReel]);
+  }, [sceneKey, modalitaHero, modalitaReel, esploraAttivo]);
+
+  useEffect(() => {
+    const viewer = viewerRef.current as import('@mkkellogg/gaussian-splats-3d').Viewer & {
+      perspectiveControls?: import('three/examples/jsm/controls/OrbitControls.js').OrbitControls;
+    } | null;
+    const controls = viewer?.perspectiveControls;
+    if (!controls || caricamento) return;
+    controls.enabled = esploraAttivo && !modalitaReel;
+  }, [esploraAttivo, modalitaReel, caricamento, sceneKey]);
 
   /** Reel: camera guidata da evento frame (sync Playwright) */
   useEffect(() => {
@@ -168,6 +197,7 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
   }, [modalitaReel, caricamento]);
 
   const sfondoBianco = modalitaViewer;
+  const parcheggiata = !esploraAttivo && !modalitaViewer && !modalitaReel;
   const mostraVetrina = (modalitaViewer || modalitaHero) && !modalitaReel && !caricamento;
   const idVetrina = motoIdVetrina ?? selezionataId ?? scene[0]?.id;
   const vetrinaPronta = modalitaViewer || cameraSpostata;
@@ -204,7 +234,15 @@ export default function GaussianGarage({ moto, selezionataId, modalitaViewer = f
           ? 'min-h-[460px] bg-white sm:min-h-[580px]'
           : 'min-h-[460px] bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.16),transparent_30%),#0F0B0A] sm:min-h-[580px]'
     }`}>
-      <div ref={hostRef} className={`absolute inset-0 ${sfondoBianco ? 'bg-white' : ''}`} aria-label="Viewer 3D interattivo" onPointerDown={() => setCameraSpostata(true)} />
+      <div
+        ref={hostRef}
+        className={`absolute inset-0 ${sfondoBianco ? 'bg-white' : ''} ${parcheggiata ? 'cursor-pointer' : ''}`}
+        aria-label="Viewer 3D interattivo"
+        onPointerDown={() => {
+          if (parcheggiata && selezionataId) onAttivaEsplora?.();
+          else setCameraSpostata(true);
+        }}
+      />
       {!modalitaReel && (
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-end gap-2 p-3 sm:p-4">
         {mostraVetrina && idVetrina && (

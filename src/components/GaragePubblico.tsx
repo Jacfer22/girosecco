@@ -40,6 +40,17 @@ export default function GaragePubblico({ username, profilo, moto, stats, vetrina
   const [selezionataId, setSelezionataId] = useState(moto[0]?.id ?? null);
   const [condiviso, setCondiviso] = useState(false);
   const [viewerPronto, setViewerPronto] = useState(false);
+  const [esploraAttivo, setEsploraAttivo] = useState(false);
+
+  function interagisciMoto(id: string) {
+    if (id === selezionataId && !esploraAttivo) {
+      setEsploraAttivo(true);
+      setViewerPronto(true);
+      return;
+    }
+    setEsploraAttivo(false);
+    setSelezionataId(id);
+  }
 
   const selezionata = useMemo(
     () => moto.find((item) => item.id === selezionataId) ?? moto[0] ?? null,
@@ -140,12 +151,17 @@ export default function GaragePubblico({ username, profilo, moto, stats, vetrina
               <GarageModelViewer
                 moto={moto}
                 selezionataId={selezionataId}
-                onSeleziona={setSelezionataId}
+                onSeleziona={interagisciMoto}
                 modalitaHero
+                esploraAttivo={esploraAttivo}
+                onAttivaEsplora={() => {
+                  setEsploraAttivo(true);
+                  setViewerPronto(true);
+                }}
               />
             </div>
             <p className="garage-pub-viewer-hint font-mono text-[9px] uppercase tracking-wide text-cemento/35">
-              Ruota · zoom · esplora
+              {esploraAttivo ? 'Ruota · zoom · esplora' : 'Tocca la moto per girarla'}
             </p>
           </section>
 
@@ -194,7 +210,10 @@ export default function GaragePubblico({ username, profilo, moto, stats, vetrina
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setSelezionataId(item.id)}
+                      onClick={() => {
+                        setEsploraAttivo(false);
+                        setSelezionataId(item.id);
+                      }}
                       className={`garage-pub-pill tap ${item.id === selezionata.id ? 'garage-pub-pill-active' : ''}`}
                     >
                       {nomeMoto(item)}

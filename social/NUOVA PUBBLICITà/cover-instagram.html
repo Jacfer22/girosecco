@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>MotoGarage — Cover Instagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+    position: relative;
+  }
+
+  /* Background */
+  .bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 110%, #3a0800 0%, #150000 35%, #000 70%);
+  }
+
+  /* Diagonal red accent stripe */
+  .stripe {
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 1400px;
+    background: linear-gradient(135deg, rgba(232,40,11,0.12) 0%, transparent 60%);
+    transform: rotate(-20deg);
+  }
+
+  /* Grid lines (subtle) */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,40,11,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,40,11,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  /* Top bar */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--red, #E8280B), #FF6040, var(--red, #E8280B));
+  }
+
+  /* MotoGarage logo top-left */
+  .logo {
+    position: absolute;
+    top: 52px; left: 60px;
+    font-size: 38px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+  }
+  .logo .w { color: #fff; }
+  .logo .r { color: #E8280B; }
+  .logo-tag {
+    position: absolute;
+    top: 98px; left: 60px;
+    font-size: 18px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* Center headline */
+  .headline {
+    position: absolute;
+    top: 150px; left: 60px; right: 60px;
+  }
+  .headline .pre {
+    font-size: 24px;
+    color: #E8280B;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .headline h1 {
+    font-size: 108px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 0.88;
+    letter-spacing: -4px;
+    text-shadow: 0 0 80px rgba(232,40,11,0.4);
+  }
+  .headline h1 .red { color: #E8280B; display: block; }
+  .headline .sub {
+    font-size: 26px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 18px;
+    letter-spacing: 2px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Mascot trio */
+  .mascots {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  .mascots img.rosso {
+    height: 540px;
+    margin-right: -40px;
+    filter: drop-shadow(0 20px 40px rgba(232,40,11,0.6));
+    z-index: 3;
+  }
+  .mascots img.blu {
+    height: 460px;
+    margin-right: -20px;
+    filter: drop-shadow(0 20px 40px rgba(61,155,232,0.4));
+    transform: scaleX(-1);
+    z-index: 2;
+    opacity: 0.85;
+  }
+  .mascots img.nero {
+    height: 400px;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+    z-index: 1;
+    opacity: 0.7;
+  }
+
+  /* iPhone mockup small */
+  .iphone-mini {
+    position: absolute;
+    bottom: 120px; left: 580px;
+    width: 200px;
+    height: 432px;
+    background: linear-gradient(145deg, #2a2a2a 0%, #111 40%, #1a1a1a 100%);
+    border-radius: 30px;
+    padding: 8px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.12),
+      0 30px 80px rgba(0,0,0,0.9),
+      0 0 60px rgba(232,40,11,0.2);
+    z-index: 10;
+    transform: rotate(-6deg);
+  }
+  .iphone-mini-screen {
+    width: 100%; height: 100%;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #111;
+  }
+  .iphone-mini-screen img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .iphone-notch-mini {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 16px;
+    background: #000;
+    border-radius: 0 0 10px 10px;
+    z-index: 5;
+  }
+
+  /* Feature pills */
+  .pills {
+    position: absolute;
+    left: 60px; bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(20,20,20,0.85);
+    border: 1.5px solid rgba(232,40,11,0.4);
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-size: 22px;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    width: fit-content;
+    backdrop-filter: blur(8px);
+  }
+  .pill .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #E8280B;
+    box-shadow: 0 0 10px #E8280B;
+    flex-shrink: 0;
+  }
+
+  /* Bottom CTA bar */
+  .cta-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 90px;
+    background: #E8280B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .cta-bar span {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .cta-bar .arrow {
+    font-size: 32px;
+    animation: arrow-bounce 0.8s ease-in-out infinite;
+  }
+  @keyframes arrow-bounce {
+    0%,100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+  }
+
+  /* Glow dots decoration */
+  .dot-dec {
+    position: absolute;
+    border-radius: 50%;
+    background: #E8280B;
+    filter: blur(60px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="stripe"></div>
+  <div class="grid"></div>
+  <div class="top-bar"></div>
+
+  <!-- Glow decorations -->
+  <div class="dot-dec" style="width:600px;height:600px;bottom:-200px;left:-100px;"></div>
+  <div class="dot-dec" style="width:300px;height:300px;top:100px;right:100px;opacity:0.08;"></div>
+
+  <!-- Logo -->
+  <div class="logo"><span class="w">Moto</span><span class="r">Garage</span></div>
+  <div class="logo-tag">La casa digitale della tua moto</div>
+
+  <!-- Headline -->
+  <div class="headline">
+    <span class="pre">▶ Il tour completo</span>
+    <h1>
+      L'App<br>
+      <span class="red">che mancava</span>
+    </h1>
+    <div class="sub">GPS · Garage 3D · Itinerari · Community</div>
+  </div>
+
+  <!-- Feature pills -->
+  <div class="pills">
+    <div class="pill"><span class="dot"></span> Traccia GPS in tempo reale</div>
+    <div class="pill"><span class="dot"></span> Garage 3D personalizzato</div>
+    <div class="pill"><span class="dot"></span> Itinerari per motociclisti</div>
+    <div class="pill"><span class="dot"></span> Community moto italiana</div>
+  </div>
+
+  <!-- iPhone mini -->
+  <div class="iphone-mini">
+    <div class="iphone-notch-mini"></div>
+    <div class="iphone-mini-screen">
+      <img src="../tour/out/instagram/01-benvenuto.jpg" alt="App">
+    </div>
+  </div>
+
+  <!-- Mascots -->
+  <div class="mascots">
+    <img class="nero" src="../mascot/nero-cruiser.png" alt="Nero">
+    <img class="blu"  src="../mascot/blu-adventure.png" alt="Blu">
+    <img class="rosso" src="../mascot/rosso-sport.png" alt="Rosso">
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="cta-bar">
+    <span>Guarda il Reel</span>
+    <span class="arrow">→</span>
+    <span>girosecco.vercel.app</span>
+  </div>
+</body>
+</html>

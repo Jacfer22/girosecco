@@ -17,6 +17,8 @@ interface Props {
   modalitaViewer?: boolean;
   modalitaHero?: boolean;
   modalitaReel?: boolean;
+  esploraAttivo?: boolean;
+  onAttivaEsplora?: () => void;
   motoIdVetrina?: string | null;
   onVetrinaSalvata?: () => void;
 }
@@ -110,7 +112,18 @@ function preparaModello(root: THREE.Group, index: number, posizione: THREE.Vecto
   });
 }
 
-export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaViewer = false, modalitaHero = false, modalitaReel = false, motoIdVetrina = null, onVetrinaSalvata }: Props) {
+export default function Garage3D({
+  moto,
+  selezionataId,
+  onSeleziona,
+  modalitaViewer = false,
+  modalitaHero = false,
+  modalitaReel = false,
+  esploraAttivo = true,
+  onAttivaEsplora,
+  motoIdVetrina = null,
+  onVetrinaSalvata,
+}: Props) {
   const { toast } = useFeedback();
   const contenitoreRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -119,6 +132,12 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
   const controlliRef = useRef<OrbitControls | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const gruppiRef = useRef(new Map<string, THREE.Group>());
+  const selezionataRef = useRef(selezionataId);
+  const parcheggiataRef = useRef(!esploraAttivo && !modalitaViewer && !modalitaReel);
+  const onAttivaEsploraRef = useRef(onAttivaEsplora);
+  selezionataRef.current = selezionataId;
+  parcheggiataRef.current = !esploraAttivo && !modalitaViewer && !modalitaReel;
+  onAttivaEsploraRef.current = onAttivaEsplora;
   const [autoRotate, setAutoRotate] = useState(false);
   const [caricati, setCaricati] = useState(0);
   const [falliti, setFalliti] = useState(0);
@@ -128,6 +147,7 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
   const pronte = moto.filter((item) => item.stato === 'pronto' && item.glb_url);
   const sfondoBianco = modalitaViewer;
   const mostraVetrina = (modalitaViewer || modalitaHero) && !modalitaReel && caricati > 0;
+  const parcheggiata = !esploraAttivo && !modalitaViewer && !modalitaReel;
 
   useEffect(() => {
     const host = contenitoreRef.current;
@@ -262,7 +282,12 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
       raycaster.setFromCamera(pointer, camera);
       const hit = raycaster.intersectObjects([...gruppiRef.current.values()], true)[0];
       const id = hit?.object.userData.motoId as string | undefined;
-      if (id) onSeleziona(id);
+      if (!id) return;
+      if (id === selezionataRef.current && parcheggiataRef.current) {
+        onAttivaEsploraRef.current?.();
+        return;
+      }
+      onSeleziona(id);
     };
     renderer.domElement.addEventListener('pointerup', clicca);
 
@@ -309,9 +334,16 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
   useEffect(() => {
     const controls = controlliRef.current;
     if (!controls) return;
-    controls.autoRotate = autoRotate && !modalitaReel;
+    controls.enabled = esploraAttivo && !modalitaReel;
+    if (!esploraAttivo) controls.autoRotate = false;
+  }, [esploraAttivo, modalitaReel]);
+
+  useEffect(() => {
+    const controls = controlliRef.current;
+    if (!controls) return;
+    controls.autoRotate = autoRotate && esploraAttivo && !modalitaReel;
     controls.autoRotateSpeed = 1.4;
-  }, [autoRotate, modalitaReel]);
+  }, [autoRotate, esploraAttivo, modalitaReel]);
 
   /** Reel GLB: sync frame Playwright */
   useEffect(() => {
@@ -340,17 +372,28 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
     const id = selezionataId;
     const controls = controlliRef.current;
     const camera = cameraRef.current;
-    if (!id || !controls || !camera) return;
+    if (!controls || !camera) return;
+
+    if (!id) {
+      if (parcheggiata && pronte.length > 1) {
+        camera.position.set(7.8, 4.5, 9.2);
+        controls.target.set(0, 1.15, 0);
+        controls.update();
+      }
+      return;
+    }
+
     const gruppo = gruppiRef.current.get(id);
     if (!gruppo) return;
     const bounds = new THREE.Box3().setFromObject(gruppo);
     const target = bounds.getCenter(new THREE.Vector3());
     target.y = Math.max(0.8, target.y);
     controls.target.copy(target);
-    const direzione = new THREE.Vector3(1.2, 0.55, 1.4).normalize();
-    camera.position.copy(target.clone().add(direzione.multiplyScalar(modalitaViewer ? 5.2 : 6.6)));
+    const distanza = esploraAttivo ? (modalitaViewer ? 5.2 : 6.6) : (modalitaHero ? 5.8 : 6.6);
+    const direzione = new THREE.Vector3(1.15, 0.42, 1.35).normalize();
+    camera.position.copy(target.clone().add(direzione.multiplyScalar(distanza)));
     controls.update();
-  }, [selezionataId, caricati, modalitaViewer]);
+  }, [selezionataId, caricati, modalitaViewer, modalitaHero, esploraAttivo, parcheggiata, pronte.length]);
 
   function resetCamera() {
     const camera = cameraRef.current;
@@ -426,11 +469,13 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
           ? 'min-h-0 bg-white'
           : 'min-h-[460px] bg-black sm:min-h-[580px]'
     }`}>
-      <div ref={contenitoreRef} className="absolute inset-0" aria-label="Garage virtuale 3D interattivo" />
+      <div ref={contenitoreRef} className={`absolute inset-0 ${parcheggiata ? 'cursor-pointer' : ''}`} aria-label="Garage virtuale 3D interattivo" />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3 sm:p-4">
         <div className={chipClass}>
-          Trascina · zoom · pan · seleziona
+          {parcheggiata
+            ? 'Parcheggiata · tocca per girarla'
+            : 'Trascina · zoom · pan · seleziona'}
         </div>
         <div className="pointer-events-auto flex flex-wrap justify-end gap-2">
           {mostraVetrina && idVetrina && (
@@ -444,12 +489,16 @@ export default function Garage3D({ moto, selezionataId, onSeleziona, modalitaVie
               {salvaVetrina ? 'Salvo…' : 'Screenshot Vetrina'}
             </button>
           )}
-          <button type="button" onClick={() => setAutoRotate((value) => !value)} className={`${btnClass} ${autoRotate ? '!border-red-500 !bg-red-500 !text-white' : ''}`}>
-            Auto
-          </button>
-          <button type="button" onClick={resetCamera} className={btnClass}>
-            Reset
-          </button>
+          {esploraAttivo && (
+            <>
+              <button type="button" onClick={() => setAutoRotate((value) => !value)} className={`${btnClass} ${autoRotate ? '!border-red-500 !bg-red-500 !text-white' : ''}`}>
+                Auto
+              </button>
+              <button type="button" onClick={resetCamera} className={btnClass}>
+                Reset
+              </button>
+            </>
+          )}
           <button type="button" onClick={fullscreen} className={btnClass}>
             Fullscreen
           </button>

@@ -2548,6 +2548,34 @@ body.nav-fullscreen-active.con-bottomnav {
   padding: 2rem 1.25rem;
   text-align: center;
 }
+.garage-parcheggio-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.75rem;
+  z-index: 12;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+}
+.garage-parcheggio-hint-pill {
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.62);
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  animation: garage-hint-pulse 2.4s ease-in-out infinite;
+}
+@keyframes garage-hint-pulse {
+  0%, 100% { opacity: 0.72; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
+}
 .garage-pub-cta {
   margin: 1.25rem 1rem 0;
   padding: 1.25rem 1.15rem;

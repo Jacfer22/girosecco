@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>MotoGarage — Reel Instagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #E8280B;
+    --red2: #FF3D20;
+    --gold: #FFB800;
+    --dark: #0A0A0A;
+    --w: 1080px;
+    --h: 1920px;
+  }
+
+  body {
+    width: var(--w);
+    height: var(--h);
+    overflow: hidden;
+    background: #000;
+    font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+    position: relative;
+    user-select: none;
+  }
+
+  canvas#particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── SCENE SYSTEM ── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .scene.active { opacity: 1; pointer-events: auto; }
+
+  /* ── BACKGROUNDS ── */
+  .bg-dark { background: var(--dark); }
+  .bg-gradient-red {
+    background: radial-gradient(ellipse at 50% 100%, #3a0800 0%, #150000 40%, #000 100%);
+  }
+  .bg-gradient-blue {
+    background: radial-gradient(ellipse at 50% 100%, #000e3a 0%, #000820 40%, #000 100%);
+  }
+  .bg-gradient-charcoal {
+    background: radial-gradient(ellipse at 50% 100%, #1a0005 0%, #0d0d0d 50%, #000 100%);
+  }
+
+  /* ── SPEED LINES ── */
+  .speedlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .speedline {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(232,40,11,0.6) 50%, transparent 100%);
+    animation: speedline-anim 0.3s linear infinite;
+    transform-origin: left center;
+  }
+  @keyframes speedline-anim {
+    from { transform: scaleX(0) translateX(-50%); opacity: 1; }
+    to   { transform: scaleX(1) translateX(0);   opacity: 0; }
+  }
+
+  /* ── FLASH OVERLAY ── */
+  #flash {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    z-index: 999;
+    pointer-events: none;
+    transition: opacity 0.05s;
+  }
+
+  /* ── SHOCKWAVE ── */
+  #shockwave {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    border-radius: 50%;
+    border: 4px solid var(--red);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: 998;
+    pointer-events: none;
+  }
+
+  /* ── SCENE 1: INTRO ── */
+  #s1 { background: #000; }
+
+  .logo-wrap {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+  }
+  .logo-wrap.visible {
+    animation: logo-slam 0.4s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes logo-slam {
+    from { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+    to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+
+  .logo-moto {
+    font-size: 100px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(232,40,11,0.8), 0 4px 0 #333;
+  }
+  .logo-garage {
+    font-size: 100px;
+    font-weight: 900;
+    color: var(--red);
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(232,40,11,1), 0 4px 0 #600;
+  }
+  .logo-tagline {
+    font-size: 28px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 16px;
+    font-weight: 400;
+  }
+
+  /* ── IPHONE MOCKUP ── */
+  .iphone-wrap {
+    position: absolute;
+    width: 380px;
+    /* center */
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) translateY(-40px);
+    z-index: 10;
+    filter: drop-shadow(0 40px 80px rgba(0,0,0,0.9));
+  }
+  .iphone-frame {
+    position: relative;
+    width: 380px;
+    height: 820px;
+    background: linear-gradient(145deg, #2a2a2a 0%, #111 40%, #1a1a1a 100%);
+    border-radius: 52px;
+    padding: 16px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.15),
+      0 0 0 2px rgba(0,0,0,0.8),
+      inset 0 0 0 1px rgba(255,255,255,0.08),
+      0 60px 120px rgba(0,0,0,0.8),
+      0 0 80px rgba(232,40,11,0.15);
+  }
+  .iphone-notch {
+    position: absolute;
+    top: 16px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 34px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    z-index: 5;
+  }
+  .iphone-screen {
+    width: 100%; height: 100%;
+    border-radius: 38px;
+    overflow: hidden;
+    background: #111;
+    position: relative;
+  }
+  .iphone-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+    transition: opacity 0.3s;
+  }
+  .iphone-side-btn {
+    position: absolute;
+    right: -4px; top: 160px;
+    width: 4px; height: 70px;
+    background: #2a2a2a;
+    border-radius: 0 3px 3px 0;
+  }
+  .iphone-vol-btn {
+    position: absolute;
+    left: -4px;
+    width: 4px; height: 50px;
+    background: #2a2a2a;
+    border-radius: 3px 0 0 3px;
+  }
+  .iphone-vol-btn.v1 { top: 130px; }
+  .iphone-vol-btn.v2 { top: 195px; }
+
+  /* Screen label */
+  .screen-label {
+    position: absolute;
+    bottom: -60px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--red);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    text-shadow: 0 0 20px var(--red);
+  }
+  .screen-label.show {
+    animation: label-in 0.4s 0.2s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes label-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── MASCOT ── */
+  .mascot {
+    position: absolute;
+    bottom: 0;
+    width: 600px;
+    height: auto;
+    opacity: 0;
+    filter: drop-shadow(0 20px 60px rgba(0,0,0,0.9));
+    z-index: 8;
+  }
+  .mascot.rosso { left: -60px; }
+  .mascot.blu   { right: -60px; transform: scaleX(-1); }
+  .mascot.nero  { left: -80px; }
+
+  /* Entry animations */
+  .mascot-enter-left {
+    animation: mascot-from-left 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  .mascot-enter-right {
+    animation: mascot-from-right 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  .mascot-enter-bottom {
+    animation: mascot-from-bottom 0.6s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes mascot-from-left {
+    from { opacity: 0; transform: translateX(-200px) rotate(-5deg); }
+    to   { opacity: 1; transform: translateX(0) rotate(0deg); }
+  }
+  @keyframes mascot-from-right {
+    from { opacity: 0; transform: scaleX(-1) translateX(-200px) rotate(-5deg); }
+    to   { opacity: 1; transform: scaleX(-1) translateX(0) rotate(0deg); }
+  }
+  @keyframes mascot-from-bottom {
+    from { opacity: 0; transform: translateY(300px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .mascot-exit-left {
+    animation: mascot-to-left 0.3s ease-in forwards;
+  }
+  @keyframes mascot-to-left {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-400px); }
+  }
+
+  /* Bounce idle */
+  .mascot-idle {
+    animation: mascot-bounce 2s ease-in-out infinite;
+  }
+  @keyframes mascot-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .mascot.blu.mascot-idle {
+    animation: mascot-bounce-blu 2s ease-in-out infinite;
+  }
+  @keyframes mascot-bounce-blu {
+    0%, 100% { transform: scaleX(-1) translateY(0); }
+    50% { transform: scaleX(-1) translateY(-20px); }
+  }
+
+  /* ── FEATURE CALLOUT ── */
+  .callout {
+    position: absolute;
+    background: rgba(10,10,10,0.92);
+    border: 2px solid var(--red);
+    border-radius: 20px;
+    padding: 20px 30px;
+    z-index: 20;
+    opacity: 0;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 40px rgba(232,40,11,0.3), inset 0 0 20px rgba(232,40,11,0.05);
+  }
+  .callout.show {
+    animation: callout-pop 0.4s cubic-bezier(0.17,0.67,0.36,1.5) forwards;
+  }
+  @keyframes callout-pop {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .callout-icon { font-size: 40px; margin-bottom: 8px; display: block; }
+  .callout-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .callout-desc {
+    font-size: 22px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 6px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* ── TOP BADGE ── */
+  .top-badge {
+    position: absolute;
+    top: 60px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--red);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 10px 30px;
+    border-radius: 40px;
+    z-index: 30;
+    opacity: 0;
+    box-shadow: 0 4px 30px rgba(232,40,11,0.6);
+  }
+  .top-badge.show {
+    animation: badge-slide 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes badge-slide {
+    from { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── BIG TEXT ── */
+  .big-text {
+    position: absolute;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 90px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(232,40,11,0.8);
+    opacity: 0;
+    z-index: 30;
+  }
+  .big-text.slam {
+    animation: text-slam 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes text-slam {
+    from { opacity: 0; transform: scale(2.5); letter-spacing: 20px; }
+    to   { opacity: 1; transform: scale(1); letter-spacing: -2px; }
+  }
+  .big-text .accent { color: var(--red); }
+
+  /* ── CTA SCENE ── */
+  #s-cta {
+    background: radial-gradient(ellipse at 50% 80%, #2a0500 0%, #0d0000 50%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .cta-logo { font-size: 110px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+  .cta-logo .w { color: #fff; }
+  .cta-logo .r { color: var(--red); text-shadow: 0 0 60px var(--red); }
+  .cta-sub { font-size: 26px; color: rgba(255,255,255,0.5); letter-spacing: 6px; text-transform: uppercase; margin-top: 12px; }
+  .cta-btn {
+    margin-top: 60px;
+    background: var(--red);
+    color: #fff;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 24px 70px;
+    border-radius: 100px;
+    box-shadow: 0 0 60px rgba(232,40,11,0.8), 0 8px 0 #800;
+    animation: btn-pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes btn-pulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(232,40,11,0.8), 0 8px 0 #800; transform: scale(1); }
+    50% { box-shadow: 0 0 100px rgba(232,40,11,1), 0 8px 0 #800; transform: scale(1.04); }
+  }
+  .cta-url { margin-top: 30px; font-size: 28px; color: rgba(255,255,255,0.4); letter-spacing: 2px; }
+  .cta-url span { color: rgba(255,255,255,0.7); }
+  .cta-trio {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  .cta-trio img {
+    height: 520px;
+    opacity: 0.18;
+    filter: grayscale(20%);
+  }
+  .cta-trio img.center { height: 620px; opacity: 0.25; }
+  .cta-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -200px;
+  }
+
+  /* ── TRIO SCENE ── */
+  #s-trio { background: #000; }
+  .trio-container {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+  .trio-container img {
+    height: 580px;
+    opacity: 0;
+    transition: none;
+  }
+  .trio-container img.show-r {
+    animation: trio-in 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  .trio-container img.show-b {
+    animation: trio-in 0.5s 0.15s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  .trio-container img.show-n {
+    animation: trio-in 0.5s 0.3s cubic-bezier(0.17,0.67,0.36,1.3) forwards;
+  }
+  @keyframes trio-in {
+    from { opacity: 0; transform: translateY(200px) scale(0.7); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .trio-tagline {
+    position: absolute;
+    top: 160px; left: 0; right: 0;
+    text-align: center;
+    opacity: 0;
+  }
+  .trio-tagline.show {
+    animation: trio-tag-in 0.6s 0.5s ease-out forwards;
+  }
+  @keyframes trio-tag-in {
+    from { opacity: 0; transform: translateY(-30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .trio-tagline h2 {
+    font-size: 72px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .trio-tagline h2 .red { color: var(--red); }
+  .trio-tagline p {
+    font-size: 28px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── GLOW RING ── */
+  .glow-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--red);
+    opacity: 0;
+    pointer-events: none;
+    animation: ring-expand 1s ease-out infinite;
+  }
+  @keyframes ring-expand {
+    0%   { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(2);   opacity: 0; }
+  }
+
+  /* ── COUNTER BADGE ── */
+  .counter {
+    position: absolute;
+    top: 30px; right: 40px;
+    font-size: 24px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 700;
+    letter-spacing: 2px;
+    z-index: 50;
+  }
+  .counter .cur { color: var(--red); font-size: 32px; }
+
+  /* ── RED LINE SEPARATOR ── */
+  .redline {
+    position: absolute;
+    bottom: 80px; left: 60px; right: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity: 0.4;
+  }
+
+  /* ── GLITCH ── */
+  @keyframes glitch {
+    0%, 100% { clip-path: none; transform: none; }
+    20% { clip-path: polygon(0 15%, 100% 15%, 100% 30%, 0 30%); transform: translate(-4px, 0); }
+    40% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translate(4px, 0); }
+    60% { clip-path: polygon(0 40%, 100% 40%, 100% 50%, 0 50%); transform: translate(-2px, 0); }
+    80% { clip-path: none; transform: none; }
+  }
+  .glitch-active { animation: glitch 0.15s steps(1) 3; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    bottom: 0; left: 0;
+    height: 6px;
+    background: var(--red);
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--red);
+  }
+</style>
+</head>
+<body>
+
+<!-- Flash & Shockwave overlays -->
+<div id="flash"></div>
+<div id="shockwave"></div>
+<div id="progress-bar"></div>
+
+<!-- Particle canvas -->
+<canvas id="particles"></canvas>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 1: INTRO LOGO (0–3s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene" id="s1">
+  <div style="position:absolute;inset:0;background:#000;">
+    <!-- Spark lines -->
+    <div class="speedlines" id="sl1"></div>
+  </div>
+  <div class="logo-wrap" id="logo-wrap">
+    <div class="logo-moto">Moto</div>
+    <div class="logo-garage">Garage</div>
+    <div class="logo-tagline">La casa digitale della tua moto</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 2: ROSSO + HUB (3–9s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene bg-gradient-red" id="s2">
+  <div class="speedlines" id="sl2"></div>
+
+  <div class="top-badge" id="badge2">MOTOGARAGE — IL TOUR</div>
+  <div class="counter"><span class="cur">01</span> / 04</div>
+
+  <!-- iPhone -->
+  <div class="iphone-wrap" id="iphone2" style="top:38%; left:55%; transform:translate(-50%,-50%);">
+    <div class="iphone-frame">
+      <div class="iphone-notch"></div>
+      <div class="iphone-side-btn"></div>
+      <div class="iphone-vol-btn v1"></div>
+      <div class="iphone-vol-btn v2"></div>
+      <div class="iphone-screen">
+        <img src="../tour/out/instagram/01-benvenuto.jpg" id="screen2" alt="Hub">
+      </div>
+    </div>
+    <div class="screen-label" id="lbl2">📍 HUB — Il punto di partenza</div>
+  </div>
+
+  <!-- Rosso mascot -->
+  <img class="mascot rosso" id="rosso2" src="../mascot/rosso-sport.png" alt="Rosso">
+
+  <!-- Callout -->
+  <div class="callout" id="callout2" style="top:140px; left:60px; max-width:500px;">
+    <span class="callout-icon">🏁</span>
+    <div class="callout-title">Il tuo Hub</div>
+    <div class="callout-desc">Tutto in un posto.<br>La tua moto. Le tue gite. I tuoi amici.</div>
+  </div>
+
+  <div class="redline"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 3: BLU + TRACCIA GPS (9–16s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene bg-gradient-blue" id="s3">
+  <div class="speedlines" id="sl3"></div>
+
+  <div class="top-badge" id="badge3">GPS IN TEMPO REALE</div>
+  <div class="counter"><span class="cur">02</span> / 04</div>
+
+  <!-- iPhone -->
+  <div class="iphone-wrap" id="iphone3" style="top:38%; left:45%; transform:translate(-50%,-50%);">
+    <div class="iphone-frame">
+      <div class="iphone-notch"></div>
+      <div class="iphone-side-btn"></div>
+      <div class="iphone-vol-btn v1"></div>
+      <div class="iphone-vol-btn v2"></div>
+      <div class="iphone-screen">
+        <img src="../tour/out/instagram/02-traccia.jpg" id="screen3" alt="Traccia">
+      </div>
+    </div>
+    <div class="screen-label" id="lbl3" style="color:#3d9be8;text-shadow:0 0 20px #3d9be8;">🗺️ TRACCIA GPS</div>
+  </div>
+
+  <!-- Blu mascot -->
+  <img class="mascot blu" id="blu3" src="../mascot/blu-adventure.png" alt="Blu">
+
+  <!-- Callout -->
+  <div class="callout" id="callout3" style="top:140px; right:60px; left:auto; max-width:480px; border-color:#3d9be8; box-shadow:0 0 40px rgba(61,155,232,0.3);">
+    <span class="callout-icon">⚡</span>
+    <div class="callout-title" style="color:#3d9be8;">Traccia GPS</div>
+    <div class="callout-desc">Accendi. Parti. Rivivi<br>ogni giro km per km.</div>
+  </div>
+
+  <div class="redline" style="background:linear-gradient(90deg,transparent,#3d9be8,transparent);"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 4: NERO + GARAGE 3D (16–23s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene bg-gradient-charcoal" id="s4">
+  <div class="speedlines" id="sl4" style="opacity:0.3;"></div>
+
+  <div class="top-badge" id="badge4" style="background:#333;">GARAGE 3D</div>
+  <div class="counter"><span class="cur">03</span> / 04</div>
+
+  <!-- iPhone -->
+  <div class="iphone-wrap" id="iphone4" style="top:38%; left:55%; transform:translate(-50%,-50%);">
+    <div class="iphone-frame">
+      <div class="iphone-notch"></div>
+      <div class="iphone-side-btn"></div>
+      <div class="iphone-vol-btn v1"></div>
+      <div class="iphone-vol-btn v2"></div>
+      <div class="iphone-screen">
+        <img src="../tour/out/instagram/04-garage.jpg" id="screen4" alt="Garage">
+      </div>
+    </div>
+    <div class="screen-label" id="lbl4" style="color:#aaa;text-shadow:0 0 20px #fff;">🔧 GARAGE 3D</div>
+  </div>
+
+  <!-- Nero mascot -->
+  <img class="mascot nero" id="nero4" src="../mascot/nero-cruiser.png" alt="Nero">
+
+  <!-- Callout -->
+  <div class="callout" id="callout4" style="top:140px; left:60px; max-width:500px; border-color:#555;">
+    <span class="callout-icon">🛠️</span>
+    <div class="callout-title" style="color:#ccc;">Il Tuo Garage</div>
+    <div class="callout-desc">Crea la tua moto in 3D.<br>Personalizza. Mostra agli amici.</div>
+  </div>
+
+  <div class="redline" style="background:linear-gradient(90deg,transparent,#555,transparent);"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 5: TRIO (23–27s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene" id="s-trio">
+  <!-- glow rings behind mascots -->
+  <div class="glow-ring" style="width:400px;height:400px;bottom:300px;left:50%;transform:translateX(-50%);animation-delay:0s;"></div>
+  <div class="glow-ring" style="width:400px;height:400px;bottom:300px;left:50%;transform:translateX(-50%);animation-delay:0.5s;"></div>
+
+  <div class="trio-tagline" id="trio-tagline">
+    <h2>Scegli la tua<br><span class="red">moto.</span></h2>
+    <p>Inizia il tour</p>
+  </div>
+
+  <div class="trio-container" id="trio-container">
+    <img id="trio-r" src="../mascot/rosso-sport.png" alt="Rosso" style="margin-bottom:40px;">
+    <img id="trio-b" src="../mascot/blu-adventure.png" alt="Blu" style="height:650px;transform:scaleX(-1);">
+    <img id="trio-n" src="../mascot/nero-cruiser.png" alt="Nero" style="margin-bottom:20px;">
+  </div>
+
+  <div style="position:absolute;top:60px;left:50%;transform:translateX(-50%);">
+    <div style="font-size:28px;color:rgba(255,255,255,0.2);letter-spacing:8px;text-transform:uppercase;text-align:center;">motogarage</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SCENE 6: CTA (27–30s) -->
+<!-- ═══════════════════════════════════ -->
+<div class="scene" id="s-cta">
+  <div class="cta-trio">
+    <img src="../mascot/rosso-sport.png" alt="">
+    <img src="../mascot/blu-adventure.png" alt="" class="center" style="transform:scaleX(-1);">
+    <img src="../mascot/nero-cruiser.png" alt="">
+  </div>
+  <div class="cta-content" id="cta-content">
+    <div class="cta-logo">
+      <span class="w">MOTO</span><span class="r">GARAGE</span>
+    </div>
+    <div class="cta-sub">La casa digitale della tua moto</div>
+    <div class="cta-btn" id="cta-btn">SCARICA ORA</div>
+    <div class="cta-url">girosecco<span>.vercel.app</span></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// PARTICLE SYSTEM
+// ═══════════════════════════════════════════════════════════
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = 1080;
+canvas.height = 1920;
+
+let particles = [];
+let activeColor = '#E8280B';
+
+function spawnParticles(x, y, count, color, speed) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const v = speed * (0.5 + Math.random());
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * v,
+      vy: Math.sin(angle) * v - speed * 0.3,
+      life: 1,
+      decay: 0.015 + Math.random() * 0.02,
+      size: 4 + Math.random() * 10,
+      color: color || activeColor
+    });
+  }
+}
+
+function spawnSpeedTrail(count, color) {
+  for (let i = 0; i < count; i++) {
+    const y = Math.random() * 1920;
+    const startX = -200;
+    particles.push({
+      x: startX,
+      y,
+      vx: 25 + Math.random() * 30,
+      vy: (Math.random() - 0.5) * 2,
+      life: 1,
+      decay: 0.04 + Math.random() * 0.04,
+      size: 1 + Math.random() * 3,
+      color: color || 'rgba(232,40,11,0.6)',
+      trail: true,
+      length: 80 + Math.random() * 120
+    });
+  }
+}
+
+function tickParticles() {
+  ctx.clearRect(0, 0, 1080, 1920);
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.4; // gravity
+    p.life -= p.decay;
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    if (p.trail) {
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = p.size;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - p.length, p.y);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  requestAnimationFrame(tickParticles);
+}
+tickParticles();
+
+// ═══════════════════════════════════════════════════════════
+// SPEED LINES GENERATOR
+// ═══════════════════════════════════════════════════════════
+function createSpeedLines(containerId, count, color) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  for (let i = 0; i < count; i++) {
+    const line = document.createElement('div');
+    line.className = 'speedline';
+    line.style.cssText = `
+      top: ${Math.random() * 100}%;
+      left: ${Math.random() * 60}%;
+      width: ${100 + Math.random() * 300}px;
+      opacity: ${0.3 + Math.random() * 0.5};
+      animation-delay: ${Math.random() * 0.3}s;
+      animation-duration: ${0.2 + Math.random() * 0.2}s;
+      background: linear-gradient(90deg, transparent, ${color || 'rgba(232,40,11,0.5)'}, transparent);
+    `;
+    container.appendChild(line);
+  }
+}
+createSpeedLines('sl1', 20, 'rgba(232,40,11,0.5)');
+createSpeedLines('sl2', 12, 'rgba(232,40,11,0.3)');
+createSpeedLines('sl3', 12, 'rgba(61,155,232,0.3)');
+createSpeedLines('sl4', 8, 'rgba(150,150,150,0.2)');
+
+// ═══════════════════════════════════════════════════════════
+// FLASH & SHOCKWAVE
+// ═══════════════════════════════════════════════════════════
+const flash = document.getElementById('flash');
+const shockwave = document.getElementById('shockwave');
+
+function doFlash(color = '#fff', duration = 100) {
+  flash.style.background = color;
+  flash.style.opacity = '1';
+  setTimeout(() => { flash.style.opacity = '0'; }, duration);
+}
+
+function doShockwave(x = 540, y = 960) {
+  shockwave.style.cssText = `
+    position:fixed; top:${y}px; left:${x}px;
+    width:0; height:0; border-radius:50%;
+    border:6px solid var(--red);
+    transform:translate(-50%,-50%);
+    opacity:1; z-index:998; pointer-events:none;
+    transition:width 0.6s ease-out, height 0.6s ease-out, opacity 0.6s ease-out;
+  `;
+  requestAnimationFrame(() => {
+    shockwave.style.width = '2400px';
+    shockwave.style.height = '2400px';
+    shockwave.style.opacity = '0';
+  });
+  setTimeout(() => {
+    shockwave.style.width = '0';
+    shockwave.style.height = '0';
+  }, 700);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE MANAGER
+// ═══════════════════════════════════════════════════════════
+const scenes = ['s1','s2','s3','s4','s-trio','s-cta'];
+let currentScene = 0;
+
+function showScene(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function el(id) { return document.getElementById(id); }
+function addClass(id, cls) { const e = el(id); if (e) e.classList.add(cls); }
+function removeClass(id, cls) { const e = el(id); if (e) e.classList.remove(cls); }
+
+// ═══════════════════════════════════════════════════════════
+// TIMELINE (ms)
+// ═══════════════════════════════════════════════════════════
+const T = [
+  // ── SCENE 1: INTRO (0–3000ms) ──
+  [0, () => {
+    showScene('s1');
+    spawnSpeedTrail(30, 'rgba(232,40,11,0.4)');
+    setTimeout(() => { doFlash('#fff', 80); addClass('logo-wrap','visible'); }, 300);
+    setTimeout(() => spawnParticles(540, 960, 60, '#E8280B', 18), 350);
+    setTimeout(() => spawnSpeedTrail(20), 600);
+    setTimeout(() => spawnSpeedTrail(20), 1000);
+    setTimeout(() => spawnParticles(540, 960, 30, '#FF6040', 12), 1200);
+  }],
+
+  // ── SCENE 2: ROSSO + HUB (3000–9000ms) ──
+  [3000, () => {
+    doFlash('#fff', 80);
+    doShockwave(540, 960);
+    spawnParticles(540, 960, 80, '#E8280B', 22);
+    setTimeout(() => {
+      showScene('s2');
+      spawnSpeedTrail(25, 'rgba(232,40,11,0.5)');
+    }, 150);
+    setTimeout(() => {
+      addClass('badge2','show');
+      addClass('rosso2','mascot-enter-left');
+      el('rosso2').style.opacity = '1';
+    }, 400);
+    setTimeout(() => {
+      addClass('lbl2','show');
+      addClass('callout2','show');
+    }, 1000);
+    setTimeout(() => {
+      // iPhone drops in
+      el('iphone2').style.animation = 'iphone-drop 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards';
+      spawnParticles(700, 700, 40, '#FF3D20', 10);
+    }, 800);
+    // idle bounce
+    setTimeout(() => addClass('rosso2','mascot-idle'), 1200);
+    // Ambient particles
+    const ambInt = setInterval(() => spawnParticles(200, 1400, 5, '#E8280B', 6), 300);
+    setTimeout(() => clearInterval(ambInt), 6000);
+  }],
+
+  // ── SCENE 3: BLU + TRACCIA (9000–16000ms) ──
+  [9000, () => {
+    doFlash('#3d9be8', 100);
+    doShockwave(540, 960);
+    spawnParticles(540, 960, 80, '#3d9be8', 22);
+    setTimeout(() => {
+      showScene('s3');
+      spawnSpeedTrail(25, 'rgba(61,155,232,0.5)');
+    }, 150);
+    setTimeout(() => {
+      addClass('badge3','show');
+      addClass('blu3','mascot-enter-right');
+      el('blu3').style.opacity = '1';
+    }, 400);
+    setTimeout(() => {
+      addClass('lbl3','show');
+      addClass('callout3','show');
+    }, 1000);
+    setTimeout(() => {
+      el('iphone3').style.animation = 'iphone-drop 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards';
+      spawnParticles(400, 700, 40, '#3d9be8', 10);
+    }, 800);
+    setTimeout(() => addClass('blu3','mascot-idle'), 1200);
+    const ambInt2 = setInterval(() => spawnParticles(900, 1400, 5, '#3d9be8', 6), 300);
+    setTimeout(() => clearInterval(ambInt2), 7000);
+  }],
+
+  // ── SCENE 4: NERO + GARAGE (16000–23000ms) ──
+  [16000, () => {
+    doFlash('#222', 120);
+    doShockwave(540, 960);
+    spawnParticles(540, 960, 60, '#888', 18);
+    setTimeout(() => {
+      showScene('s4');
+      spawnSpeedTrail(15, 'rgba(150,150,150,0.3)');
+    }, 150);
+    setTimeout(() => {
+      addClass('badge4','show');
+      addClass('nero4','mascot-enter-left');
+      el('nero4').style.opacity = '1';
+    }, 500);
+    setTimeout(() => {
+      addClass('lbl4','show');
+      addClass('callout4','show');
+    }, 1100);
+    setTimeout(() => {
+      el('iphone4').style.animation = 'iphone-drop 0.5s cubic-bezier(0.17,0.67,0.36,1.3) forwards';
+      spawnParticles(700, 700, 30, '#999', 8);
+    }, 900);
+    setTimeout(() => addClass('nero4','mascot-idle'), 1400);
+  }],
+
+  // ── SCENE 5: TRIO (23000–27000ms) ──
+  [23000, () => {
+    doFlash('#fff', 200);
+    setTimeout(() => doFlash('#E8280B', 150), 250);
+    doShockwave(540, 960);
+    spawnParticles(540, 960, 120, '#E8280B', 28);
+    spawnParticles(540, 960, 60, '#FFB800', 20);
+    setTimeout(() => {
+      showScene('s-trio');
+    }, 300);
+    setTimeout(() => {
+      addClass('trio-r','show-r');
+      addClass('trio-b','show-b');
+      addClass('trio-n','show-n');
+      spawnParticles(200, 1600, 30, '#E8280B', 12);
+      spawnParticles(540, 1600, 30, '#3d9be8', 12);
+      spawnParticles(880, 1600, 30, '#888', 12);
+    }, 400);
+    setTimeout(() => addClass('trio-tagline','show'), 800);
+    // Continuous ambient
+    const t5 = setInterval(() => {
+      spawnParticles(200 + Math.random()*700, 1920, 8, '#E8280B', 8);
+    }, 200);
+    setTimeout(() => clearInterval(t5), 4000);
+  }],
+
+  // ── SCENE 6: CTA (27000–30000ms) ──
+  [27000, () => {
+    doFlash('#fff', 300);
+    spawnParticles(540, 960, 150, '#E8280B', 30);
+    spawnParticles(540, 960, 80, '#FFB800', 20);
+    doShockwave(540, 960);
+    setTimeout(() => {
+      showScene('s-cta');
+      spawnParticles(540, 1200, 100, '#E8280B', 20);
+    }, 200);
+    // CTA content slides up
+    setTimeout(() => {
+      el('cta-content').style.animation = 'cta-slide-up 0.6s cubic-bezier(0.17,0.67,0.36,1.3) forwards';
+    }, 400);
+    const ctaInt = setInterval(() => spawnParticles(Math.random()*1080, Math.random()*1920, 5, '#E8280B', 6), 150);
+    setTimeout(() => clearInterval(ctaInt), 3000);
+  }],
+];
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS BAR
+// ═══════════════════════════════════════════════════════════
+const TOTAL_DURATION = 30000;
+const startTime = Date.now();
+
+function updateProgress() {
+  const elapsed = Date.now() - startTime;
+  const pct = Math.min((elapsed / TOTAL_DURATION) * 100, 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  if (pct < 100) requestAnimationFrame(updateProgress);
+}
+requestAnimationFrame(updateProgress);
+
+// ═══════════════════════════════════════════════════════════
+// FIRE TIMELINE
+// ═══════════════════════════════════════════════════════════
+T.forEach(([ms, fn]) => setTimeout(fn, ms));
+
+// ═══════════════════════════════════════════════════════════
+// EXTRA CSS ANIMATIONS (injected)
+// ═══════════════════════════════════════════════════════════
+const extraStyles = document.createElement('style');
+extraStyles.textContent = `
+  @keyframes iphone-drop {
+    from { opacity:0; transform:translate(-50%,-50%) translateY(-300px) rotate(-8deg) scale(0.8); }
+    to   { opacity:1; transform:translate(-50%,-50%) translateY(-40px) rotate(0deg) scale(1); }
+  }
+  @keyframes cta-slide-up {
+    from { opacity:0; transform:translateY(200px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  #iphone2, #iphone3, #iphone4 { opacity:0; }
+
+  /* iPhone floating idle */
+  .iphone-float {
+    animation: iphone-float 3s ease-in-out infinite;
+  }
+  @keyframes iphone-float {
+    0%,100% { transform:translate(-50%,-50%) translateY(-40px) rotate(0deg) scale(1); }
+    50%      { transform:translate(-50%,-50%) translateY(-70px) rotate(1deg) scale(1.01); }
+  }
+
+  /* Scene init */
+  #s1 { opacity:1; pointer-events:auto; }
+`;
+document.head.appendChild(extraStyles);
+
+// Add float to iphones after they drop
+[2,3,4].forEach(n => {
+  setTimeout(() => {
+    const ip = el(`iphone${n}`);
+    if (ip) {
+      ip.style.animation = '';
+      ip.classList.add('iphone-float');
+    }
+  }, (n===2?3000:n===3?9000:16000) + 1800);
+});
+
+// ═══════════════════════════════════════════════════════════
+// LOOP (restart after 30s for demo purposes)
+// ═══════════════════════════════════════════════════════════
+setTimeout(() => {
+  document.querySelector('body').innerHTML = '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#E8280B;font-size:48px;font-weight:900;font-family:Arial Black;">▶ Ricarica per rivedere</div>';
+}, 30500);
+</script>
+</body>
+</html>
