@@ -20,7 +20,7 @@ export default function LayoutCommunity({ children }: { children: React.ReactNod
         Community
       </h1>
       <p className="mt-4 text-lg text-cemento/70">
-        Foto dei giri, classifica chilometri e ricerca rider.
+        Pubblica foto e giri, reagisci agli altri rider, scala la classifica km.
       </p>
 
       <div className="mt-6">

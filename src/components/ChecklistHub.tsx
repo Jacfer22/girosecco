@@ -13,13 +13,13 @@ export default function ChecklistHub({ utenteId, profiloOk }: Props) {
 
   if (!progresso || !progresso.incompleto) return null;
 
-  const completati = [progresso.profilo, progresso.giro, progresso.moto].filter(Boolean).length;
-
   const passi = [
     { ok: progresso.profilo, titolo: 'Scegli il tuo username', href: '/account' },
     { ok: progresso.giro, titolo: 'Traccia il primo giro', href: '/traccia' },
     { ok: progresso.moto, titolo: 'Crea l\'avatar 3D moto', href: '/garage' },
+    { ok: progresso.community, titolo: 'Pubblica in community', href: '/community' },
   ];
+  const completati = passi.filter((p) => p.ok).length;
 
   return (
     <section className="pb-2">
@@ -28,7 +28,7 @@ export default function ChecklistHub({ utenteId, profiloOk }: Props) {
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">Primi passi</p>
             <p className="mt-1 font-display text-xl font-bold uppercase tracking-tight text-white">
-              {completati}/3 completati
+              {completati}/4 completati
             </p>
           </div>
           <div className="hub-progress-track" aria-hidden="true">

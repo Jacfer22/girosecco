@@ -16,6 +16,7 @@ import BloccoGarageBio from './BloccoGarageBio';
 import NotificheKmSettimana from './NotificheKmSettimana';
 import LogoHomeLink from './LogoHomeLink';
 import HubPostGiro from './HubPostGiro';
+import CommunityInvitoHub from './CommunityInvitoHub';
 
 interface AnteprimaMoto {
   id: string;
@@ -171,6 +172,10 @@ export default function DashboardHome() {
         <HubPostGiro />
       </Reveal>
 
+      <Reveal delay={50}>
+        <CommunityInvitoHub utenteId={user.id} />
+      </Reveal>
+
       <ChecklistHub
         utenteId={user.id}
         profiloOk={Boolean(profilo?.username?.trim())}
@@ -246,7 +251,7 @@ export default function DashboardHome() {
                 </svg>
               </span>
               <p className="mt-3 font-display text-lg font-black uppercase leading-tight text-white">Community</p>
-              <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-wide text-cemento/45">Foto · giri · commenti</p>
+              <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-wide text-cemento/45">Pubblica · scopri · reagisci</p>
             </div>
           </Link>
         </Reveal>

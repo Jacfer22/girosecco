@@ -213,17 +213,19 @@ export default function PaginaProfilo() {
           </h2>
           <ul className="mt-4 space-y-3">
             {giri.map((g) => (
-              <li key={g.id} className="card-app flex items-center justify-between gap-3 p-4">
-                <div>
-                  <p className="font-mono text-sm font-medium uppercase">{g.nome}</p>
-                  <p className="font-mono text-[11px] text-asfalto/50">
-                    {new Date(g.created_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
-                    {g.curve > 0 ? ` · ${g.curve} curve` : ''}
+              <li key={g.id}>
+                <Link href={`/giro/${g.id}`} className="card-app flex items-center justify-between gap-3 p-4 transition-colors hover:border-brand/30">
+                  <div>
+                    <p className="font-mono text-sm font-medium uppercase">{g.nome}</p>
+                    <p className="font-mono text-[11px] text-asfalto/50">
+                      {new Date(g.created_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
+                      {g.curve > 0 ? ` · ${g.curve} curve` : ''}
+                    </p>
+                  </div>
+                  <p className="font-display text-2xl font-bold shrink-0">
+                    {Math.round(g.km)}<span className="text-sm"> km</span>
                   </p>
-                </div>
-                <p className="font-display text-2xl font-bold shrink-0">
-                  {Math.round(g.km)}<span className="text-sm"> km</span>
-                </p>
+                </Link>
               </li>
             ))}
           </ul>

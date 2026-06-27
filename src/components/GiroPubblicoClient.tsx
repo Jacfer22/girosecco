@@ -6,6 +6,7 @@ import { formattaDurata, formattaKmDisplay } from '@/lib/geo';
 import type { GiroPubblico } from '@/lib/giri-public';
 import { BRAND_DOMAIN } from '@/lib/brand-display';
 import { scaricaGpx } from '@/lib/gpx-export';
+import BottoneLike from '@/components/BottoneLike';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
@@ -55,6 +56,11 @@ export default function GiroPubblicoClient({ giro }: Props) {
           <MappaTraccia punti={giro.punti} inCorso={false} />
         </div>
       )}
+
+      <div className="mt-6 flex items-center justify-between gap-3 rounded-app border border-white/10 bg-white/[0.04] px-4 py-3">
+        <p className="font-mono text-[10px] uppercase text-cemento/50">Ti piace questo giro?</p>
+        <BottoneLike tipo="giro" contenutoId={giro.id} />
+      </div>
 
       <div className="mt-8 flex flex-col gap-2 sm:flex-row">
         {giro.punti.length > 1 && (

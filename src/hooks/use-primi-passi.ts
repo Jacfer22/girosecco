@@ -7,6 +7,7 @@ export interface ProgressoPrimiPassi {
   profilo: boolean;
   giro: boolean;
   moto: boolean;
+  community: boolean;
   incompleto: boolean;
 }
 
@@ -21,17 +22,20 @@ export function usePrimiPassi(utenteId: string | undefined, profiloOk: boolean) 
     }
 
     async function carica() {
-      const [giriRes, motoRes] = await Promise.all([
+      const [giriRes, motoRes, giriPubRes, fotoRes] = await Promise.all([
         supabase!.from('giri').select('id', { count: 'exact', head: true }).eq('utente_id', utenteId!),
         supabase!.from('moto').select('id', { count: 'exact', head: true }).eq('utente_id', utenteId!),
+        supabase!.from('giri').select('id', { count: 'exact', head: true }).eq('utente_id', utenteId!).eq('pubblico', true),
+        supabase!.from('foto').select('id', { count: 'exact', head: true }).eq('autore_id', utenteId!),
       ]);
 
       const profilo = profiloOk;
       const giro = (giriRes.count ?? 0) > 0;
       const moto = (motoRes.count ?? 0) > 0;
-      const incompleto = !profilo || !giro || !moto;
+      const community = (giriPubRes.count ?? 0) > 0 || (fotoRes.count ?? 0) > 0;
+      const incompleto = !profilo || !giro || !moto || !community;
 
-      setProgresso({ profilo, giro, moto, incompleto });
+      setProgresso({ profilo, giro, moto, community, incompleto });
     }
 
     void carica();

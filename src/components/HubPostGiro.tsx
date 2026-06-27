@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
+import { useFeedback } from '@/components/FeedbackProvider';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import { formattaDurata, formattaKmDisplay } from '@/lib/geo';
 import { avanzamento, badgeRaggiunto, prossimoBadge } from '@/lib/badge';
+import { aggiornaGiroCloud } from '@/lib/giri-store';
 import {
   cancellaGiroCelebrato,
   leggiGiroCelebrato,
@@ -15,8 +17,11 @@ import IconaBadgeLivello from '@/components/icons/IconaBadgeLivello';
 
 export default function HubPostGiro() {
   const { user, profilo } = useAuth();
+  const { toast } = useFeedback();
   const [giro, setGiro] = useState<GiroCelebrato | null>(null);
   const [kmTotali, setKmTotali] = useState<number | null>(null);
+  const [pubblico, setPubblico] = useState(false);
+  const [pubblicando, setPubblicando] = useState(false);
 
   useEffect(() => {
     const salvato = leggiGiroCelebrato();
@@ -25,6 +30,7 @@ export default function HubPostGiro() {
 
   useEffect(() => {
     if (!giro) return;
+    const cloudId = giro.cloudId;
     async function caricaKm() {
       const supabase = getSupabaseBrowser();
       const userId = user?.id;
@@ -32,9 +38,13 @@ export default function HubPostGiro() {
         setKmTotali(0);
         return;
       }
-      const { data } = await supabase.from('giri').select('km').eq('utente_id', userId);
+      const { data } = await supabase.from('giri').select('id, km, pubblico').eq('utente_id', userId);
       const tot = (data ?? []).reduce((acc, r) => acc + (Number(r.km) || 0), 0);
       setKmTotali(Math.round(tot));
+      if (cloudId) {
+        const riga = (data ?? []).find((r) => r.id === cloudId);
+        if (riga?.pubblico) setPubblico(true);
+      }
     }
     caricaKm();
   }, [giro, user?.id]);
@@ -44,6 +54,25 @@ export default function HubPostGiro() {
   function chiudi() {
     cancellaGiroCelebrato();
     setGiro(null);
+  }
+
+  async function pubblicaInCommunity() {
+    if (!giro?.cloudId) {
+      toast('Salvataggio in corso — riprova tra un attimo.', 'info');
+      return;
+    }
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+    setPubblicando(true);
+    try {
+      await aggiornaGiroCloud(supabase, giro.cloudId, { pubblico: true });
+      setPubblico(true);
+      toast('Giro in community! Gli altri rider possono vederlo.', 'ok');
+    } catch {
+      toast('Non sono riuscito a pubblicare. Riprova.', 'errore');
+    } finally {
+      setPubblicando(false);
+    }
   }
 
   const idCard = giro.cloudId ?? giro.id;
@@ -98,8 +127,31 @@ export default function HubPostGiro() {
         </div>
       )}
 
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <Link href={hrefCard} className="tap btn-primary text-center">
+      <div className="mt-5 rounded-app border border-white/10 bg-white/[0.03] p-3.5">
+        <p className="font-mono text-[10px] uppercase tracking-wide text-brand">Community</p>
+        <p className="mt-1 text-sm text-cemento/60">
+          {pubblico
+            ? 'Il tuo giro è nel feed — gli altri possono vedere km, curve e tracciato.'
+            : 'Condividi il giro: è il modo più veloce per far vivere la community.'}
+        </p>
+        {pubblico ? (
+          <Link href="/community" className="tap btn-primary mt-3 inline-block w-full text-center sm:w-auto sm:px-8">
+            Vedi nel feed
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => void pubblicaInCommunity()}
+            disabled={pubblicando}
+            className="tap btn-primary mt-3 w-full sm:w-auto sm:px-8"
+          >
+            {pubblicando ? 'Pubblico…' : 'Pubblica in community'}
+          </button>
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Link href={hrefCard} className="tap editor-card-btn-secondary text-center">
           Crea la card
         </Link>
         <Link href="/giri" className="tap editor-card-btn-secondary text-center">

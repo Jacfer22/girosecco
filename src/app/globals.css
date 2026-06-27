@@ -2268,3 +2268,57 @@ body.nav-fullscreen-active.con-bottomnav {
   font-size: 1.25rem;
   line-height: 1;
 }
+
+/* Community attiva */
+.community-composer {
+  border-radius: 16px;
+  border: 1px solid rgba(237, 33, 0, 0.28);
+  background: linear-gradient(165deg, rgba(237, 33, 0, 0.08), rgba(15, 11, 10, 0.95));
+  padding: 1.1rem 1.15rem;
+}
+.community-composer-guest {
+  text-align: center;
+  padding: 1.5rem 1.15rem;
+}
+.community-composer-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(240, 241, 242, 0.75);
+  transition: border-color 0.2s, color 0.2s;
+}
+.community-composer-chip:hover {
+  border-color: rgba(237, 33, 0, 0.4);
+  color: #fff;
+}
+.community-composer .tap.flex.w-full {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(240, 241, 242, 0.65) !important;
+  background: rgba(255, 255, 255, 0.03);
+}
+.community-composer .tap.flex.w-full:hover {
+  border-color: rgba(237, 33, 0, 0.45) !important;
+  color: #fff !important;
+}
+.community-feed-vuoto {
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2rem 1.25rem;
+  text-align: center;
+}
+.community-invito-hub {
+  margin-bottom: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem 1.1rem;
+}
