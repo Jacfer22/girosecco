@@ -13,12 +13,15 @@ import { useTracciamentoGiro } from '@/hooks/use-tracciamento-giro';
 import AvvisoGpsTraccia from '@/components/AvvisoGpsTraccia';
 import OnboardingTraccia from '@/components/OnboardingTraccia';
 import IconaGpsLive from '@/components/icons/IconaGpsLive';
+import SelettoreMascotteGps from '@/components/SelettoreMascotteGps';
+import { useMascotGpsId } from '@/hooks/use-mascot-gps';
 
 const MappaTraccia = dynamic(() => import('@/components/MappaTraccia'), { ssr: false });
 
 export default function PaginaTraccia() {
   const { user, loading } = useAuth();
   const track = useTracciamentoGiro(user?.id);
+  const { mascotId } = useMascotGpsId();
 
   const tracciaAttiva = track.stato === 'in_corso' || track.stato === 'in_pausa';
 
@@ -68,7 +71,7 @@ export default function PaginaTraccia() {
   if (tracciaAttiva) {
     return (
       <div className="nav-fullscreen">
-        <MappaTraccia punti={track.punti} inCorso={track.stato === 'in_corso'} fullscreen />
+        <MappaTraccia punti={track.punti} inCorso={track.stato === 'in_corso'} fullscreen mascotId={mascotId} />
         <OverlayTracciaGiro
           stato={track.stato as 'in_corso' | 'in_pausa'}
           velocitaKmh={track.velCorrenteKmh}
@@ -113,12 +116,13 @@ export default function PaginaTraccia() {
           <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-cemento/55">
             Tracciato GPS in tempo reale
           </p>
-          <MappaTraccia punti={track.punti} inCorso={false} />
+          <MappaTraccia punti={track.punti} inCorso={false} mascotId={mascotId} />
         </div>
       )}
 
       {track.stato === 'pronto' && (
         <div className="mt-8 flex flex-col gap-4">
+          <SelettoreMascotteGps />
           <AvvisoGpsTraccia />
           <Button fullWidth onClick={() => track.iniziaPercorso()}>
             Inizia percorso

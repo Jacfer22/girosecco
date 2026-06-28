@@ -2,6 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Punto } from '@/lib/geo';
+import {
+  DIMENSIONI_MARKER_MASCOT,
+  htmlMarkerMascotGps,
+  mascotGps,
+  rotazioneMarkerMascot,
+  type IdMascotGps,
+} from '@/lib/mascot-gps';
 
 const PIXEL_TRASPARENTE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -12,6 +19,7 @@ interface Props {
   percorsoNav?: Punto[];
   destinazione?: { lat: number; lng: number } | null;
   fullscreen?: boolean;
+  mascotId?: IdMascotGps;
 }
 
 function centroIniziale(
@@ -25,7 +33,14 @@ function centroIniziale(
   return [41.9, 12.5];
 }
 
-export default function MappaTraccia({ punti, inCorso, percorsoNav, destinazione, fullscreen = false }: Props) {
+export default function MappaTraccia({
+  punti,
+  inCorso,
+  percorsoNav,
+  destinazione,
+  fullscreen = false,
+  mascotId = 'rosso',
+}: Props) {
   const contenitore = useRef<HTMLDivElement>(null);
   const mappaRef = useRef<unknown>(null);
   const lineaRef = useRef<unknown>(null);
@@ -116,17 +131,33 @@ export default function MappaTraccia({ punti, inCorso, percorsoNav, destinazione
     linea.setLatLngs(latlngs);
 
     const ultimo = latlngs[latlngs.length - 1];
+    const mascot = mascotGps(mascotId);
+    const rot = rotazioneMarkerMascot(punti, mascot);
+    const html = htmlMarkerMascotGps(mascot, rot);
+    const { iconSize, iconAnchor } = DIMENSIONI_MARKER_MASCOT;
 
     if (!markerRef.current) {
       const icona = L.divIcon({
-        className: '',
-        html: '<div class="marker-posizione"></div>',
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
+        className: 'marker-mascot-wrap',
+        html,
+        iconSize,
+        iconAnchor,
       });
-      markerRef.current = L.marker(ultimo, { icon: icona }).addTo(mappa);
+      markerRef.current = L.marker(ultimo, { icon: icona, zIndexOffset: 1000 }).addTo(mappa);
     } else {
-      (markerRef.current as { setLatLng: (latlng: [number, number]) => void }).setLatLng(ultimo);
+      const m = markerRef.current as {
+        setLatLng: (latlng: [number, number]) => void;
+        setIcon: (icon: unknown) => void;
+      };
+      m.setLatLng(ultimo);
+      m.setIcon(
+        L.divIcon({
+          className: 'marker-mascot-wrap',
+          html,
+          iconSize,
+          iconAnchor,
+        }),
+      );
     }
 
     if (inCorso) {
@@ -134,7 +165,7 @@ export default function MappaTraccia({ punti, inCorso, percorsoNav, destinazione
     } else if (latlngs.length > 1 && !(percorsoNav && percorsoNav.length > 1)) {
       mappa.fitBounds(L.latLngBounds(latlngs), { padding: [30, 30] });
     }
-  }, [punti, inCorso, mappaPronta, percorsoNav]);
+  }, [punti, inCorso, mappaPronta, percorsoNav, mascotId]);
 
   // Percorso navigazione OSRM (blu)
   useEffect(() => {

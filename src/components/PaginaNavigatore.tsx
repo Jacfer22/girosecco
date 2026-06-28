@@ -22,6 +22,8 @@ import {
 import { distanzaRimanenteNav } from '@/lib/chrome-app';
 import { leggiModalitaNav, salvaModalitaNav, type ModalitaNav } from '@/lib/nav-modalita';
 import OverlayNavigatoreTesto from '@/components/OverlayNavigatoreTesto';
+import SelettoreMascotteGps from '@/components/SelettoreMascotteGps';
+import { useMascotGpsId } from '@/hooks/use-mascot-gps';
 
 const MappaNavigatore = dynamic(() => import('./MappaNavigatore'), { ssr: false });
 
@@ -29,6 +31,7 @@ export default function PaginaNavigatore() {
   const { user } = useAuth();
   const { conferma } = useFeedback();
   const track = useTracciamentoGiro(user?.id);
+  const { mascotId } = useMascotGpsId();
   const [query, setQuery] = useState('');
   const [risultati, setRisultati] = useState<DestinazioneNav[]>([]);
   const [destinazione, setDestinazione] = useState<DestinazioneNav | null>(null);
@@ -178,11 +181,13 @@ export default function PaginaNavigatore() {
         <MappaNavigatore
           posizione={posizione}
           percorsoNav={percorsoDaMostrare}
+          percorsoGps={track.punti}
           mostraTracciatoGps={false}
           destinazione={destinazione}
           segui={segui}
           onSeguiChange={setSegui}
           ricentraTick={ricentraTick}
+          mascotId={mascotId}
           fullscreen
         />
         <OverlayNavigatore
@@ -265,17 +270,22 @@ export default function PaginaNavigatore() {
         {caricamento && (
           <p className="mt-2 font-mono text-[10px] uppercase text-cemento/40">Calcolo percorso…</p>
         )}
+        <div className="mt-4">
+          <SelettoreMascotteGps compatto />
+        </div>
       </div>
 
       <div className="relative min-h-[45dvh] flex-1">
         <MappaNavigatore
           posizione={posizione}
           percorsoNav={rotta?.percorso}
+          percorsoGps={track.punti}
           mostraTracciatoGps={false}
           destinazione={destinazione}
           segui={segui}
           onSeguiChange={setSegui}
           ricentraTick={ricentraTick}
+          mascotId={mascotId}
         />
       </div>
 

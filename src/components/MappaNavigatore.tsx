@@ -2,6 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import type { Punto } from '@/lib/geo';
+import {
+  DIMENSIONI_MARKER_MASCOT,
+  htmlMarkerMascotGps,
+  mascotGps,
+  rotazioneMascotNav,
+  type IdMascotGps,
+} from '@/lib/mascot-gps';
 
 const PIXEL_TRASPARENTE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -17,8 +24,9 @@ interface Props {
   fullscreen?: boolean;
   /** false = nasconde il tracciato GPS già percorso (solo rotta da fare) */
   mostraTracciatoGps?: boolean;
-  /** HTML custom per marker posizione (es. avatar cartoon reel) */
+  /** HTML custom per marker posizione (es. avatar cartoon reel) — ha priorità su mascotId */
   markerPosizioneHtml?: string;
+  mascotId?: IdMascotGps;
   zoomMinimo?: number;
   /** Adatta zoom al percorso (tick incrementale) */
   adattaPercorsoTick?: number;
@@ -37,6 +45,7 @@ export default function MappaNavigatore({
   fullscreen = false,
   mostraTracciatoGps = false,
   markerPosizioneHtml,
+  mascotId = 'rosso',
   zoomMinimo = 16,
   adattaPercorsoTick = 0,
   seguiAnimato = true,
@@ -173,13 +182,22 @@ export default function MappaNavigatore({
 
     const latlng: [number, number] = [posizione.lat, posizione.lng];
 
+    const mascot = mascotGps(mascotId);
+    const rot = rotazioneMascotNav(percorsoGps, posizione, mascot);
+    const htmlMascot = htmlMarkerMascotGps(mascot, rot);
+    const html = markerPosizioneHtml ?? htmlMascot;
+    const neon = html.includes('marker-neon-reel');
+    const usaMascot = !markerPosizioneHtml;
+    const iconSize = neon ? [24, 24] : usaMascot ? DIMENSIONI_MARKER_MASCOT.iconSize : [20, 20];
+    const iconAnchor = neon ? [12, 12] : usaMascot ? DIMENSIONI_MARKER_MASCOT.iconAnchor : [10, 10];
+    const className = neon || usaMascot ? 'marker-mascot-wrap' : '';
+
     if (!markerRef.current) {
-      const neon = markerPosizioneHtml?.includes('marker-neon-reel');
       const icona = L.divIcon({
-        className: neon ? 'reel-marker-wrap' : markerPosizioneHtml ? 'reel-marker-wrap' : '',
-        html: markerPosizioneHtml ?? '<div class="marker-posizione"></div>',
-        iconSize: neon ? [24, 24] : markerPosizioneHtml ? [52, 36] : [20, 20],
-        iconAnchor: neon ? [12, 12] : markerPosizioneHtml ? [26, 18] : [10, 10],
+        className,
+        html,
+        iconSize,
+        iconAnchor,
       });
       markerRef.current = L.marker(latlng, { icon: icona, zIndexOffset: 1000 }).addTo(mappa);
     } else {
@@ -188,23 +206,20 @@ export default function MappaNavigatore({
         setIcon: (i: unknown) => void;
       };
       m.setLatLng(latlng);
-      if (markerPosizioneHtml) {
-        const neon = markerPosizioneHtml.includes('marker-neon-reel');
-        m.setIcon(
-          L.divIcon({
-            className: 'reel-marker-wrap',
-            html: markerPosizioneHtml,
-            iconSize: neon ? [24, 24] : [52, 36],
-            iconAnchor: neon ? [12, 12] : [26, 18],
-          }),
-        );
-      }
+      m.setIcon(
+        L.divIcon({
+          className,
+          html,
+          iconSize,
+          iconAnchor,
+        }),
+      );
     }
 
     if (segui) {
       mappa.setView(latlng, Math.max(mappa.getZoom(), zoomMinimo), { animate: seguiAnimato });
     }
-  }, [posizione, segui, markerPosizioneHtml, zoomMinimo, seguiAnimato]);
+  }, [posizione, segui, markerPosizioneHtml, mascotId, percorsoGps, zoomMinimo, seguiAnimato]);
 
   useEffect(() => {
     const L = leafletRef.current;
