@@ -1,12 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AppPageShell from '@/components/AppPageShell';
-import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
+import { AuthWallLoading } from '@/components/AuthWall';
 import DashboardHome from '@/components/DashboardHome';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function PaginaHub() {
   const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/');
+    }
+  }, [loading, user, router]);
 
   if (loading) {
     return (
@@ -17,14 +26,7 @@ export default function PaginaHub() {
   }
 
   if (!user) {
-    return (
-      <AppPageShell width="full">
-        <AuthWall
-          titolo="Il tuo cockpit"
-          descrizione="Accedi per aprire la home personale: garage, giri, traccia e community."
-        />
-      </AppPageShell>
-    );
+    return null;
   }
 
   return (

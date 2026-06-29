@@ -8,7 +8,6 @@ import {
   salvaMascotGps,
   type IdMascotGps,
 } from '@/lib/mascot-gps';
-import { useMascotMarkerUrls, urlMascotPerId } from '@/hooks/use-mascot-marker-urls';
 
 interface Props {
   compatto?: boolean;
@@ -17,7 +16,6 @@ interface Props {
 
 export default function SelettoreMascotteGps({ compatto = false, onChange }: Props) {
   const [selezionata, setSelezionata] = useState<IdMascotGps>('rosso');
-  const { urls: mascotUrls } = useMascotMarkerUrls();
 
   useEffect(() => {
     setSelezionata(leggiMascotGps());
@@ -56,7 +54,7 @@ export default function SelettoreMascotteGps({ compatto = false, onChange }: Pro
               aria-pressed={attiva}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={urlMascotPerId(mascotUrls, m.id, m.immagine)} alt="" className="mascot-gps-thumb" />
+              <img src={m.immagine} alt="" className="mascot-gps-thumb" />
               <span className="mascot-gps-nome">{m.nome}</span>
               {!compatto && <span className="mascot-gps-ruolo">{m.ruolo}</span>}
             </button>

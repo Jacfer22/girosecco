@@ -1,8 +1,15 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Tappa } from '@/lib/types';
 import { Punto } from '@/lib/geo';
+import {
+  creaIconaMascotLeaflet,
+  mascotGps,
+  rotazioneMascotNav,
+  type IdMascotGps,
+} from '@/lib/mascot-gps';
+import { useMascotGpsId } from '@/hooks/use-mascot-gps';
 
 const PIXEL_TRASPARENTE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -12,16 +19,27 @@ interface Props {
   tracciato: [number, number][];
   posizione: Punto | null;
   segui: boolean;
+  mascotId?: IdMascotGps;
 }
 
-export default function MappaNavigazione({ tappe, tracciato, posizione, segui }: Props) {
+export default function MappaNavigazione({ tappe, tracciato, posizione, segui, mascotId: mascotIdProp }: Props) {
+  const { mascotId: mascotIdHook } = useMascotGpsId();
+  const mascotId = mascotIdProp ?? mascotIdHook;
   const contenitore = useRef<HTMLDivElement>(null);
   const mappaRef = useRef<unknown>(null);
   const markerPosRef = useRef<unknown>(null);
+  const ultimaIconaRef = useRef('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const leafletRef = useRef<any>(null);
 
-  // Inizializza la mappa con tracciato e tappe fisse, una sola volta
+  const percorsoNav: Punto[] = useMemo(
+    () =>
+      tracciato && tracciato.length > 1
+        ? tracciato.map(([lat, lng]) => ({ lat, lng }))
+        : tappe.map((t) => ({ lat: t.lat, lng: t.lng })),
+    [tracciato, tappe],
+  );
+
   useEffect(() => {
     let attivo = true;
 
@@ -90,7 +108,6 @@ export default function MappaNavigazione({ tappe, tracciato, posizione, segui }:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Aggiorna il marker della posizione GPS
   useEffect(() => {
     const L = leafletRef.current;
     const mappa = mappaRef.current as {
@@ -100,23 +117,32 @@ export default function MappaNavigazione({ tappe, tracciato, posizione, segui }:
     if (!L || !mappa || !posizione) return;
 
     const latlng: [number, number] = [posizione.lat, posizione.lng];
+    const mascot = mascotGps(mascotId);
+    const rot = rotazioneMascotNav(undefined, posizione, mascot, percorsoNav);
+    const chiaveIcona = `${mascotId}-${Math.round(rot / 6)}`;
 
     if (!markerPosRef.current) {
-      const icona = L.divIcon({
-        className: '',
-        html: '<div class="marker-posizione"></div>',
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
-      });
-      markerPosRef.current = L.marker(latlng, { icon: icona, zIndexOffset: 1000 }).addTo(mappa);
+      markerPosRef.current = L.marker(latlng, {
+        icon: creaIconaMascotLeaflet(L, mascot, rot),
+        zIndexOffset: 1000,
+      }).addTo(mappa);
+      ultimaIconaRef.current = chiaveIcona;
     } else {
-      (markerPosRef.current as { setLatLng: (l: [number, number]) => void }).setLatLng(latlng);
+      const m = markerPosRef.current as {
+        setLatLng: (l: [number, number]) => void;
+        setIcon: (i: unknown) => void;
+      };
+      m.setLatLng(latlng);
+      if (chiaveIcona !== ultimaIconaRef.current) {
+        ultimaIconaRef.current = chiaveIcona;
+        m.setIcon(creaIconaMascotLeaflet(L, mascot, rot));
+      }
     }
 
     if (segui) {
       mappa.setView(latlng, Math.max(mappa.getZoom(), 15), { animate: true });
     }
-  }, [posizione, segui]);
+  }, [posizione, segui, mascotId, percorsoNav]);
 
   return (
     <div

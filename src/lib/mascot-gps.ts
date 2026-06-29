@@ -6,9 +6,10 @@ export interface MascotGps {
   id: IdMascotGps;
   nome: string;
   ruolo: string;
+  /** PNG scontornato per marker mappa */
   immagine: string;
   accent: string;
-  /** Offset CSS: le PNG guardano verso destra (est) */
+  /** Offset CSS: asset guardano verso destra (est) */
   rotazioneBase: number;
 }
 
@@ -17,7 +18,7 @@ export const MASCOTTE_GPS: MascotGps[] = [
     id: 'rosso',
     nome: 'Rosso',
     ruolo: 'Sport',
-    immagine: '/mascot/rosso-sport.png',
+    immagine: '/mascot/rosso-sport-marker.png',
     accent: '#ED2100',
     rotazioneBase: -90,
   },
@@ -25,7 +26,7 @@ export const MASCOTTE_GPS: MascotGps[] = [
     id: 'blu',
     nome: 'Blu',
     ruolo: 'Adventure',
-    immagine: '/mascot/blu-adventure.png',
+    immagine: '/mascot/blu-adventure-marker.png',
     accent: '#2B8CDE',
     rotazioneBase: -90,
   },
@@ -33,7 +34,7 @@ export const MASCOTTE_GPS: MascotGps[] = [
     id: 'nero',
     nome: 'Nero',
     ruolo: 'Cruiser',
-    immagine: '/mascot/nero-cruiser.png',
+    immagine: '/mascot/nero-cruiser-marker.png',
     accent: '#C8C4BC',
     rotazioneBase: -90,
   },
@@ -50,8 +51,7 @@ export const MOTO_GPS_FUTURE = [
 
 const CHIAVE_STORAGE = 'motogarage-mascot-gps';
 
-/** Pixel display sul marker mappa */
-export const MASCOT_MARKER_PX = 48;
+export const MASCOT_MARKER_PX = 52;
 
 export function mascotGps(id: IdMascotGps): MascotGps {
   return MASCOTTE_GPS.find((m) => m.id === id) ?? MASCOTTE_GPS[0];
@@ -69,7 +69,6 @@ export function salvaMascotGps(id: IdMascotGps): void {
   localStorage.setItem(CHIAVE_STORAGE, id);
 }
 
-/** Bearing geografico: 0° = nord, 90° = est */
 export function direzioneGradi(da: Punto, a: Punto): number {
   const lat1 = (da.lat * Math.PI) / 180;
   const lat2 = (a.lat * Math.PI) / 180;
@@ -85,7 +84,6 @@ function distanzaQuadro(a: Punto, b: Punto): number {
   return dlat * dlat + dlng * dlng;
 }
 
-/** Direzione lungo il percorso davanti alla posizione attuale */
 export function direzioneSuPercorso(posizione: Punto, percorso: Punto[]): number | null {
   if (percorso.length < 2) return null;
 
@@ -155,8 +153,8 @@ export function htmlMarkerMascotGps(
 }
 
 export const DIMENSIONI_MARKER_MASCOT = {
-  iconSize: [52, 52] as [number, number],
-  iconAnchor: [26, 26] as [number, number],
+  iconSize: [56, 56] as [number, number],
+  iconAnchor: [28, 28] as [number, number],
 };
 
 export function creaIconaMascotLeaflet(
