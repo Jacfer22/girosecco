@@ -133,6 +133,15 @@ export default function GaussianGarage({
         if (annullato) return;
         viewer.start();
         disabilitaTastieraViewer(viewer);
+        if (hero && !modalitaViewer) {
+          const v = viewer as import('@mkkellogg/gaussian-splats-3d').Viewer & {
+            renderer?: { setClearColor: (color: number, alpha: number) => void };
+            threeScene?: { background: null };
+          };
+          v.renderer?.setClearColor(0x000000, 0);
+          if (v.threeScene) v.threeScene.background = null;
+          host.querySelector('canvas')?.setAttribute('style', 'background: transparent');
+        }
         const controls = (viewer as import('@mkkellogg/gaussian-splats-3d').Viewer & {
           perspectiveControls?: import('three/examples/jsm/controls/OrbitControls.js').OrbitControls;
         }).perspectiveControls;

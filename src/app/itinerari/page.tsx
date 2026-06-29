@@ -53,7 +53,7 @@ export default async function PaginaItinerari() {
 
   return (
     <div>
-      <section className="hero-asfalto border-b border-white/5">
+      <section className="hero-asfalto hero-asfalto-cinematic border-b border-white/5">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
           <Reveal>
             <p className="font-mono text-xs uppercase tracking-[0.28em] text-red-400">

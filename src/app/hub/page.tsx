@@ -30,7 +30,7 @@ export default function PaginaHub() {
   }
 
   return (
-    <AppPageShell width="full" className="!pb-4">
+    <AppPageShell width="full" className="!pb-4" atmosphere="glow">
       <DashboardHome />
     </AppPageShell>
   );

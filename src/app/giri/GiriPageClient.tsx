@@ -16,7 +16,7 @@ import {
 import EditorCardGiro from '@/components/EditorCardGiro';
 import { BRAND_DOMAIN } from '@/lib/brand-display';
 import { useFeedback } from '@/components/FeedbackProvider';
-import AppPageShell from '@/components/AppPageShell';
+import AppPageShell, { PageIntro } from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { Button, ButtonLink } from '@/components/Button';
 import { scaricaGpx } from '@/lib/gpx-export';
@@ -134,31 +134,32 @@ export default function GiriPageClient() {
 
   if (!user) {
     return (
-      <AppPageShell>
-        <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-tight text-white">I miei giri</h1>
+      <AppPageShell atmosphere="card">
+        <PageIntro
+          label="I tuoi giri"
+          title="I miei giri"
+          description="Accedi per vedere i giri salvati nel cloud e creare le card da qualsiasi dispositivo."
+        />
         <div className="mt-6">
-          <AuthWall
-            titolo="I tuoi percorsi salvati"
-            descrizione="Accedi per vedere i giri salvati nel cloud e creare le card da qualsiasi dispositivo."
-            invitaRegistrazione={false}
-          />
+          <AuthWall titolo="I tuoi percorsi salvati" descrizione="" invitaRegistrazione={false} />
         </div>
       </AppPageShell>
     );
   }
 
   return (
-    <AppPageShell>
-      <p className="font-mono text-sm uppercase tracking-widest text-cartello">MotoGarage</p>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-tight text-white md:text-5xl">I miei giri</h1>
-        <ButtonLink href="/traccia" className="!min-h-[44px]">
+    <AppPageShell atmosphere="card">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        <PageIntro
+          label="Archivio giri"
+          title="I miei giri"
+          description="Tutti i percorsi GPS salvati nel tuo account. Apri da qualsiasi telefono e crea la card quando vuoi."
+          className="flex-1"
+        />
+        <ButtonLink href="/traccia" className="!min-h-[44px] shrink-0">
           + Traccia giro
         </ButtonLink>
       </div>
-      <p className="mt-3 text-cemento/65">
-        Tutti i percorsi GPS salvati nel tuo account. Apri da qualsiasi telefono e crea la card quando vuoi.
-      </p>
 
       {errore && <p className="mt-4 rounded-app border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{errore}</p>}
 

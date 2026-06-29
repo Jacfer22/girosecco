@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import CtaHome from '@/components/CtaHome';
 import Reveal from '@/components/Reveal';
-import TuningGarageScene from '@/components/TuningGarageScene';
+import CinematicScene from '@/components/cinematic/CinematicScene';
+import CinematicHeadline from '@/components/cinematic/CinematicHeadline';
+import { CINEMATIC } from '@/lib/cinematic-assets';
 
 interface Props {
   itinerariCount: number;
@@ -11,8 +13,17 @@ interface Props {
 
 export default function LandingHero({ itinerariCount }: Props) {
   return (
-    <TuningGarageScene variant="landing" className="landing-tuning-hero">
-      <div className="landing-tuning-content">
+    <CinematicScene src={CINEMATIC.traccia} vignette="hero" className="landing-cinematic-hero">
+      <CinematicHeadline
+        align="right"
+        size="hero"
+        className="landing-cinematic-deco pointer-events-none"
+        lines={[
+          { text: 'Traccia', accent: true },
+          { text: 'il giro', accent: false },
+        ]}
+      />
+      <div className="landing-tuning-content landing-cinematic-content relative z-[6]">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.32em] text-amber-200/80">
             Per motociclisti italiani
@@ -62,7 +73,7 @@ export default function LandingHero({ itinerariCount }: Props) {
           </div>
         </Reveal>
       </div>
-    </TuningGarageScene>
+    </CinematicScene>
   );
 }
 

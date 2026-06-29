@@ -203,11 +203,9 @@ export default function PaginaNavigatore() {
   return (
     <div className="nav-setup-pagina flex min-h-[calc(100dvh-4rem)] flex-col">
       <div className="nav-setup-scroll flex-1 overflow-y-auto overscroll-contain">
-        <div className="border-b border-white/10 bg-notte px-4 py-5 text-cemento">
-          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-brand">Navigatore</p>
-          <h1 className="mt-1 font-display text-2xl font-black uppercase leading-tight tracking-tight text-white">
-            Dove vuoi andare?
-          </h1>
+        <div className="border-b border-white/10 bg-notte px-4 py-5 text-cemento nav-setup-hero-cinematic">
+          <p className="page-intro-label">Navigatore</p>
+          <h1 className="page-intro-title mt-2">Dove vuoi andare?</h1>
           <p className="mt-2 text-sm text-cemento/55">
             Scegli la modalità più sicura per te. La rotta rossa è quella da fare — non confonderla col giro già fatto.
           </p>

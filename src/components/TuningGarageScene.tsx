@@ -38,12 +38,15 @@ export default function TuningGarageScene({ variant = 'landing', children, class
     [updatePointer],
   );
 
+  const bgSrc = variant === 'garage' ? '/cinematic/garage-digitale.png' : '/garage-tuning.webp';
+
   useEffect(() => {
+    setImmagineOk(false);
     const img = new Image();
     img.onload = () => setImmagineOk(true);
     img.onerror = () => setImmagineOk(false);
-    img.src = '/garage-tuning.webp';
-  }, []);
+    img.src = bgSrc;
+  }, [bgSrc]);
 
   useEffect(() => {
     if (variant !== 'landing') return;
@@ -85,7 +88,10 @@ export default function TuningGarageScene({ variant = 'landing', children, class
         ['--py' as string]: `${py}px`,
       }}
     >
-      <div className={`tuning-garage-bg ${immagineOk ? 'tuning-garage-bg-foto' : ''}`} aria-hidden="true" />
+      <div
+        className={`tuning-garage-bg ${immagineOk ? 'tuning-garage-bg-foto' : ''} ${variant === 'garage' ? 'tuning-garage-bg-cinematic' : ''}`}
+        aria-hidden="true"
+      />
       <div className="tuning-garage-overlay" aria-hidden="true" />
       <div className="tuning-garage-luci" aria-hidden="true">
         <span className="tuning-luce tuning-luce-1" />
@@ -93,9 +99,14 @@ export default function TuningGarageScene({ variant = 'landing', children, class
         <span className="tuning-luce tuning-luce-3" />
       </div>
       <div className="tuning-garage-pavimento" aria-hidden="true" />
-      <div className="tuning-garage-legno-sx" aria-hidden="true" />
-      <div className="tuning-garage-legno-dx" aria-hidden="true" />
+      {variant === 'landing' && (
+        <>
+          <div className="tuning-garage-legno-sx" aria-hidden="true" />
+          <div className="tuning-garage-legno-dx" aria-hidden="true" />
+        </>
+      )}
       <div className="tuning-garage-pedana" aria-hidden="true" />
+      {variant === 'garage' && <div className="tuning-garage-riflesso" aria-hidden="true" />}
       <div className="tuning-garage-grain" aria-hidden="true" />
       {children}
     </div>

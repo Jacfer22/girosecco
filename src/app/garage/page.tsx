@@ -288,11 +288,11 @@ export default function PaginaGarage() {
         <div className="garage-ui-pannello">
           <div className="garage-ui-header">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-brand-chiaro">
-                {profilo?.username ?? 'Rider'} / MotoGarage
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#ff6a20]/90">
+                {profilo?.username ?? 'Rider'} · Garage digitale
               </p>
-              <h1 className="mt-1 font-display text-2xl font-black uppercase leading-none tracking-tight text-white sm:text-3xl">
-                Il mio Garage
+              <h1 className="mt-1 font-display text-xl font-black uppercase leading-none tracking-tight text-white sm:text-2xl">
+                Le tue moto
               </h1>
             </div>
             <button

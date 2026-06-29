@@ -146,6 +146,8 @@ export default function Garage3D({
 
   const pronte = moto.filter((item) => item.stato === 'pronto' && item.glb_url);
   const sfondoBianco = modalitaViewer;
+  const modalitaComposita = modalitaHero && !modalitaViewer;
+  const mostraAmbiente3D = !sfondoBianco && !modalitaComposita;
   const mostraVetrina = (modalitaViewer || modalitaHero) && !modalitaReel && caricati > 0;
   const parcheggiata = !esploraAttivo && !modalitaViewer && !modalitaReel;
 
@@ -154,8 +156,8 @@ export default function Garage3D({
     if (!host) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(sfondoBianco ? 0xffffff : 0x07090d);
-    scene.fog = sfondoBianco ? null : new THREE.Fog(0x07090d, 12, 28);
+    scene.background = modalitaComposita ? null : new THREE.Color(sfondoBianco ? 0xffffff : 0x07090d);
+    scene.fog = sfondoBianco || modalitaComposita ? null : new THREE.Fog(0x07090d, 12, 28);
     sceneRef.current = scene;
     ambienteRef.current = [];
 
@@ -165,14 +167,17 @@ export default function Garage3D({
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: modalitaComposita,
       preserveDrawingBuffer: true,
       powerPreference: 'high-performance',
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = sfondoBianco ? 1.05 : 1.15;
-    renderer.setClearColor(sfondoBianco ? 0xffffff : 0x07090d, 1);
+    renderer.toneMappingExposure = sfondoBianco ? 1.05 : modalitaComposita ? 1.22 : 1.15;
+    renderer.setClearColor(
+      modalitaComposita ? 0x000000 : sfondoBianco ? 0xffffff : 0x07090d,
+      modalitaComposita ? 0 : 1,
+    );
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
@@ -190,21 +195,26 @@ export default function Garage3D({
     controlliRef.current = controls;
     controls.addEventListener('start', () => setCameraSpostata(true));
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xe8e8e8, sfondoBianco ? 2.2 : 1.15));
-    const key = new THREE.SpotLight(0xffffff, sfondoBianco ? 95 : 115, 32, Math.PI / 5.5, 0.55, 1.3);
+    scene.add(new THREE.HemisphereLight(0xfff4e8, 0x1a1410, sfondoBianco ? 2.2 : modalitaComposita ? 1.4 : 1.15));
+    const key = new THREE.SpotLight(0xfff8f0, sfondoBianco ? 95 : modalitaComposita ? 135 : 115, 32, Math.PI / 5.5, 0.55, 1.3);
     key.position.set(2.5, 8.5, 5.5);
     key.target.position.set(0, 0.8, 0);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
     scene.add(key, key.target);
-    const red = new THREE.PointLight(0xe61c28, sfondoBianco ? 8 : 42, 13, 1.7);
+    const red = new THREE.PointLight(0xe61c28, sfondoBianco ? 8 : modalitaComposita ? 58 : 42, 13, 1.7);
     red.position.set(-5, 2.7, 0);
     scene.add(red);
-    const white = new THREE.PointLight(0xdce9ff, sfondoBianco ? 12 : 22, 14, 1.7);
+    const white = new THREE.PointLight(0xdce9ff, sfondoBianco ? 12 : modalitaComposita ? 28 : 22, 14, 1.7);
     white.position.set(5, 3.4, 1.5);
     scene.add(white);
+    if (modalitaComposita) {
+      const arancio = new THREE.PointLight(0xff6a20, 44, 16, 1.6);
+      arancio.position.set(3.2, 2.8, -2.4);
+      scene.add(arancio);
+    }
 
-    if (!sfondoBianco) {
+    if (mostraAmbiente3D) {
       const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(30, 30, 30, 30),
         new THREE.MeshStandardMaterial({ color: 0x1b1d20, roughness: 0.64, metalness: 0.22 }),
@@ -219,7 +229,26 @@ export default function Garage3D({
       ambienteRef.current.push(grid);
     }
 
-    if (!sfondoBianco) {
+    if (modalitaComposita) {
+      const ombra = new THREE.Mesh(
+        new THREE.CircleGeometry(2.9, 48),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.38 }),
+      );
+      ombra.rotation.x = -Math.PI / 2;
+      ombra.position.y = 0.01;
+      scene.add(ombra);
+      ambienteRef.current.push(ombra);
+      const pedana = new THREE.Mesh(
+        new THREE.RingGeometry(1.6, 3.1, 64),
+        new THREE.MeshBasicMaterial({ color: 0xed2100, transparent: true, opacity: 0.14, side: THREE.DoubleSide }),
+      );
+      pedana.rotation.x = -Math.PI / 2;
+      pedana.position.y = 0.008;
+      scene.add(pedana);
+      ambienteRef.current.push(pedana);
+    }
+
+    if (mostraAmbiente3D) {
       ambienteRef.current.push(
         box(scene, [15, 7, 0.3], [0, 3.35, -6], 0x101216),
         box(scene, [0.3, 7, 14], [-7.4, 3.35, 0], 0x0c0e12),
@@ -472,12 +501,14 @@ export default function Garage3D({
       <div ref={contenitoreRef} className={`absolute inset-0 ${parcheggiata ? 'cursor-pointer' : ''}`} aria-label="Garage virtuale 3D interattivo" />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3 sm:p-4">
+        {!modalitaHero && (
         <div className={chipClass}>
           {parcheggiata
             ? 'Parcheggiata · tocca per girarla'
             : 'Trascina · zoom · pan · seleziona'}
         </div>
-        <div className="pointer-events-auto flex flex-wrap justify-end gap-2">
+        )}
+        <div className={`pointer-events-auto flex flex-wrap justify-end gap-2 ${modalitaHero ? 'ml-auto w-full' : ''}`}>
           {mostraVetrina && idVetrina && (
             <button
               type="button"

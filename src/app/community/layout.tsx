@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import CercaUtenti from '@/components/CercaUtenti';
-import AppPageShell from '@/components/AppPageShell';
+import AppPageShell, { PageIntro } from '@/components/AppPageShell';
 
 const TAB = [
   { href: '/community', label: 'Attività', match: (p: string) => p === '/community' },
@@ -14,14 +14,12 @@ export default function LayoutCommunity({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   return (
-    <AppPageShell>
-      <p className="font-mono text-sm uppercase tracking-[0.2em] text-cartello">In sella ora</p>
-      <h1 className="mt-1 font-display text-4xl font-bold uppercase leading-none tracking-tight text-white sm:text-5xl">
-        Community
-      </h1>
-      <p className="mt-4 text-lg text-cemento/70">
-        Pubblica foto e giri, reagisci agli altri rider, scala la classifica km.
-      </p>
+    <AppPageShell atmosphere="glow">
+      <PageIntro
+        label="In sella ora"
+        title="Community"
+        description="Pubblica foto e giri, reagisci agli altri rider, scala la classifica km."
+      />
 
       <div className="mt-6">
         <CercaUtenti />

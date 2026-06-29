@@ -6,13 +6,12 @@ import { useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import RedirectPostGiro from '@/components/RedirectPostGiro';
 import OverlayTracciaGiro from '@/components/OverlayTracciaGiro';
-import AppPageShell from '@/components/AppPageShell';
+import AppPageShell, { PageIntro } from '@/components/AppPageShell';
 import AuthWall, { AuthWallLoading } from '@/components/AuthWall';
 import { Button } from '@/components/Button';
 import { useTracciamentoGiro } from '@/hooks/use-tracciamento-giro';
 import AvvisoGpsTraccia from '@/components/AvvisoGpsTraccia';
 import OnboardingTraccia from '@/components/OnboardingTraccia';
-import IconaGpsLive from '@/components/icons/IconaGpsLive';
 import SelettoreMascotteGps from '@/components/SelettoreMascotteGps';
 import { useMascotGpsId } from '@/hooks/use-mascot-gps';
 
@@ -44,16 +43,14 @@ export default function PaginaTraccia() {
 
   if (!user) {
     return (
-      <AppPageShell>
-        <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-brand">Tracciamento GPS</p>
-        <h1 className="mt-1 font-display text-3xl font-black uppercase leading-none tracking-tight text-white md:text-5xl">
-          Traccia un giro
-        </h1>
+      <AppPageShell atmosphere="traccia">
+        <PageIntro
+          label="Tracciamento GPS"
+          title="Traccia un giro"
+          description="Registra il percorso via GPS e genera la card da condividere. Serve un account gratuito."
+        />
         <div className="mt-6">
-          <AuthWall
-            titolo="Registra il tuo percorso"
-            descrizione="Registra il percorso via GPS e genera la card da condividere. Serve un account gratuito."
-          />
+          <AuthWall titolo="Registra il tuo percorso" descrizione="" />
         </div>
       </AppPageShell>
     );
@@ -87,20 +84,13 @@ export default function PaginaTraccia() {
   }
 
   return (
-    <AppPageShell className="pagina-immersiva">
+    <AppPageShell className="pagina-immersiva" atmosphere="traccia">
       <OnboardingTraccia pronto={track.stato === 'pronto'} />
-      <div className="flex items-center gap-3">
-        <IconaGpsLive size={32} className="shrink-0 text-brand" />
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-brand">Tracciamento GPS</p>
-          <h1 className="mt-0.5 font-display text-3xl font-black uppercase leading-none tracking-tight text-white md:text-5xl">
-            Traccia un giro
-          </h1>
-        </div>
-      </div>
-      <p className="mt-3 text-sm text-cemento/55">
-        Registra il percorso reale. Alla fine, wizard card e condivisione.
-      </p>
+      <PageIntro
+        label="Tracciamento GPS"
+        title="Traccia un giro"
+        description="Registra il percorso reale. Alla fine, wizard card e condivisione."
+      />
 
       {track.info && (
         <p className="mt-4 rounded-app border border-cartello/30 bg-cartello/10 p-3 text-sm text-cemento/85">

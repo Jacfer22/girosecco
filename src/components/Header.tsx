@@ -34,7 +34,7 @@ export default function Header() {
   }
 
   return (
-    <header className="app-chrome-header relative z-40 border-b border-white/10 bg-asfalto/97 text-cemento shadow-app-sm backdrop-blur-xl">
+    <header className="app-chrome-header app-chrome-glass relative z-40 border-b border-white/10 bg-asfalto/97 text-cemento shadow-app-sm backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
         <LogoHomeLink onClick={chiudiMenu} />
 

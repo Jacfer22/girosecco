@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import type { GarageMoto } from '@/lib/garage';
 import TuningGarageScene from '@/components/TuningGarageScene';
+import CinematicHeadline from '@/components/cinematic/CinematicHeadline';
 
 const GarageModelViewer = dynamic(() => import('@/components/GarageModelViewer'), {
   ssr: false,
@@ -53,6 +54,15 @@ export default function GarageAmbiente({
 
   return (
     <TuningGarageScene variant="garage" className="garage-tuning-wrap">
+      <CinematicHeadline
+        align="left"
+        size="garage"
+        className="garage-cinematic-title pointer-events-none"
+        lines={[
+          { text: 'Il mio', accent: false },
+          { text: 'garage', accent: true },
+        ]}
+      />
       <div className="garage-palco-hero">
         {haModello ? (
           <>

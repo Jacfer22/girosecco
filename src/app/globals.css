@@ -784,6 +784,7 @@ body {
 
 /* Card app: superficie bianca, bordo sottile, elevazione che reagisce */
 .card-app {
+  position: relative;
   background: #fff;
   border: 1px solid rgba(21, 24, 26, 0.08);
   border-radius: 14px;
@@ -794,6 +795,21 @@ body {
 .card-app:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 16px rgba(21, 24, 26, 0.08), 0 16px 40px rgba(21, 24, 26, 0.14);
+}
+
+.card-app::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 106, 32, 0.22), transparent);
+  pointer-events: none;
+}
+
+.dark .card-app::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 106, 32, 0.18), transparent);
 }
 
 /* Pressione tattile sui controlli (feedback "app") */
@@ -873,7 +889,8 @@ body {
   .skeleton { animation: none; }
   .bento-feature:hover { transform: none; }
   .hub-tile:hover { transform: none; }
-  .tuning-garage-bg { transition: none; }
+  .tuning-garage-bg,
+  .cinematic-scene-bg { transform: none !important; transition: none; }
   .card-demo-float { animation: none; }
   .card-demo-route { animation: none; stroke-dashoffset: 0; }
 }
@@ -1161,6 +1178,252 @@ body {
   }
 }
 
+/* ============ CINEMATIC (promo style sito) ============ */
+
+.cinematic-scene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cinematic-scene-bg {
+  position: absolute;
+  inset: -4%;
+  background: linear-gradient(145deg, #0a0908, #12100e 50%, #060605);
+  transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(1.06);
+  transition: transform 0.45s ease-out;
+}
+
+.cinematic-scene-bg-foto {
+  background-image: var(--cinematic-bg);
+  background-size: cover;
+  background-position: center 42%;
+  filter: saturate(1.08) contrast(1.06) brightness(0.82);
+}
+
+.cinematic-scene-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cinematic-scene-hero .cinematic-scene-overlay {
+  background:
+    radial-gradient(ellipse 55% 45% at 22% 48%, rgba(8, 7, 5, 0.08) 0%, rgba(6, 5, 4, 0.62) 72%),
+    linear-gradient(90deg, rgba(8, 7, 5, 0.72) 0%, rgba(8, 7, 5, 0.28) 42%, transparent 68%),
+    linear-gradient(180deg, rgba(6, 5, 4, 0.35) 0%, transparent 32%, rgba(6, 5, 4, 0.55) 100%);
+}
+
+.cinematic-scene-garage .cinematic-scene-overlay {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 58%, transparent 6%, rgba(6, 5, 4, 0.35) 48%, rgba(4, 3, 3, 0.88) 100%),
+    radial-gradient(ellipse 35% 28% at 78% 20%, rgba(255, 106, 32, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(6, 5, 4, 0.5) 0%, transparent 28%, rgba(4, 3, 3, 0.82) 100%);
+}
+
+.cinematic-scene-section .cinematic-scene-overlay {
+  background:
+    linear-gradient(90deg, rgba(6, 5, 4, 0.92) 0%, rgba(6, 5, 4, 0.55) 42%, rgba(6, 5, 4, 0.35) 100%),
+    linear-gradient(180deg, rgba(6, 5, 4, 0.45) 0%, transparent 40%, rgba(4, 3, 3, 0.7) 100%);
+}
+
+.cinematic-scene-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+.cinematic-headline {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 0.88;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cinematic-headline-left { left: clamp(1rem, 4vw, 2.5rem); bottom: clamp(4rem, 14vh, 9rem); }
+.cinematic-headline-right { right: clamp(1rem, 4vw, 2.5rem); bottom: clamp(3rem, 12vh, 7rem); text-align: right; align-items: flex-end; }
+
+.cinematic-headline-plain,
+.cinematic-headline-accent {
+  display: block;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transform: skewX(-6deg);
+}
+
+.cinematic-headline-hero .cinematic-headline-plain {
+  font-size: clamp(2.8rem, 9vw, 5.5rem);
+  color: rgba(248, 248, 250, 0.92);
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.55);
+}
+
+.cinematic-headline-hero .cinematic-headline-accent {
+  font-size: clamp(3rem, 10vw, 6rem);
+  color: var(--brand);
+  text-shadow: 0 0 40px rgba(237, 33, 0, 0.35);
+}
+
+.cinematic-headline-garage .cinematic-headline-plain {
+  font-size: clamp(1.6rem, 4.5vw, 2.8rem);
+  color: rgba(235, 238, 245, 0.88);
+}
+
+.cinematic-headline-garage .cinematic-headline-accent {
+  font-size: clamp(2.2rem, 6.5vw, 4rem);
+  color: #ff6a20;
+  text-shadow: 0 0 32px rgba(255, 106, 32, 0.45);
+}
+
+.cinematic-headline-section .cinematic-headline-plain {
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  color: rgba(240, 242, 248, 0.9);
+}
+
+.cinematic-headline-section .cinematic-headline-accent {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  color: var(--brand);
+}
+
+.landing-cinematic-hero { min-height: min(94dvh, 920px); }
+.landing-cinematic-deco { opacity: 0.92; }
+.landing-cinematic-content {
+  position: relative;
+  z-index: 6;
+  width: 100%;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 5rem 1rem 4rem;
+}
+
+.hud-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.hud-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 106, 32, 0.28);
+  background: rgba(8, 7, 6, 0.72);
+  padding: 0.5rem 0.75rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hud-stat-value {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.hud-stat-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #ff6a20;
+}
+
+.cinematic-section-wrap {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cinematic-section-inner {
+  position: relative;
+  z-index: 5;
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: 3rem 1rem 3.5rem;
+}
+
+.garage-cinematic-title {
+  opacity: 0.75;
+}
+
+.cinematic-section-deco {
+  opacity: 0.28;
+  bottom: 1.5rem !important;
+}
+
+.cinematic-sat-card,
+.cinematic-sat-core {
+  border-color: rgba(255, 106, 32, 0.15) !important;
+  background: rgba(8, 7, 6, 0.55) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (max-width: 767px) {
+  .landing-cinematic-deco {
+    opacity: 0.35;
+    bottom: 1.5rem !important;
+  }
+
+  .garage-cinematic-title {
+    display: none;
+  }
+
+  .cinematic-scene-bg,
+  .tuning-garage-bg {
+    transform: none !important;
+    transition: none;
+  }
+
+  .landing-cinematic-hero {
+    min-height: max(100dvh, 100svh);
+  }
+
+  .landing-cinematic-content {
+    padding-top: max(4.25rem, calc(env(safe-area-inset-top) + 2.75rem));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  .cinematic-section-deco {
+    display: none;
+  }
+
+  .cinematic-section-inner {
+    padding-top: 2.25rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .cinematic-scene-section {
+    min-height: auto !important;
+  }
+
+  .tuning-garage-garage .tuning-garage-bg-foto,
+  .tuning-garage-bg-cinematic.tuning-garage-bg-foto {
+    background-image: url('/garage-ambient.webp');
+    background-position: center 26%;
+    filter: saturate(1.06) contrast(1.05) brightness(0.82);
+  }
+
+  .tuning-garage-riflesso {
+    display: none;
+  }
+
+  .garage-pagina-wrap {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 /* ============ TUNING GARAGE (landing + garage) ============ */
 
 .tuning-garage {
@@ -1193,6 +1456,42 @@ body {
   filter: saturate(1.05) contrast(1.04) brightness(0.88);
 }
 
+.tuning-garage-garage .tuning-garage-bg-foto,
+.tuning-garage-bg-cinematic.tuning-garage-bg-foto {
+  background-image: url('/cinematic/garage-digitale.png');
+  background-position: center 30%;
+  filter: saturate(1.12) contrast(1.1) brightness(0.78);
+}
+
+
+.tuning-garage-garage .tuning-luce {
+  background: linear-gradient(90deg, transparent, rgba(255, 150, 60, 0.8), transparent);
+  box-shadow: 0 0 28px rgba(255, 110, 30, 0.4);
+  opacity: 0.85;
+}
+
+.tuning-garage-garage .tuning-garage-pavimento {
+  height: 48%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(20, 18, 16, 0.25) 18%, rgba(12, 11, 10, 0.82) 100%),
+    radial-gradient(ellipse 55% 40% at 50% 0%, rgba(255, 106, 32, 0.14), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 72px);
+}
+
+.tuning-garage-riflesso {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  width: min(78vw, 760px);
+  height: 120px;
+  transform: translateX(-50%) perspective(400px) rotateX(72deg);
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(255, 106, 32, 0.22), transparent 68%);
+  filter: blur(8px);
+  opacity: 0.7;
+}
+
+
 .tuning-garage-overlay {
   position: absolute;
   inset: 0;
@@ -1212,8 +1511,10 @@ body {
 
 .tuning-garage-garage .tuning-garage-overlay {
   background:
-    radial-gradient(ellipse 70% 55% at 50% 58%, transparent 5%, rgba(8, 7, 5, 0.25) 45%, rgba(8, 7, 5, 0.7) 100%),
-    linear-gradient(180deg, rgba(8, 7, 5, 0.45) 0%, transparent 25%, rgba(8, 7, 5, 0.55) 100%);
+    radial-gradient(ellipse 65% 50% at 50% 55%, transparent 8%, rgba(8, 6, 4, 0.2) 42%, rgba(6, 5, 4, 0.78) 100%),
+    radial-gradient(ellipse 40% 30% at 72% 18%, rgba(255, 90, 20, 0.12), transparent 70%),
+    radial-gradient(ellipse 35% 25% at 18% 22%, rgba(230, 28, 40, 0.08), transparent 65%),
+    linear-gradient(180deg, rgba(8, 7, 5, 0.5) 0%, transparent 22%, rgba(8, 7, 5, 0.45) 58%, rgba(6, 5, 4, 0.88) 100%);
 }
 
 .tuning-garage-luci {
@@ -1281,8 +1582,12 @@ body {
 }
 
 .tuning-garage-garage .tuning-garage-pedana {
-  bottom: 18%;
-  width: min(80vw, 820px);
+  bottom: 17%;
+  width: min(82vw, 860px);
+  background: radial-gradient(ellipse at center, rgba(255, 106, 32, 0.42), rgba(237, 33, 0, 0.12) 55%, transparent 72%);
+  box-shadow:
+    0 0 60px rgba(255, 106, 32, 0.28),
+    0 0 120px rgba(237, 33, 0, 0.12);
 }
 
 /* Landing hero content */
@@ -1395,13 +1700,27 @@ body {
   width: min(100% - 2rem, 360px);
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 10, 8, 0.78);
-  backdrop-filter: blur(18px) saturate(130%);
-  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 106, 32, 0.22);
+  background: rgba(6, 5, 4, 0.82);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
   padding: 1rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.garage-ui-pannello::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #ff6a20, transparent);
+  opacity: 0.85;
 }
 
 .garage-ui-header {
@@ -1518,7 +1837,52 @@ body {
     bottom: auto;
     width: auto;
     margin: 0.75rem;
+    margin-bottom: max(0.75rem, env(safe-area-inset-bottom));
     max-height: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(6, 5, 4, 0.94);
+  }
+
+  .app-pagina-cinematic-foto::before {
+    background:
+      radial-gradient(ellipse 70% 50% at 100% -5%, rgba(255, 106, 32, 0.07), transparent 58%),
+      radial-gradient(ellipse 55% 40% at 0% 100%, rgba(237, 33, 0, 0.05), transparent 52%);
+    opacity: 1;
+    filter: none;
+  }
+
+  .dash-hero-top::before,
+  .nav-setup-hero-cinematic::before {
+    background: linear-gradient(135deg, rgba(255, 106, 32, 0.06), transparent 55%);
+    opacity: 1;
+    filter: none;
+  }
+
+  .hero-asfalto-cinematic::before {
+    background:
+      linear-gradient(165deg, rgba(15, 11, 10, 0.94) 0%, rgba(15, 11, 10, 0.82) 55%, rgba(15, 11, 10, 0.92) 100%),
+      url('/cinematic/traccia-giro.png') center 35% / cover no-repeat;
+    opacity: 0.42;
+  }
+
+  .page-intro-title {
+    font-size: clamp(1.65rem, 8vw, 2.35rem);
+  }
+
+  .app-pagina {
+    padding-top: max(1.25rem, env(safe-area-inset-top));
+  }
+
+  body.app-immersive-mobile .app-pagina {
+    padding-top: max(0.65rem, env(safe-area-inset-top));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
+  .cinematic-sat-card,
+  .cinematic-sat-core {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .tuning-garage-pedana {
@@ -1937,10 +2301,157 @@ body.nav-fullscreen-active.con-bottomnav {
 .safe-left { padding-left: env(safe-area-inset-left); }
 
 .app-pagina {
+  position: relative;
   background: var(--notte);
   color: #f0f1f2;
   min-height: calc(100dvh - 4rem);
+  isolation: isolate;
 }
+
+.app-pagina-cinematic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app-pagina-cinematic-glow::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 100% -5%, rgba(255, 106, 32, 0.07), transparent 58%),
+    radial-gradient(ellipse 55% 40% at 0% 100%, rgba(237, 33, 0, 0.05), transparent 52%);
+}
+
+.app-pagina-cinematic-foto::before {
+  background:
+    radial-gradient(ellipse 75% 55% at 100% 0%, rgba(255, 106, 32, 0.06), transparent 60%),
+    var(--page-accent-bg) right -18% top -8% / min(520px, 72vw) auto no-repeat;
+  opacity: 0.11;
+  filter: saturate(0.85) contrast(1.02);
+}
+
+.app-pagina-cinematic > * {
+  position: relative;
+  z-index: 1;
+}
+
+.page-intro {
+  margin-bottom: 0.25rem;
+}
+
+.page-intro-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 106, 32, 0.82);
+}
+
+.page-intro-label::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 2px;
+  margin-bottom: 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 106, 32, 0.85), transparent);
+}
+
+.page-intro-title {
+  margin-top: 0.35rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(1.85rem, 5vw, 3rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #f0f1f2;
+}
+
+.page-intro-desc {
+  margin-top: 0.75rem;
+  max-width: 36rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: rgba(240, 241, 242, 0.58);
+}
+
+.app-chrome-glass {
+  background: rgba(8, 7, 6, 0.86) !important;
+  border-bottom-color: rgba(255, 106, 32, 0.14) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+}
+
+.dash-hero-top {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+  padding-top: max(0.35rem, env(safe-area-inset-top));
+  min-height: 9.5rem;
+  border-radius: 14px;
+}
+
+.dash-hero-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255, 106, 32, 0.05), transparent 45%),
+    url('/cinematic/navigazione-gps.png') right -12% top -25% / 62% auto no-repeat;
+  opacity: 0.1;
+  filter: saturate(0.9);
+}
+
+.dash-hero-top > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-asfalto-cinematic {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-asfalto-cinematic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(165deg, rgba(15, 11, 10, 0.92) 0%, rgba(15, 11, 10, 0.72) 50%, rgba(15, 11, 10, 0.88) 100%),
+    url('/cinematic/traccia-giro.png') center 30% / cover no-repeat;
+  opacity: 1;
+}
+
+.hero-asfalto-cinematic > * {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-setup-hero-cinematic {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-setup-hero-cinematic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(15, 11, 10, 0.55), rgba(15, 11, 10, 0.92)),
+    url('/cinematic/navigazione-gps.png') right -30% top -40% / 70% auto no-repeat;
+  opacity: 0.12;
+}
+
+.nav-setup-hero-cinematic > * {
+  position: relative;
+  z-index: 1;
+}
+
 .app-shell-loggato {
   background: var(--notte);
 }
@@ -2031,13 +2542,6 @@ body.nav-fullscreen-active.con-bottomnav {
 
 .dash-home {
   color: #f0f1f2;
-}
-.dash-hero-top {
-  position: relative;
-  overflow: visible;
-  margin-bottom: 0.25rem;
-  padding-top: max(0.35rem, env(safe-area-inset-top));
-  min-height: 9.5rem;
 }
 .dash-hero-logo {
   display: inline-flex;
