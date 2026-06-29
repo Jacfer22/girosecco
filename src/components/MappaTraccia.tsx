@@ -8,6 +8,7 @@ import {
   rotazioneMarkerMascot,
   type IdMascotGps,
 } from '@/lib/mascot-gps';
+import { useMascotMarkerUrls, urlMascotPerId } from '@/hooks/use-mascot-marker-urls';
 
 const PIXEL_TRASPARENTE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -50,6 +51,7 @@ export default function MappaTraccia({
   const leafletRef = useRef<any>(null);
   const [mappaPronta, setMappaPronta] = useState(false);
   const ultimaIconaRef = useRef('');
+  const { urls: mascotUrls } = useMascotMarkerUrls();
 
   useEffect(() => {
     const mappa = mappaRef.current as { invalidateSize?: () => void } | null;
@@ -132,12 +134,13 @@ export default function MappaTraccia({
 
     const ultimo = latlngs[latlngs.length - 1];
     const mascot = mascotGps(mascotId);
+    const img = urlMascotPerId(mascotUrls, mascotId, mascot.immagine);
     const rot = rotazioneMarkerMascot(punti, mascot);
-    const chiaveIcona = `${mascotId}-${Math.round(rot / 8)}`;
+    const chiaveIcona = `${mascotId}-${Math.round(rot / 6)}-${img.includes('data:') ? 't' : 'o'}`;
 
     if (!markerRef.current) {
       markerRef.current = L.marker(ultimo, {
-        icon: creaIconaMascotLeaflet(L, mascot, rot),
+        icon: creaIconaMascotLeaflet(L, mascot, rot, img),
         zIndexOffset: 1000,
       }).addTo(mappa);
       ultimaIconaRef.current = chiaveIcona;
@@ -149,7 +152,7 @@ export default function MappaTraccia({
       m.setLatLng(ultimo);
       if (chiaveIcona !== ultimaIconaRef.current) {
         ultimaIconaRef.current = chiaveIcona;
-        m.setIcon(creaIconaMascotLeaflet(L, mascot, rot));
+        m.setIcon(creaIconaMascotLeaflet(L, mascot, rot, img));
       }
     }
 
@@ -158,7 +161,7 @@ export default function MappaTraccia({
     } else if (latlngs.length > 1 && !(percorsoNav && percorsoNav.length > 1)) {
       mappa.fitBounds(L.latLngBounds(latlngs), { padding: [30, 30] });
     }
-  }, [punti, inCorso, mappaPronta, percorsoNav, mascotId]);
+  }, [punti, inCorso, mappaPronta, percorsoNav, mascotId, mascotUrls]);
 
   // Percorso navigazione OSRM (blu)
   useEffect(() => {

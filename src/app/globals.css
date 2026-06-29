@@ -401,12 +401,14 @@ body {
 .marker-mascot-gps {
   position: relative;
   pointer-events: none;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+  background: transparent !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 .marker-mascot-gps img {
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+  background: transparent !important;
 }
 
 /* Selettore mascotte GPS */
@@ -447,6 +449,7 @@ body {
   height: 52px;
   object-fit: contain;
   pointer-events: none;
+  background: transparent;
 }
 .mascot-gps-nome {
   font-family: var(--font-display, sans-serif);

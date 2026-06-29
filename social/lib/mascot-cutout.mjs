@@ -10,7 +10,9 @@ export function ensureMascotCutout(srcPath) {
   if (existsSync(cutout) && existsSync(srcPath)) {
     if (statSync(cutout).mtimeMs >= statSync(srcPath).mtimeMs) return cutout;
   }
-  const vf = 'colorkey=0x000000:0.42:0.18,format=rgba';
+  /** Solo pixel quasi neri → alpha 0; preserva rosso/blu/corpo moto */
+  const vf =
+    "geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(lt(r(X,Y)+g(X,Y)+b(X,Y)\\,32)\\,0\\,255)',format=rgba";
   const ok =
     spawnSync(
       ffmpegPath,

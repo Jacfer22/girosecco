@@ -17,3 +17,6 @@ social/tour-video/**/*.mp4
 social/mascot/out/
 social/mascot/out/**/*
 social/mascot/*-cutout.png
+social/ideogram/out/
+social/ideogram/out/**/*
+social/ideogram/.browser-profile/

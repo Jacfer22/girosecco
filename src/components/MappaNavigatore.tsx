@@ -8,6 +8,7 @@ import {
   rotazioneMascotNav,
   type IdMascotGps,
 } from '@/lib/mascot-gps';
+import { useMascotMarkerUrls, urlMascotPerId } from '@/hooks/use-mascot-marker-urls';
 
 const PIXEL_TRASPARENTE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -59,6 +60,7 @@ export default function MappaNavigatore({
   const leafletRef = useRef<any>(null);
   const onSeguiChangeRef = useRef(onSeguiChange);
   const ultimaIconaRef = useRef('');
+  const { urls: mascotUrls } = useMascotMarkerUrls();
 
   useEffect(() => {
     const mappa = mappaRef.current as { invalidateSize?: () => void } | null;
@@ -183,8 +185,9 @@ export default function MappaNavigatore({
     const latlng: [number, number] = [posizione.lat, posizione.lng];
 
     const mascot = mascotGps(mascotId);
-    const rot = rotazioneMascotNav(percorsoGps, posizione, mascot);
-    const chiaveIcona = markerPosizioneHtml ?? `${mascotId}-${Math.round(rot / 8)}`;
+    const img = urlMascotPerId(mascotUrls, mascotId, mascot.immagine);
+    const rot = rotazioneMascotNav(percorsoGps, posizione, mascot, percorsoNav, destinazione);
+    const chiaveIcona = markerPosizioneHtml ?? `${mascotId}-${Math.round(rot / 6)}-${img.includes('data:') ? 't' : 'o'}`;
 
     if (!markerRef.current) {
       const html = markerPosizioneHtml;
@@ -195,7 +198,7 @@ export default function MappaNavigatore({
             iconSize: html.includes('marker-neon-reel') ? [24, 24] : [52, 36],
             iconAnchor: html.includes('marker-neon-reel') ? [12, 12] : [26, 18],
           })
-        : creaIconaMascotLeaflet(L, mascot, rot);
+        : creaIconaMascotLeaflet(L, mascot, rot, img);
       markerRef.current = L.marker(latlng, { icon: icona, zIndexOffset: 1000 }).addTo(mappa);
       ultimaIconaRef.current = chiaveIcona;
     } else {
@@ -217,7 +220,7 @@ export default function MappaNavigatore({
             }),
           );
         } else {
-          m.setIcon(creaIconaMascotLeaflet(L, mascot, rot));
+          m.setIcon(creaIconaMascotLeaflet(L, mascot, rot, img));
         }
       }
     }
@@ -225,7 +228,7 @@ export default function MappaNavigatore({
     if (segui) {
       mappa.panTo(latlng, { animate: seguiAnimato, duration: 0.4, easeLinearity: 0.22 });
     }
-  }, [posizione, segui, markerPosizioneHtml, mascotId, percorsoGps, zoomMinimo, seguiAnimato]);
+  }, [posizione, segui, markerPosizioneHtml, mascotId, percorsoGps, percorsoNav, destinazione, mascotUrls, zoomMinimo, seguiAnimato]);
 
   useEffect(() => {
     const L = leafletRef.current;
